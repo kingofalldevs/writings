@@ -1,0 +1,206 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Check, ArrowRight, Sparkles, Zap, X } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+
+const plans = [
+  {
+    id: 'zen',
+    name: 'Zen',
+    price: 3,
+    description: 'Start your practice.',
+    features: ['Minimalist Editor', 'Binder', 'Binaural Audio', 'Aria AI (50/day)'],
+    cta: 'Start Zen',
+    highlight: false,
+  },
+  {
+    id: 'crescendo',
+    name: 'Crescendo',
+    price: 8,
+    description: 'The full experience.',
+    features: ['Everything in Zen', 'Unlimited AI', 'Full Audio Library', 'Portfolio Publishing'],
+    cta: 'Start Crescendo',
+    highlight: true,
+  },
+  {
+    id: 'purist',
+    name: 'Purist',
+    price: 15,
+    description: 'For serious writers.',
+    features: ['Everything in Crescendo', 'Priority AI', 'Early Beta Features', 'Priority Support'],
+    cta: 'Go Purist',
+    highlight: false,
+  },
+];
+
+const PricingModal = ({ isOpen, onClose }) => {
+  const [billingCycle, setBillingCycle] = useState('monthly');
+  const [trialMode, setTrialMode] = useState(true);
+  const [loadingPlan, setLoadingPlan] = useState(null);
+  const { user } = useAuth();
+
+  if (!isOpen) return null;
+
+  const getPrice = (plan) => {
+    if (billingCycle === 'yearly') return Math.round(plan.price * 0.8);
+    return plan.price;
+  };
+
+  const handleCheckout = async (plan) => {
+    if (!user) return; // Should be logged in to see modal anyway
+
+    setLoadingPlan(plan.id);
+    try {
+      const res = await fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          planId: plan.id,
+          userEmail: user.email,
+          userName: user.displayName || '',
+          trial: trialMode,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        // Show the real Dodo error so we can debug it
+        const msg = data.details || data.error || 'Failed to start checkout.';
+        alert(`Checkout error: ${msg}`);
+      }
+    } catch (err) {
+      console.error('Checkout error:', err);
+      alert(`Network error: ${err.message}`);
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 overflow-y-auto"
+      >
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 20 }}
+          className="relative w-full max-w-5xl bg-background border border-foreground/10 shadow-2xl rounded-3xl p-8 max-h-[90vh] overflow-y-auto hide-scrollbar"
+        >
+          <button
+            onClick={onClose}
+            className="absolute top-6 right-6 p-2 rounded-full hover:bg-foreground/5 transition-colors"
+          >
+            <X size={24} />
+          </button>
+
+          <div className="text-center mb-10">
+            <h2 className="text-4xl font-bold mb-4 tracking-tight">Upgrade Your Practice</h2>
+            <p className="text-muted text-lg mb-8">Unlock the full power of the Living OS.</p>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+              {/* Trial / Pay Now toggle */}
+              <div className="flex items-center gap-2 p-1.5 rounded-full bg-accent/5 border border-foreground/10">
+                <button
+                  onClick={() => setTrialMode(true)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                    trialMode ? 'bg-accent text-background' : 'text-muted hover:text-foreground'
+                  }`}
+                >
+                  <Sparkles size={14} /> 7-day trial
+                </button>
+                <button
+                  onClick={() => setTrialMode(false)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                    !trialMode ? 'bg-accent text-background' : 'text-muted hover:text-foreground'
+                  }`}
+                >
+                  <Zap size={14} /> Pay now
+                </button>
+              </div>
+
+              {/* Monthly / Yearly toggle */}
+              <div className="flex items-center gap-1 p-1.5 rounded-full bg-accent/5 border border-foreground/10">
+                {['monthly', 'yearly'].map((cycle) => (
+                  <button
+                    key={cycle}
+                    onClick={() => setBillingCycle(cycle)}
+                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                      billingCycle === cycle ? 'bg-foreground/5 shadow-sm text-foreground' : 'text-muted hover:text-foreground'
+                    }`}
+                  >
+                    {cycle.charAt(0).toUpperCase() + cycle.slice(1)}
+                    {cycle === 'yearly' && <span className="text-accent ml-1">-20%</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {plans.map((plan) => (
+              <div
+                key={plan.id}
+                className={`relative flex flex-col p-6 rounded-2xl transition-all ${
+                  plan.highlight 
+                    ? 'border-2 border-accent bg-accent/5 shadow-lg' 
+                    : 'border border-foreground/10 bg-background hover:border-accent/50'
+                }`}
+              >
+                {plan.highlight && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-accent text-background text-[10px] font-bold uppercase tracking-wider rounded-full">
+                    Most Popular
+                  </div>
+                )}
+                
+                <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+                <p className="text-sm text-muted mb-6 h-10">{plan.description}</p>
+                
+                <div className="mb-6 flex items-baseline gap-1">
+                  <span className="text-4xl font-bold">${getPrice(plan)}</span>
+                  <span className="text-sm text-muted">/mo</span>
+                </div>
+
+                <div className="flex-1 flex flex-col gap-4 mb-8">
+                  {plan.features.map((feature, i) => (
+                    <div key={i} className="flex items-start gap-2 text-sm">
+                      <Check size={16} className="text-accent shrink-0 mt-0.5" />
+                      <span className="opacity-80">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => handleCheckout(plan)}
+                  disabled={loadingPlan === plan.id}
+                  className={`w-full py-3 rounded-full font-bold flex items-center justify-center gap-2 transition-all ${
+                    plan.highlight
+                      ? 'bg-text-color text-bg-color hover:scale-[1.02]'
+                      : 'bg-accent/5 text-foreground hover:bg-accent/10 border border-foreground/10'
+                  }`}
+                  style={plan.highlight ? { backgroundColor: 'var(--text-color)', color: 'var(--bg-color)' } : {}}
+                >
+                  {loadingPlan === plan.id ? 'Loading...' : (
+                    <>
+                      {trialMode ? 'Start Free Trial' : plan.cta}
+                      <ArrowRight size={16} />
+                    </>
+                  )}
+                </button>
+              </div>
+            ))}
+          </div>
+          
+          <p className="text-center text-xs text-muted mt-8">Secure payments via Dodo Payments. Cancel anytime.</p>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+export default PricingModal;

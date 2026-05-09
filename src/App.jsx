@@ -11,6 +11,7 @@ import PricingPage from './components/PricingPage';
 import AriaPage from './components/AriaPage';
 import PhilosophyPage from './components/PhilosophyPage';
 import AuthModal from './components/AuthModal';
+import PricingModal from './components/PricingModal';
 import WorkNameModal from './components/WorkNameModal';
 import SharedNovelView from './components/SharedNovelView';
 import AuthorPortfolio from './components/AuthorPortfolio';
@@ -29,6 +30,7 @@ function AppContent() {
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(tracks[0]);
   const [editorContent, setEditorContent] = useState('');
   const [selectedItemId, setSelectedItemId] = useState(null);
@@ -68,7 +70,7 @@ function AppContent() {
       const q = query(collection(db, 'users', user.uid, 'works'), orderBy('name', 'asc'));
       const unsubscribe = onSnapshot(q, async (snapshot) => {
         const works = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        
+
         // Auto-initialize Idea 1 if it doesn't exist
         const idea1Exists = works.find(w => w.name === 'Idea 1' && w.type === 'folder' && !w.parentId);
         if (!idea1Exists && works.length === 0) {
@@ -207,14 +209,14 @@ function AppContent() {
       }
       return null;
     };
-    
+
     const parentItem = findInTree(allItems, parentId);
 
     // TEMPLATE: New Idea inside Ideabase root
     if (section === 'ideabase' && !parentId && type === 'folder') {
       const ideaName = prompt("Enter Idea Name:", `Idea ${binderData.ideabase.length + 1}`);
       if (!ideaName) return;
-      
+
       // Create Idea Folder
       const ideaRef = await addDoc(collection(db, 'users', user.uid, 'works'), {
         name: ideaName,
@@ -328,13 +330,13 @@ function AppContent() {
       showNotif('Sign in required', 'Please sign in to publish your portfolio.', 'warning');
       return;
     }
-    
+
     try {
       const { getDoc } = await import('firebase/firestore');
       const defaultUsername = user.displayName?.split(' ')[0]?.toLowerCase() || user.email?.split('@')[0]?.toLowerCase() || 'author';
       const docRef = doc(db, 'portfolios', defaultUsername);
       const docSnap = await getDoc(docRef);
-      
+
       let portfolioData = {};
       if (docSnap.exists()) {
         portfolioData = docSnap.data();
@@ -358,7 +360,7 @@ function AppContent() {
         works: works,
         timestamp: serverTimestamp()
       });
-      
+
       const shareUrl = `${window.location.origin}/?author=${portfolioData.username.toLowerCase()}`;
       navigator.clipboard.writeText(shareUrl);
       showNotif('Portfolio updated!', 'Your portfolio is live. Link copied to clipboard.', 'success', { copyText: shareUrl });
@@ -376,16 +378,16 @@ function AppContent() {
 
     const defaultUsername = user.displayName?.split(' ')[0]?.toLowerCase() || user.email?.split('@')[0]?.toLowerCase() || 'author';
     const username = prompt("Enter your unique author handle (e.g. prince) to publish your portfolio:", defaultUsername);
-    
+
     const bio = prompt("A short bio about you as a writer:", "Crafting narratives at the intersection of architecture, philosophy, and the quiet moments of the everyday.");
     const inspirations = prompt("Your inspirations (e.g. minimalist design, natural world):", "Inspired by the minimalist lines of design, classical music, and the raw beauty of the natural world.");
-    
+
     if (!username) return;
 
     try {
       const worksSnapshot = await getDocs(query(collection(db, 'users', user.uid, 'works')));
       const works = worksSnapshot.docs.map(d => ({ ...d.data(), id: d.id }));
-      
+
       const authorName = user.displayName || username;
 
       await setDoc(doc(db, 'portfolios', username.toLowerCase()), {
@@ -397,7 +399,7 @@ function AppContent() {
         works: works,
         timestamp: serverTimestamp()
       });
-      
+
       const shareUrl = `${window.location.origin}/?author=${username.toLowerCase()}`;
       navigator.clipboard.writeText(shareUrl);
       showNotif('Portfolio is live! 🎉', 'Your author page is published. Link copied to clipboard.', 'success', { copyText: shareUrl });
@@ -568,6 +570,7 @@ function AppContent() {
         onToggleLibrary={() => setIsLibraryOpen(true)}
         onToggleBinder={() => setIsBinderOpen(o => !o)}
         isBinderOpen={isBinderOpen}
+        onPricing={() => setIsPricingModalOpen(true)}
       />
 
       <div className="animate-fade-in flex flex-1 mt-16 overflow-hidden">
@@ -604,6 +607,11 @@ function AppContent() {
       <WorkNameModal
         isOpen={isNamingModalOpen}
         onSave={handleSaveWorkName}
+      />
+
+      <PricingModal
+        isOpen={isPricingModalOpen}
+        onClose={() => setIsPricingModalOpen(false)}
       />
 
       <NotificationModal
@@ -643,9 +651,9 @@ function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        {authorUsername ? <AuthorPortfolio authorUsername={authorUsername} /> : 
-         shareId ? <SharedNovelView shareId={shareId} /> : 
-         <AppContent />}
+        {authorUsername ? <AuthorPortfolio authorUsername={authorUsername} /> :
+          shareId ? <SharedNovelView shareId={shareId} /> :
+            <AppContent />}
       </ThemeProvider>
     </AuthProvider>
   );

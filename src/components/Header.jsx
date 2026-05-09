@@ -25,7 +25,8 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
     onSignIn,
     onToggleLibrary,
     onToggleBinder,
-    isBinderOpen
+    isBinderOpen,
+    onPricing
   }) => {
     const { theme, toggleTheme } = useTheme();
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -124,16 +125,29 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
         <div className="relative flex items-center gap-2" ref={menuRef}>
           {user && (
-            <motion.button
-              whileHover={{ scale: 1.05, y: -1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={onQuickPublish}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-background hover:shadow-[0_8px_20px_-4px_rgba(var(--accent-rgb),0.4)] transition-all text-[11px] font-bold tracking-widest uppercase shadow-lg shadow-accent/20"
-              title="Instant Publish to Portfolio"
-            >
-              <Globe size={14} />
-              <span>Publish</span>
-            </motion.button>
+            <div className="flex items-center gap-2 mr-2">
+              <motion.button
+                whileHover={{ scale: 1.05, y: -1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onPricing}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent/10 text-accent hover:bg-accent/20 transition-all text-[11px] font-bold tracking-widest uppercase"
+                title="Upgrade Plan"
+              >
+                <Sparkles size={14} />
+                <span>Upgrade</span>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.05, y: -1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onQuickPublish}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-background hover:shadow-[0_8px_20px_-4px_rgba(var(--accent-rgb),0.4)] transition-all text-[11px] font-bold tracking-widest uppercase shadow-lg shadow-accent/20"
+                title="Instant Publish to Portfolio"
+              >
+                <Globe size={14} />
+                <span>Publish</span>
+              </motion.button>
+            </div>
           )}
 
           <button
