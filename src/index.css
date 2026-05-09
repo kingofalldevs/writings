@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-accent: rgb(var(--accent-rgb));
+  --color-accent-hover: var(--accent-hover);
+  --color-background: var(--bg-color);
+  --color-foreground: var(--text-color);
+  --color-muted: var(--text-muted);
+  
+  --font-sans: "Outfit", "sans-serif";
+  --font-serif: "Playfair Display", "serif";
+  
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+  --radius-4xl: 32px;
+}
+
+:root {
+  --bg-color: #f4ecd8;
+  --text-color: #433422;
+  --text-muted: #8b7d6b;
+  --accent-color: #5bb0a3;
+  --accent-rgb: 91, 176, 163;
+  --accent-hover: #4a8f84;
+  --card-bg: rgba(0, 0, 0, 0.03);
+  --border-color: rgba(0, 0, 0, 0.08);
+  --glass-bg: rgba(244, 236, 216, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --bg-color: #0a0f18;
+  --text-color: #e0e0e0;
+  --text-muted: #8a8f98;
+  --accent-color: #4fd1c5;
+  --accent-rgb: 79, 209, 197;
+  --accent-hover: #38b2ac;
+  --card-bg: rgba(255, 255, 255, 0.03);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(15, 22, 34, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+[data-theme='light'] {
+  --bg-color: #ffffff;
+  --text-color: #1a202c;
+  --text-muted: #718096;
+  --accent-color: #319795;
+  --accent-rgb: 49, 151, 149;
+  --accent-hover: #287e7c;
+  --card-bg: rgba(0, 0, 0, 0.02);
+  --border-color: rgba(0, 0, 0, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground transition-colors duration-500 antialiased overflow-x-hidden min-h-screen w-screen;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Design System Components */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  @apply rounded-full;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Base Component Styles */
+button {
+  font-family: inherit;
+  @apply cursor-pointer transition-all duration-200 text-current;
+  background: none;
+  border: none;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+textarea {
+  @apply w-full bg-transparent outline-none transition-opacity duration-300 text-foreground;
+  resize: none;
+}
