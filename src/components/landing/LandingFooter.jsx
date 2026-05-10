@@ -17,7 +17,7 @@ const LandingFooter = () => {
             <span className="text-xl font-bold tracking-tight">Writings</span>
           </div>
           <p className="text-sm font-light leading-relaxed opacity-70 max-w-[240px]">
-            The minimalist operating system for deep work, research, and cognitive excellence. Designed for flow.
+            The peaceful workspace for your best writing, research, and deep thinking. Designed for flow.
           </p>
         </div>
 
@@ -25,9 +25,9 @@ const LandingFooter = () => {
         <div className="flex flex-col gap-6">
           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent opacity-60">Product</span>
           <div className="flex flex-col gap-4">
-            <FooterLink label="Living OS" />
-            <FooterLink label="Aria AI Tutor" />
-            <FooterLink label="Zen Tracks" />
+            <FooterLink label="The Workspace" />
+            <FooterLink label="Intelligent Assistant" />
+            <FooterLink label="Deep Work Audio" />
           </div>
         </div>
 
