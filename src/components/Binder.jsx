@@ -240,6 +240,7 @@ const Binder = ({ data, selectedId, onSelect, onAddItem, onDeleteItem, onRenameI
         ))}
       </div>
     </aside>
+    </>
   );
 };
 
