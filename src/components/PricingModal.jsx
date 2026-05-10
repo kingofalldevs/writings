@@ -5,37 +5,27 @@ import { useAuth } from '../context/AuthContext';
 
 const plans = [
   {
-    id: 'zen',
-    name: 'Zen',
-    price: 3,
+    id: 'free',
+    name: 'Zen (Free)',
+    price: 0,
     description: 'Start your practice.',
     features: ['Minimalist Editor', 'Binder', 'Binaural Audio', 'Aria AI (50/day)'],
-    cta: 'Start Zen',
+    cta: 'Start Free',
     highlight: false,
   },
   {
-    id: 'writings',
-    name: 'Writings',
-    price: 8,
-    description: 'The full Living OS experience.',
-    features: ['Unlimited Documents', 'Full Ideabase', 'Priority AI Assistant', 'Advanced Export'],
-    cta: 'Start Writings',
+    id: 'pro',
+    name: 'Writings Pro',
+    price: 10,
+    description: 'Full creative toolkit.',
+    features: ['Unlimited AI', 'Full Ideabase', 'Portfolio Publishing', 'PDF Extraction'],
+    cta: 'Start Pro',
     highlight: true,
-  },
-  {
-    id: 'zenith',
-    name: 'Zenith',
-    price: 15,
-    description: 'The ultimate tool for scholars.',
-    features: ['Everything in Writings', 'Priority AI', 'Early Beta Features', 'Priority Support'],
-    cta: 'Start Zenith',
-    highlight: false,
   },
 ];
 
 const PricingModal = ({ isOpen, onClose }) => {
   const [billingCycle, setBillingCycle] = useState('monthly');
-  const [trialMode, setTrialMode] = useState(true);
   const [loadingPlan, setLoadingPlan] = useState(null);
   const { user } = useAuth();
 
@@ -58,7 +48,7 @@ const PricingModal = ({ isOpen, onClose }) => {
           planId: plan.id,
           userEmail: user.email,
           userName: user.displayName || '',
-          trial: trialMode,
+          trial: false,
         }),
       });
 
@@ -90,7 +80,7 @@ const PricingModal = ({ isOpen, onClose }) => {
           initial={{ scale: 0.95, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 20 }}
-          className="relative w-full max-w-5xl bg-background border border-foreground/10 shadow-2xl rounded-3xl p-8 max-h-[90vh] overflow-y-auto hide-scrollbar"
+          className="relative w-full max-w-3xl bg-background border border-foreground/10 shadow-2xl rounded-3xl p-8 max-h-[90vh] overflow-y-auto hide-scrollbar"
         >
           <button
             onClick={onClose}
@@ -104,26 +94,6 @@ const PricingModal = ({ isOpen, onClose }) => {
             <p className="text-muted text-lg mb-8">Unlock the full power of the Living OS.</p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-              {/* Trial / Pay Now toggle */}
-              <div className="flex items-center gap-2 p-1.5 rounded-full bg-accent/5 border border-foreground/10">
-                <button
-                  onClick={() => setTrialMode(true)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                    trialMode ? 'bg-accent text-background' : 'text-muted hover:text-foreground'
-                  }`}
-                >
-                  <Sparkles size={14} /> 7-day trial
-                </button>
-                <button
-                  onClick={() => setTrialMode(false)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                    !trialMode ? 'bg-accent text-background' : 'text-muted hover:text-foreground'
-                  }`}
-                >
-                  <Zap size={14} /> Pay now
-                </button>
-              </div>
-
               {/* Monthly / Yearly toggle */}
               <div className="flex items-center gap-1 p-1.5 rounded-full bg-accent/5 border border-foreground/10">
                 {['monthly', 'yearly'].map((cycle) => (
@@ -142,7 +112,7 @@ const PricingModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
             {plans.map((plan) => (
               <div
                 key={plan.id}
@@ -187,7 +157,7 @@ const PricingModal = ({ isOpen, onClose }) => {
                 >
                   {loadingPlan === plan.id ? 'Loading...' : (
                     <>
-                      {trialMode ? 'Start Free Trial' : plan.cta}
+                      {plan.cta}
                       <ArrowRight size={16} />
                     </>
                   )}

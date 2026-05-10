@@ -7,57 +7,40 @@ import { useAuth } from '../context/AuthContext';
 
 const plans = [
   {
-    id: 'zen',
-    name: 'Zen',
-    price: 3,
-    description: 'Everything you need to start your writing practice.',
+    id: 'free',
+    name: 'Zen (Free)',
+    price: 0,
+    description: 'Perfect for starting your daily writing practice.',
     features: [
       'Minimalist Living OS Editor',
       'Scrivener-style Binder',
       'Binaural Focus Tracks',
       'Aria AI (50 queries/day)',
-      'Single Device Sync',
+      'Basic Manuscript Export',
     ],
     cta: 'Start Writing',
     highlight: false,
   },
   {
-    id: 'writings',
-    name: 'Writings',
-    price: 8,
-    description: 'The full Living OS experience for deep thinkers.',
+    id: 'pro',
+    name: 'Writings Pro',
+    price: 10,
+    description: 'The complete toolkit for serious creative production.',
     features: [
-      'Everything in Zen',
+      'Everything in Free',
       'Unlimited Aria AI Assistant',
-      'Full Binaural Audio Library',
-      'PDF Research Extraction',
-      'Author Portfolio & Publishing',
-      'Cross-platform Sync',
+      'PDF Research & Extraction',
+      'Author Portfolio Publishing',
+      'Custom Branding & Domains',
+      'Priority Feature Access',
     ],
-    cta: 'Start Writing',
+    cta: 'Start Pro',
     highlight: true,
-  },
-  {
-    id: 'purist',
-    name: 'Purist',
-    price: 15,
-    description: 'For serious writers who demand the absolute best.',
-    features: [
-      'Everything in Writings',
-      'Priority AI Response',
-      'Exclusive Beta Features',
-      'Priority Support',
-      'Founding Member Badge',
-      'Early Access to New Tools',
-    ],
-    cta: 'Go Purist',
-    highlight: false,
   },
 ];
 
 const PricingPage = ({ onStart, onBack }) => {
   const [billingCycle, setBillingCycle] = useState('monthly');
-  const [trialMode, setTrialMode] = useState(true); // true = 7-day trial, false = pay now
   const [loadingPlan, setLoadingPlan] = useState(null);
   const { user } = useAuth();
 
@@ -81,7 +64,7 @@ const PricingPage = ({ onStart, onBack }) => {
           planId: plan.id,
           userEmail: user.email,
           userName: user.displayName || '',
-          trial: trialMode,
+          trial: false,
         }),
       });
 
@@ -110,67 +93,9 @@ const PricingPage = ({ onStart, onBack }) => {
           className="text-center mb-16 w-full max-w-4xl"
           style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
         >
-          <div style={{
-            display: 'inline-block',
-            padding: '8px 16px',
-            borderRadius: '8px',
-            backgroundColor: 'rgba(var(--accent-rgb), 0.08)',
-            marginBottom: '24px'
-          }}>
-            <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.2em', color: 'var(--accent-color)' }}>
-              PRICING FOR FLOW
-            </span>
-          </div>
-
-          <h1 className="font-medium tracking-tight mb-8" style={{ fontSize: 'clamp(44px, 7vw, 84px)', lineHeight: 1.05 }}>
-            Invest in your <br />
-            <span style={{ color: 'var(--accent-color)' }}>cognitive peak.</span>
-          </h1>
-
           <p style={{ fontSize: '18px', opacity: 0.5, maxWidth: '540px', margin: '0 auto 40px', fontWeight: 300 }}>
-            No free tier. No compromises. Every plan includes the full Living OS and a 7-day free trial.
+            Start for free and stay for the deep work. Upgrade to Pro for unlimited AI, portfolios, and advanced research tools.
           </p>
-
-          {/* Trial / Pay Now toggle */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            marginBottom: '32px',
-            padding: '16px 24px',
-            borderRadius: '16px',
-            backgroundColor: 'rgba(var(--accent-rgb), 0.04)',
-            border: '1px solid var(--border-color)',
-          }}>
-            <button
-              onClick={() => setTrialMode(true)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '8px',
-                padding: '10px 20px', borderRadius: '100px', fontSize: '14px', fontWeight: 600,
-                transition: 'all 0.3s ease', border: 'none', cursor: 'pointer',
-                backgroundColor: trialMode ? 'var(--accent-color)' : 'transparent',
-                color: trialMode ? 'var(--bg-color)' : 'var(--text-color)',
-                opacity: trialMode ? 1 : 0.5,
-              }}
-            >
-              <Sparkles size={14} />
-              7-day free trial
-            </button>
-            <button
-              onClick={() => setTrialMode(false)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '8px',
-                padding: '10px 20px', borderRadius: '100px', fontSize: '14px', fontWeight: 600,
-                transition: 'all 0.3s ease', border: 'none', cursor: 'pointer',
-                backgroundColor: !trialMode ? 'var(--accent-color)' : 'transparent',
-                color: !trialMode ? 'var(--bg-color)' : 'var(--text-color)',
-                opacity: !trialMode ? 1 : 0.5,
-              }}
-            >
-              <Zap size={14} />
-              Pay now, skip trial
-            </button>
-          </div>
 
           {/* Monthly / Yearly toggle */}
           <div style={{
@@ -203,9 +128,9 @@ const PricingPage = ({ onStart, onBack }) => {
 
         {/* Plan cards */}
         <div style={{
-          width: '100%', maxWidth: '1200px',
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '32px', padding: '20px 0'
+          width: '100%', maxWidth: '900px',
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '24px', padding: '20px 0'
         }}>
           {plans.map((plan, index) => (
             <motion.div
@@ -216,8 +141,8 @@ const PricingPage = ({ onStart, onBack }) => {
               style={{
                 background: plan.highlight ? 'rgba(var(--accent-rgb), 0.03)' : 'var(--card-bg)',
                 border: plan.highlight ? '2px solid var(--accent-color)' : '1px solid var(--border-color)',
-                borderRadius: '32px', padding: '64px 48px 48px 48px',
-                display: 'flex', flexDirection: 'column', gap: '40px',
+                borderRadius: '24px', padding: '40px 32px',
+                display: 'flex', flexDirection: 'column', gap: '32px',
                 transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
                 position: 'relative', height: '100%'
               }}
@@ -244,22 +169,12 @@ const PricingPage = ({ onStart, onBack }) => {
                 <span className="text-sm opacity-40 font-medium">/month</span>
               </div>
 
-              {trialMode && (
-                <div style={{
-                  padding: '10px 16px', borderRadius: '10px',
-                  backgroundColor: 'rgba(var(--accent-rgb), 0.06)',
-                  border: '1px solid rgba(var(--accent-rgb), 0.15)',
-                  fontSize: '13px', color: 'var(--accent-color)', fontWeight: 500
-                }}>
-                  ✦ 7 days free — cancel anytime before being charged
-                </div>
-              )}
 
-              <div className="flex flex-col gap-5 py-8 border-y border-[var(--border-color)]">
+              <div className="flex flex-col gap-4 py-8 border-y border-[var(--border-color)]">
                 {plan.features.map((feature, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <Check size={18} className="text-[var(--accent-color)] mt-0.5" />
-                    <span className="text-[15px] opacity-80">{feature}</span>
+                    <span className="text-[14px] opacity-80">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -269,7 +184,7 @@ const PricingPage = ({ onStart, onBack }) => {
                 disabled={loadingPlan === plan.id}
                 className="w-full rounded-full font-bold transition-all duration-300 flex items-center justify-center gap-3 group/btn"
                 style={{
-                  padding: '22px 0',
+                  padding: '16px 0',
                   backgroundColor: plan.highlight ? 'var(--text-color)' : 'rgba(var(--accent-rgb), 0.03)',
                   color: plan.highlight ? 'var(--bg-color)' : 'var(--text-color)',
                   border: plan.highlight ? 'none' : '1.5px solid var(--border-color)',
@@ -304,7 +219,7 @@ const PricingPage = ({ onStart, onBack }) => {
                   <span>Preparing checkout...</span>
                 ) : (
                   <>
-                    <span>{trialMode ? 'Start Free Trial' : plan.cta}</span>
+                    <span>{plan.cta}</span>
                     <ArrowRight size={18} className="group-hover/btn:translate-x-1.5 transition-transform duration-300" />
                   </>
                 )}
