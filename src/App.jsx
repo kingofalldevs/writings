@@ -27,7 +27,16 @@ import { collection, addDoc, updateDoc, doc, setDoc, serverTimestamp, onSnapshot
 import { tracks } from './data/tracks';
 
 function AppContent() {
-  const [view, setView] = useState('landing'); // 'landing', 'pricing', 'aria', 'philosophy', 'dashboard', 'account', 'portfolio-editor', 'terms', 'privacy'
+  const [view, setView] = useState(() => {
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes('/terms')) return 'terms';
+    if (path.includes('/privacy')) return 'privacy';
+    if (path.includes('/pricing')) return 'pricing';
+    if (path.includes('/aria')) return 'aria';
+    if (path.includes('/philosophy')) return 'philosophy';
+    return 'landing';
+  }); // 'landing', 'pricing', 'aria', 'philosophy', 'dashboard', 'account', 'portfolio-editor', 'terms', 'privacy'
+
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
@@ -148,13 +157,22 @@ function AppContent() {
   // Redirect to dashboard when logged in
   React.useEffect(() => {
     if (!loading && user && (view === 'landing' || view === 'pricing' || view === 'aria' || view === 'philosophy')) {
-      setView('dashboard');
+      handleNavigate('dashboard');
     }
   }, [user, loading, view]);
 
+  const handleNavigate = (newView) => {
+    let path = '/';
+    if (newView !== 'landing' && newView !== 'dashboard' && newView !== 'account' && newView !== 'portfolio-editor') {
+      path = `/${newView}`;
+    }
+    window.history.pushState({}, '', path);
+    setView(newView);
+  };
+
   const handleStartJourney = () => {
     if (user) {
-      setView('dashboard');
+      handleNavigate('dashboard');
     } else {
       setIsAuthModalOpen(true);
     }
@@ -489,30 +507,30 @@ function AppContent() {
       <>
         <LandingPage
           user={user}
-          onAccount={() => setView('account')}
+          onAccount={() => handleNavigate('account')}
           onStart={handleStartJourney}
-          onPricing={() => setView('pricing')}
-          onAria={() => setView('aria')}
-          onPhilosophy={() => setView('philosophy')}
-          onTerms={() => setView('terms')}
-          onPrivacy={() => setView('privacy')}
+          onPricing={() => handleNavigate('pricing')}
+          onAria={() => handleNavigate('aria')}
+          onPhilosophy={() => handleNavigate('philosophy')}
+          onTerms={() => handleNavigate('terms')}
+          onPrivacy={() => handleNavigate('privacy')}
         />
         <AuthModal 
           isOpen={isAuthModalOpen} 
           onClose={() => setIsAuthModalOpen(false)} 
-          onTerms={() => { setIsAuthModalOpen(false); setView('terms'); }}
-          onPrivacy={() => { setIsAuthModalOpen(false); setView('privacy'); }}
+          onTerms={() => { setIsAuthModalOpen(false); handleNavigate('terms'); }}
+          onPrivacy={() => { setIsAuthModalOpen(false); handleNavigate('privacy'); }}
         />
       </>
     );
   }
 
   if (view === 'terms') {
-    return <TermsPage onBack={() => setView('landing')} onPricing={() => setView('pricing')} onAria={() => setView('aria')} onPhilosophy={() => setView('philosophy')} onTerms={() => setView('terms')} onPrivacy={() => setView('privacy')} />;
+    return <TermsPage onBack={() => handleNavigate('landing')} onPricing={() => handleNavigate('pricing')} onAria={() => handleNavigate('aria')} onPhilosophy={() => handleNavigate('philosophy')} onTerms={() => handleNavigate('terms')} onPrivacy={() => handleNavigate('privacy')} />;
   }
 
   if (view === 'privacy') {
-    return <PrivacyPage onBack={() => setView('landing')} onPricing={() => setView('pricing')} onAria={() => setView('aria')} onPhilosophy={() => setView('philosophy')} onTerms={() => setView('terms')} onPrivacy={() => setView('privacy')} />;
+    return <PrivacyPage onBack={() => handleNavigate('landing')} onPricing={() => handleNavigate('pricing')} onAria={() => handleNavigate('aria')} onPhilosophy={() => handleNavigate('philosophy')} onTerms={() => handleNavigate('terms')} onPrivacy={() => handleNavigate('privacy')} />;
   }
 
   if (view === 'pricing') {
@@ -520,18 +538,18 @@ function AppContent() {
       <>
         <PricingPage
           onStart={handleStartJourney}
-          onBack={() => setView('landing')}
-          onPricing={() => setView('pricing')}
-          onAria={() => setView('aria')}
-          onPhilosophy={() => setView('philosophy')}
-          onTerms={() => setView('terms')}
-          onPrivacy={() => setView('privacy')}
+          onBack={() => handleNavigate('landing')}
+          onPricing={() => handleNavigate('pricing')}
+          onAria={() => handleNavigate('aria')}
+          onPhilosophy={() => handleNavigate('philosophy')}
+          onTerms={() => handleNavigate('terms')}
+          onPrivacy={() => handleNavigate('privacy')}
         />
         <AuthModal 
           isOpen={isAuthModalOpen} 
           onClose={() => setIsAuthModalOpen(false)} 
-          onTerms={() => { setIsAuthModalOpen(false); setView('terms'); }}
-          onPrivacy={() => { setIsAuthModalOpen(false); setView('privacy'); }}
+          onTerms={() => { setIsAuthModalOpen(false); handleNavigate('terms'); }}
+          onPrivacy={() => { setIsAuthModalOpen(false); handleNavigate('privacy'); }}
         />
       </>
     );
@@ -542,18 +560,18 @@ function AppContent() {
       <>
         <AriaPage
           onStart={handleStartJourney}
-          onBack={() => setView('landing')}
-          onPricing={() => setView('pricing')}
-          onAria={() => setView('aria')}
-          onPhilosophy={() => setView('philosophy')}
-          onTerms={() => setView('terms')}
-          onPrivacy={() => setView('privacy')}
+          onBack={() => handleNavigate('landing')}
+          onPricing={() => handleNavigate('pricing')}
+          onAria={() => handleNavigate('aria')}
+          onPhilosophy={() => handleNavigate('philosophy')}
+          onTerms={() => handleNavigate('terms')}
+          onPrivacy={() => handleNavigate('privacy')}
         />
         <AuthModal 
           isOpen={isAuthModalOpen} 
           onClose={() => setIsAuthModalOpen(false)} 
-          onTerms={() => { setIsAuthModalOpen(false); setView('terms'); }}
-          onPrivacy={() => { setIsAuthModalOpen(false); setView('privacy'); }}
+          onTerms={() => { setIsAuthModalOpen(false); handleNavigate('terms'); }}
+          onPrivacy={() => { setIsAuthModalOpen(false); handleNavigate('privacy'); }}
         />
       </>
     );
@@ -564,18 +582,18 @@ function AppContent() {
       <>
         <PhilosophyPage
           onStart={handleStartJourney}
-          onBack={() => setView('landing')}
-          onPricing={() => setView('pricing')}
-          onAria={() => setView('aria')}
-          onPhilosophy={() => setView('philosophy')}
-          onTerms={() => setView('terms')}
-          onPrivacy={() => setView('privacy')}
+          onBack={() => handleNavigate('landing')}
+          onPricing={() => handleNavigate('pricing')}
+          onAria={() => handleNavigate('aria')}
+          onPhilosophy={() => handleNavigate('philosophy')}
+          onTerms={() => handleNavigate('terms')}
+          onPrivacy={() => handleNavigate('privacy')}
         />
         <AuthModal 
           isOpen={isAuthModalOpen} 
           onClose={() => setIsAuthModalOpen(false)} 
-          onTerms={() => { setIsAuthModalOpen(false); setView('terms'); }}
-          onPrivacy={() => { setIsAuthModalOpen(false); setView('privacy'); }}
+          onTerms={() => { setIsAuthModalOpen(false); handleNavigate('terms'); }}
+          onPrivacy={() => { setIsAuthModalOpen(false); handleNavigate('privacy'); }}
         />
       </>
     );
@@ -587,10 +605,10 @@ function AppContent() {
         user={user}
         onLogout={() => {
           logout();
-          setView('landing');
+          handleNavigate('landing');
         }}
-        onBack={() => setView('dashboard')}
-        onStart={() => setView('dashboard')}
+        onBack={() => handleNavigate('dashboard')}
+        onStart={() => handleNavigate('dashboard')}
         showNotif={showNotif}
         onPricing={() => setIsPricingModalOpen(true)}
       />
@@ -601,8 +619,8 @@ function AppContent() {
     return (
       <PortfolioEditor
         user={user}
-        onBack={() => setView('dashboard')}
-        onStart={() => setView('dashboard')}
+        onBack={() => handleNavigate('dashboard')}
+        onStart={() => handleNavigate('dashboard')}
         showNotif={showNotif}
       />
     );
@@ -618,11 +636,11 @@ function AppContent() {
         isAIOpen={isAIOpen}
         onTogglePlayer={() => setIsPlayerVisible(o => !o)}
         isPlayerVisible={isPlayerVisible}
-        onLogoClick={() => setView('landing')}
+        onLogoClick={() => handleNavigate('landing')}
         user={user}
         onLogout={logout}
-        onAccount={() => setView('account')}
-        onPortfolioEditor={() => setView('portfolio-editor')}
+        onAccount={() => handleNavigate('account')}
+        onPortfolioEditor={() => handleNavigate('portfolio-editor')}
         onQuickPublish={handleQuickPublish}
         onSignIn={() => setIsAuthModalOpen(true)}
         onToggleLibrary={() => setIsLibraryOpen(true)}
