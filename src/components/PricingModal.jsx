@@ -149,7 +149,7 @@ const PricingModal = ({ isOpen, onClose }) => {
                 <button
                   onClick={() => {
                     if (user?.subscription?.status === 'active' && plan.id === 'pro') {
-                      window.location.href = 'https://app.dodopayments.com/customer-portal';
+                      window.location.href = 'https://customer.dodopayments.com';
                       return;
                     }
                     plan.id !== 'free' && handleCheckout(plan);

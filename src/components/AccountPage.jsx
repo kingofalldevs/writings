@@ -122,7 +122,7 @@ const AccountPage = ({ user, onLogout, onBack, onStart }) => {
                     <ActionButton 
                       icon={<Receipt size={16} />} 
                       label="Manage Billing" 
-                      onClick={() => window.location.href = 'https://app.dodopayments.com/customer-portal'}
+                      onClick={() => window.location.href = 'https://customer.dodopayments.com'}
                     />
                     <ActionButton icon={<Key size={16} />} label="Reset Password" />
                     <ActionButton icon={<Shield size={16} />} label="Two-Factor Auth" />
