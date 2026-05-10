@@ -4,7 +4,47 @@ import { User, CreditCard, Shield, LogOut, ArrowLeft, Mail, Crown, Settings, Key
 import LandingNav from './landing/LandingNav';
 import LandingFooter from './landing/LandingFooter';
 
-const AccountPage = ({ user, onLogout, onBack, onStart }) => {
+const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) => {
+  const [loadingPortal, setLoadingPortal] = React.useState(false);
+
+  const handleManageBilling = async () => {
+    const customerId = user?.subscription?.customerId;
+    
+    if (!customerId) {
+      showNotif(
+        'Subscription Not Found', 
+        'We couldn\'t find an active customer ID for your account. Please contact support if you believe this is an error.', 
+        'warning'
+      );
+      return;
+    }
+
+    setLoadingPortal(true);
+    try {
+      const response = await fetch('/api/create-portal-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId }),
+      });
+
+      const data = await response.json();
+
+      if (data.portalUrl) {
+        window.location.href = data.portalUrl;
+      } else {
+        throw new Error(data.error || 'Failed to generate portal link');
+      }
+    } catch (err) {
+      console.error('Portal error:', err);
+      showNotif(
+        'Portal Access Error', 
+        'Unable to open the billing portal. Please try again later or contact support.', 
+        'error'
+      );
+      setLoadingPortal(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <LandingNav 
@@ -12,7 +52,7 @@ const AccountPage = ({ user, onLogout, onBack, onStart }) => {
         onAccountClick={() => {}}
         onStart={onStart} 
         onHomeClick={onBack} 
-        onPricingClick={() => {}} 
+        onPricingClick={onPricing} 
       />
 
       <main className="flex-grow flex flex-col items-center py-32 px-8">
@@ -98,10 +138,11 @@ const AccountPage = ({ user, onLogout, onBack, onStart }) => {
 
                 <div className="flex items-center gap-4">
                   <button 
-                    onClick={onPricing}
-                    className="px-8 py-4 rounded-full bg-accent text-background font-bold text-sm transition-all hover:opacity-90"
+                    onClick={user?.subscription?.status === 'active' ? handleManageBilling : onPricing}
+                    disabled={loadingPortal}
+                    className="px-8 py-4 rounded-full bg-accent text-background font-bold text-sm transition-all hover:opacity-90 disabled:opacity-50"
                   >
-                    {user?.subscription?.status === 'active' ? 'Manage Subscription' : 'Explore Pro Plans'}
+                    {loadingPortal ? 'Opening Portal...' : (user?.subscription?.status === 'active' ? 'Manage Subscription' : 'Explore Pro Plans')}
                   </button>
                   {user?.subscription?.status !== 'active' && (
                     <button className="px-8 py-4 rounded-full border border-foreground/10 hover:bg-foreground/5 transition-all text-sm font-bold">
@@ -121,8 +162,8 @@ const AccountPage = ({ user, onLogout, onBack, onStart }) => {
                   <div className="space-y-4">
                     <ActionButton 
                       icon={<Receipt size={16} />} 
-                      label="Manage Billing" 
-                      onClick={() => window.location.href = 'https://customer.dodopayments.com'}
+                      label={loadingPortal ? "Connecting..." : "Manage Billing"} 
+                      onClick={handleManageBilling}
                     />
                     <ActionButton icon={<Key size={16} />} label="Reset Password" />
                     <ActionButton icon={<Shield size={16} />} label="Two-Factor Auth" />

@@ -546,6 +546,8 @@ function AppContent() {
         }}
         onBack={() => setView('dashboard')}
         onStart={() => setView('dashboard')}
+        showNotif={showNotif}
+        onPricing={() => setIsPricingModalOpen(true)}
       />
     );
   }
