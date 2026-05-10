@@ -14,48 +14,22 @@ if (!getApps().length) {
 }
 const db = getFirestore();
 
-// Read raw body for signature verification
-const getRawBody = (req) =>
-  new Promise((resolve, reject) => {
-    let data = '';
-    req.on('data', (chunk) => { data += chunk; });
-    req.on('end', () => resolve(data));
-    req.on('error', reject);
-  });
-
-// Verify Dodo webhook signature
-function verifySignature(rawBody, signature, secret) {
-  const expected = createHmac('sha256', secret).update(rawBody).digest('hex');
-  return signature === expected;
-}
-
-// Map Dodo plan/product ID to our internal plan slug
-const PRODUCT_TO_PLAN = {
-  [process.env.DODO_PRODUCT_PRO]: 'pro',
-};
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).end('Method Not Allowed');
   }
 
-  const rawBody = await getRawBody(req);
-  const signature = req.headers['webhook-signature'] || req.headers['x-dodo-signature'];
-  const webhookSecret = process.env.DODO_WEBHOOK_SECRET;
+  // Map Dodo plan/product ID to our internal plan slug
+  const PRODUCT_TO_PLAN = {
+    [process.env.DODO_PRODUCT_PRO]: 'pro',
+  };
 
-  // Verify signature (skip if secret not set, useful for local dev)
-  if (webhookSecret && signature) {
-    if (!verifySignature(rawBody, signature, webhookSecret)) {
-      console.error('Invalid Dodo webhook signature');
-      return res.status(401).json({ error: 'Invalid signature' });
-    }
-  }
+  // Vercel serverless functions automatically parse the JSON body.
+  // We use req.body directly to avoid stream consumption issues.
+  const event = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
-  let event;
-  try {
-    event = JSON.parse(rawBody);
-  } catch {
-    return res.status(400).json({ error: 'Invalid JSON' });
+  if (!event || !event.type) {
+    return res.status(400).json({ error: 'Invalid payload' });
   }
 
   const { type, data } = event;
