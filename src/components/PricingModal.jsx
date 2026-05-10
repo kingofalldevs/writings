@@ -37,6 +37,36 @@ const PricingModal = ({ isOpen, onClose }) => {
     return 10;
   };
 
+  const handleManageBilling = async () => {
+    const customerId = user?.subscription?.customerId;
+    
+    if (!customerId) {
+      alert('Subscription ID not found. Please contact support.');
+      return;
+    }
+
+    setLoadingPlan('portal');
+    try {
+      const response = await fetch('/api/create-portal-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId }),
+      });
+
+      const data = await response.json();
+      if (data.portalUrl) {
+        window.location.href = data.portalUrl;
+      } else {
+        throw new Error(data.error || 'Failed to generate portal link');
+      }
+    } catch (err) {
+      console.error('Portal error:', err);
+      alert('Unable to open billing portal. Please try again later.');
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
   const handleCheckout = async (plan) => {
     if (!user) return; // Should be logged in to see modal anyway
 
@@ -149,12 +179,12 @@ const PricingModal = ({ isOpen, onClose }) => {
                 <button
                   onClick={() => {
                     if (user?.subscription?.status === 'active' && plan.id === 'pro') {
-                      window.location.href = 'https://customer.dodopayments.com';
+                      handleManageBilling();
                       return;
                     }
                     plan.id !== 'free' && handleCheckout(plan);
                   }}
-                  disabled={loadingPlan === plan.id || (user && plan.id === 'free' && user?.subscription?.status !== 'active')}
+                  disabled={loadingPlan === plan.id || loadingPlan === 'portal' || (user && plan.id === 'free' && user?.subscription?.status !== 'active')}
                   className={`w-full py-3 rounded-full font-bold flex items-center justify-center gap-2 transition-all ${
                     plan.highlight
                       ? 'bg-text-color text-bg-color hover:scale-[1.02]'
@@ -162,7 +192,7 @@ const PricingModal = ({ isOpen, onClose }) => {
                   } ${(user && plan.id === 'free' && user?.subscription?.status !== 'active') ? 'opacity-50 cursor-default' : ''}`}
                   style={plan.highlight ? { backgroundColor: 'var(--text-color)', color: 'var(--bg-color)' } : {}}
                 >
-                  {loadingPlan === plan.id ? 'Loading...' : (
+                  {loadingPlan === plan.id || (loadingPlan === 'portal' && plan.id === 'pro' && user?.subscription?.status === 'active') ? 'Loading...' : (
                     <>
                       {user && plan.id === 'free' && user?.subscription?.status !== 'active' ? 'Current Plan' : (
                         user?.subscription?.status === 'active' && plan.id === 'pro' ? 'Manage Subscription' : plan.cta
