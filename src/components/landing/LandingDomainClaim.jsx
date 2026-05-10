@@ -6,7 +6,7 @@ const LandingDomainClaim = () => {
   const [handle, setHandle] = useState('');
 
   return (
-    <section className="relative w-full flex flex-col items-center py-32 px-8 z-10 max-w-[1200px] mx-auto overflow-hidden">
+    <section className="relative w-full flex flex-col items-center py-20 md:py-32 px-6 md:px-8 z-10 max-w-[1200px] mx-auto overflow-hidden">
       
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -32,19 +32,24 @@ const LandingDomainClaim = () => {
         className="w-full max-w-xl relative"
       >
         <div className="relative group">
-          <div className="relative flex items-center bg-foreground/[0.02] border border-foreground/10 rounded-xl p-2 pl-6 focus-within:border-accent/40 transition-all duration-300">
-            <input
-              type="text"
-              value={handle}
-              onChange={(e) => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
-              placeholder="yourname"
-              className="flex-1 bg-transparent border-none outline-none text-xl font-light text-foreground placeholder:text-foreground/20 py-4"
-            />
-            <div className="flex items-center gap-4">
-              <span className="text-xl font-light text-foreground/40 pr-4 border-r border-foreground/10">
+          <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center bg-foreground/[0.02] border border-foreground/10 rounded-2xl p-2 focus-within:border-accent/40 transition-all duration-300">
+            <div className="flex-1 flex items-center pl-6 pr-4">
+              <input
+                type="text"
+                value={handle}
+                onChange={(e) => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
+                placeholder="yourname"
+                className="w-full bg-transparent border-none outline-none text-xl font-light text-foreground placeholder:text-foreground/20 py-4"
+              />
+            </div>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 p-1 sm:p-0">
+              <span className="hidden sm:block text-xl font-light text-foreground/40 pr-4 border-r border-foreground/10">
                 .writings.page
               </span>
-              <button className="bg-accent text-background px-6 py-4 rounded-lg font-medium flex items-center gap-2 transition-all">
+              <span className="sm:hidden text-center text-sm font-light text-foreground/30 mb-2">
+                .writings.page
+              </span>
+              <button className="bg-accent text-background px-8 py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-[0.98]">
                 Secure
                 <ArrowRight className="w-4 h-4" />
               </button>
