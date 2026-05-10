@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import LandingNav from './landing/LandingNav';
 import LandingFooter from './landing/LandingFooter';
 
-const PrivacyPage = ({ onBack, onPricing, onAria, onPhilosophy, onTerms, onPrivacy, onStart }) => {
+const PrivacyPage = ({ onBack, onPricing, onAria, onPhilosophy, onTerms, onPrivacy, onStart, onRefund }) => {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-accent/20 flex flex-col">
       <LandingNav 
@@ -52,7 +52,7 @@ const PrivacyPage = ({ onBack, onPricing, onAria, onPhilosophy, onTerms, onPriva
         </motion.div>
       </div>
 
-      <LandingFooter onTerms={onTerms} onPrivacy={onPrivacy} />
+      <LandingFooter onTerms={onTerms} onPrivacy={onPrivacy} onRefund={onRefund} />
     </div>
   );
 };

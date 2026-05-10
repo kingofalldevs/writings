@@ -39,7 +39,7 @@ const plans = [
   },
 ];
 
-const PricingPage = ({ onStart, onBack, onPricing, onAria, onPhilosophy, onTerms, onPrivacy }) => {
+const PricingPage = ({ onStart, onBack, onPricing, onAria, onPhilosophy, onTerms, onPrivacy, onRefund }) => {
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [loadingPlan, setLoadingPlan] = useState(null);
   const { user } = useAuth();
@@ -292,7 +292,7 @@ const PricingPage = ({ onStart, onBack, onPricing, onAria, onPhilosophy, onTerms
         </motion.p>
       </main>
 
-      <LandingFooter onTerms={onTerms} onPrivacy={onPrivacy} />
+      <LandingFooter onTerms={onTerms} onPrivacy={onPrivacy} onRefund={onRefund} />
     </div>
   );
 };

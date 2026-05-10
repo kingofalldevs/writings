@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 
-const LandingFooter = ({ onTerms, onPrivacy }) => {
+const LandingFooter = ({ onTerms, onPrivacy, onRefund }) => {
   return (
     <footer className="w-full flex flex-col items-center z-10 overflow-hidden pt-24 pb-12 px-8">
 
@@ -71,6 +71,9 @@ const LandingFooter = ({ onTerms, onPrivacy }) => {
           </button>
           <button onClick={onPrivacy} className="text-[12px] opacity-40 no-underline transition-opacity hover:opacity-100">
             Privacy Policy
+          </button>
+          <button onClick={onRefund} className="text-[12px] opacity-40 no-underline transition-opacity hover:opacity-100">
+            Refund Policy
           </button>
           <FooterBottomLink label="Security" />
           <FooterBottomLink label="Cookies" />

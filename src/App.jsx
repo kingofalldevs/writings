@@ -20,6 +20,7 @@ import PortfolioEditor from './components/PortfolioEditor';
 import NotificationModal from './components/NotificationModal';
 import TermsPage from './components/TermsPage';
 import PrivacyPage from './components/PrivacyPage';
+import RefundPage from './components/RefundPage';
 import { useAuth } from './context/AuthContext';
 import Binder from './components/Binder';
 import { db } from './firebase';
@@ -31,6 +32,7 @@ function AppContent() {
     const path = window.location.pathname.toLowerCase();
     if (path.includes('/terms')) return 'terms';
     if (path.includes('/privacy')) return 'privacy';
+    if (path.includes('/refund')) return 'refund';
     if (path.includes('/pricing')) return 'pricing';
     if (path.includes('/aria')) return 'aria';
     if (path.includes('/philosophy')) return 'philosophy';
@@ -514,6 +516,7 @@ function AppContent() {
           onPhilosophy={() => handleNavigate('philosophy')}
           onTerms={() => handleNavigate('terms')}
           onPrivacy={() => handleNavigate('privacy')}
+          onRefund={() => handleNavigate('refund')}
         />
         <AuthModal 
           isOpen={isAuthModalOpen} 
@@ -526,11 +529,15 @@ function AppContent() {
   }
 
   if (view === 'terms') {
-    return <TermsPage onBack={() => handleNavigate('landing')} onPricing={() => handleNavigate('pricing')} onAria={() => handleNavigate('aria')} onPhilosophy={() => handleNavigate('philosophy')} onTerms={() => handleNavigate('terms')} onPrivacy={() => handleNavigate('privacy')} />;
+    return <TermsPage onBack={() => handleNavigate('landing')} onPricing={() => handleNavigate('pricing')} onAria={() => handleNavigate('aria')} onPhilosophy={() => handleNavigate('philosophy')} onTerms={() => handleNavigate('terms')} onPrivacy={() => handleNavigate('privacy')} onRefund={() => handleNavigate('refund')} />;
   }
 
   if (view === 'privacy') {
-    return <PrivacyPage onBack={() => handleNavigate('landing')} onPricing={() => handleNavigate('pricing')} onAria={() => handleNavigate('aria')} onPhilosophy={() => handleNavigate('philosophy')} onTerms={() => handleNavigate('terms')} onPrivacy={() => handleNavigate('privacy')} />;
+    return <PrivacyPage onBack={() => handleNavigate('landing')} onPricing={() => handleNavigate('pricing')} onAria={() => handleNavigate('aria')} onPhilosophy={() => handleNavigate('philosophy')} onTerms={() => handleNavigate('terms')} onPrivacy={() => handleNavigate('privacy')} onRefund={() => handleNavigate('refund')} />;
+  }
+
+  if (view === 'refund') {
+    return <RefundPage onBack={() => handleNavigate('landing')} onPricing={() => handleNavigate('pricing')} onAria={() => handleNavigate('aria')} onPhilosophy={() => handleNavigate('philosophy')} onTerms={() => handleNavigate('terms')} onPrivacy={() => handleNavigate('privacy')} onRefund={() => handleNavigate('refund')} onStart={handleStartJourney} />;
   }
 
   if (view === 'pricing') {
@@ -544,6 +551,7 @@ function AppContent() {
           onPhilosophy={() => handleNavigate('philosophy')}
           onTerms={() => handleNavigate('terms')}
           onPrivacy={() => handleNavigate('privacy')}
+          onRefund={() => handleNavigate('refund')}
         />
         <AuthModal 
           isOpen={isAuthModalOpen} 
@@ -566,6 +574,7 @@ function AppContent() {
           onPhilosophy={() => handleNavigate('philosophy')}
           onTerms={() => handleNavigate('terms')}
           onPrivacy={() => handleNavigate('privacy')}
+          onRefund={() => handleNavigate('refund')}
         />
         <AuthModal 
           isOpen={isAuthModalOpen} 
@@ -588,6 +597,7 @@ function AppContent() {
           onPhilosophy={() => handleNavigate('philosophy')}
           onTerms={() => handleNavigate('terms')}
           onPrivacy={() => handleNavigate('privacy')}
+          onRefund={() => handleNavigate('refund')}
         />
         <AuthModal 
           isOpen={isAuthModalOpen} 
