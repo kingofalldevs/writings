@@ -85,9 +85,9 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full h-16 px-8 flex items-center justify-between z-50 bg-background border-b border-foreground/5">
+    <header className="fixed top-0 left-0 w-full h-16 px-4 md:px-8 flex items-center justify-between z-50 bg-background border-b border-foreground/5">
       <div 
-        className="flex items-center gap-3 cursor-pointer group" 
+        className="flex items-center gap-2 md:gap-3 cursor-pointer group shrink-0" 
         onClick={onLogoClick}
       >
         <div className="flex items-center justify-center w-6 h-6 transition-transform group-hover:scale-110">
@@ -95,10 +95,10 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
             <path d="M22 12H18L15 21L9 3L6 12H2" className="stroke-accent" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
-        <span className="text-xl font-medium tracking-tight">Writings</span>
+        <span className="text-lg md:text-xl font-medium tracking-tight">Writings</span>
       </div>
 
-      <div className="flex items-center gap-4 flex-1 justify-start ml-8">
+      <div className="flex items-center gap-2 md:gap-4 flex-1 justify-start ml-4 md:ml-8">
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -114,7 +114,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
         </motion.button>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-4">
         <input 
           type="file" 
           ref={fileInputRef} 
@@ -125,27 +125,29 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
         <div className="relative flex items-center gap-2" ref={menuRef}>
           {user && (
-            <div className="flex items-center gap-2 mr-2">
+            <div className="flex items-center gap-2 mr-1 md:mr-2">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={onPricing}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent/10 text-accent hover:bg-accent/20 transition-all text-[11px] font-bold tracking-widest uppercase"
+                className="flex items-center gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-full bg-accent/10 text-accent hover:bg-accent/20 transition-all text-[10px] md:text-[11px] font-bold tracking-widest uppercase"
                 title={user?.subscription?.status === 'active' ? "Manage Subscription" : "Upgrade Plan"}
               >
                 <Sparkles size={14} />
-                <span>{user?.subscription?.status === 'active' ? 'Pro' : 'Upgrade'}</span>
+                <span className="hidden sm:inline">{user?.subscription?.status === 'active' ? 'Pro' : 'Upgrade'}</span>
+                {! (user?.subscription?.status === 'active') && <span className="sm:hidden text-[9px]">UP</span>}
+                {user?.subscription?.status === 'active' && <span className="sm:hidden text-[9px]">PRO</span>}
               </motion.button>
 
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={onQuickPublish}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-background transition-all text-[11px] font-bold tracking-widest uppercase"
+                className="flex items-center gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-full bg-accent text-background transition-all text-[10px] md:text-[11px] font-bold tracking-widest uppercase"
                 title="Instant Publish to Portfolio"
               >
                 <Globe size={14} />
-                <span>Publish</span>
+                <span className="hidden sm:inline">Publish</span>
               </motion.button>
             </div>
           )}

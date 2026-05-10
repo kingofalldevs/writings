@@ -14,7 +14,8 @@ import {
   Layers,
   Database,
   RotateCcw,
-  Edit2
+  Edit2,
+  X
 } from 'lucide-react';
 
 const BinderItem = ({ item, level = 0, onSelect, selectedId, onToggle, expandedIds, onAddItem, onDeleteItem, onRenameItem }) => {
@@ -111,7 +112,7 @@ const BinderItem = ({ item, level = 0, onSelect, selectedId, onToggle, expandedI
   );
 };
 
-const Binder = ({ data, selectedId, onSelect, onAddItem, onDeleteItem, onRenameItem }) => {
+const Binder = ({ data, selectedId, onSelect, onAddItem, onDeleteItem, onRenameItem, onClose }) => {
   const [expandedIds, setExpandedIds] = useState(['ideabase']);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -125,6 +126,11 @@ const Binder = ({ data, selectedId, onSelect, onAddItem, onDeleteItem, onRenameI
     onSelect(item);
     if (item.type === 'folder') {
       toggleExpand(item.id);
+    } else {
+      // On mobile, close binder after selecting a document
+      if (window.innerWidth < 768 && onClose) {
+        onClose();
+      }
     }
   };
 
@@ -133,11 +139,26 @@ const Binder = ({ data, selectedId, onSelect, onAddItem, onDeleteItem, onRenameI
   ];
 
   return (
-    <aside 
-      className="h-full flex flex-col transition-all duration-700 ease-in-out select-none border-r border-foreground/5 w-[320px] bg-background z-20"
-    >
-      {/* Search Bar */}
-      <div className="px-6 pt-10 pb-6">
+    <>
+      {/* Mobile Backdrop */}
+      <div 
+        className="fixed inset-0 bg-background/40 backdrop-blur-sm z-[35] md:hidden transition-opacity duration-500"
+        onClick={onClose}
+      />
+      
+      <aside 
+        className="fixed md:relative h-full flex flex-col transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] select-none border-r border-foreground/5 w-[280px] md:w-[320px] bg-background z-[40] md:z-20 shadow-2xl md:shadow-none"
+      >
+        {/* Mobile Header with Close Button */}
+        <div className="flex md:hidden items-center justify-between px-6 pt-6 pb-2">
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] opacity-30">Ideabase</span>
+          <button onClick={onClose} className="p-2 -mr-2 text-muted hover:text-foreground">
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Search Bar */}
+        <div className="px-6 pt-4 md:pt-10 pb-6">
         <div className="relative group">
           <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 opacity-20 group-focus-within:opacity-100 transition-opacity text-accent" />
           <input 

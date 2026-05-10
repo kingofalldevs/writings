@@ -51,7 +51,7 @@ const Editor = ({ content, onChange, onFocus, user, onOpenLibrary, onUpload, isS
   };
 
   return (
-    <main className={`flex-1 flex justify-center px-16 overflow-y-auto h-full ${isSelected ? 'items-start pt-16' : 'items-start pt-24'}`}>
+    <main className={`flex-1 flex justify-center px-4 md:px-16 overflow-y-auto h-full ${isSelected ? 'items-start pt-8 md:pt-16' : 'items-start pt-16 md:pt-24'}`}>
       <div className="animate-fade-in w-full max-w-[900px] relative">
         {!isSelected ? (
           <div className="h-full w-full flex items-start pt-8">

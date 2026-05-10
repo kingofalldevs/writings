@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, Moon, Sun, Coffee } from 'lucide-react';
+import { ChevronDown, Moon, Sun, Coffee, Menu } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../context/ThemeContext';
 
 const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick, onPhilosophyClick, onHomeClick }) => {
   const { theme, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,7 +21,7 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
       <nav className={`w-full flex items-center justify-between pointer-events-auto transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
         isScrolled 
           ? 'max-w-[1200px] px-8 py-4 bg-background/80 backdrop-blur-xl rounded-2xl border border-foreground/10' 
-          : 'max-w-full px-12 py-6 bg-transparent border-transparent'
+          : 'max-w-full px-8 md:px-12 py-6 bg-transparent border-transparent'
       }`}>
         {/* Left: Logo */}
         <div 
@@ -35,7 +37,7 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
         </div>
 
         {/* Center: Main Links */}
-        <div className="hidden md:flex items-center gap-10">
+        <div className="hidden lg:flex items-center gap-10">
           <NavLink label="Philosophy" hasChevron onClick={onPhilosophyClick} />
           <div className="flex items-center gap-2">
             <NavLink label="Aria AI" onClick={onAriaClick} />
@@ -45,8 +47,8 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
         </div>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-6">
-          <div className="flex items-center p-1 rounded-full border border-foreground/10 bg-foreground/5 gap-0.5">
+        <div className="flex items-center gap-2 md:gap-6">
+          <div className="hidden sm:flex items-center p-1 rounded-full border border-foreground/10 bg-foreground/5 gap-0.5">
             <ThemeIcon 
               active={theme === 'light'} 
               onClick={() => toggleTheme('light')} 
@@ -64,25 +66,72 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
             />
           </div>
 
-          {!user && (
+          <div className="flex items-center gap-2">
+            {!user && (
+              <button
+                onClick={onStart}
+                className="hidden sm:block bg-transparent border-none text-sm font-medium text-foreground/60 cursor-pointer transition-opacity hover:opacity-100"
+              >
+                Sign In
+              </button>
+            )}
             <button
               onClick={onStart}
-              className="hidden sm:block bg-transparent border-none text-sm font-medium text-foreground/60 cursor-pointer transition-opacity hover:opacity-100"
+              className="px-5 md:px-6 py-2.5 rounded-full border border-foreground/10 bg-foreground/5 text-foreground text-sm font-semibold cursor-pointer transition-all hover:bg-foreground/[0.08] hover:border-foreground/25"
             >
-              Sign In
+              {user ? 'Dashboard' : 'Get Started'}
             </button>
-          )}
-          <button
-            onClick={onStart}
-            className="px-6 py-2.5 rounded-full border border-foreground/10 bg-foreground/5 text-foreground text-sm font-semibold cursor-pointer transition-all hover:bg-foreground/[0.08] hover:border-foreground/25"
-          >
-            {user ? 'Dashboard' : 'Get Started'}
-          </button>
+
+            {/* Mobile Menu Button */}
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="flex lg:hidden items-center justify-center w-10 h-10 rounded-full border border-foreground/10 bg-foreground/5 text-foreground"
+            >
+              <Menu size={20} />
+            </button>
+          </div>
         </div>
       </nav>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-full left-0 right-0 mt-4 mx-6 p-6 rounded-3xl glass pointer-events-auto lg:hidden"
+          >
+            <div className="flex flex-col gap-6">
+              <MobileNavLink label="Philosophy" onClick={() => { onPhilosophyClick(); setIsMobileMenuOpen(false); }} />
+              <MobileNavLink label="Aria AI" onClick={() => { onAriaClick(); setIsMobileMenuOpen(false); }} />
+              <MobileNavLink label="Pricing" onClick={() => { onPricingClick(); setIsMobileMenuOpen(false); }} />
+              <div className="pt-6 border-t border-foreground/10 flex flex-col gap-6">
+                 <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-widest opacity-40">Appearance</span>
+                    <div className="flex items-center p-1 rounded-full border border-foreground/10 bg-foreground/5 gap-0.5">
+                      <ThemeIcon active={theme === 'light'} onClick={() => toggleTheme('light')} icon={<Sun size={14} />} />
+                      <ThemeIcon active={theme === 'sepia'} onClick={() => toggleTheme('sepia')} icon={<Coffee size={14} />} />
+                      <ThemeIcon active={theme === 'dark'} onClick={() => toggleTheme('dark')} icon={<Moon size={14} />} />
+                    </div>
+                 </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
+
+const MobileNavLink = ({ label, onClick }) => (
+  <div 
+    onClick={onClick}
+    className="text-lg font-medium text-foreground/70 hover:text-foreground transition-colors cursor-pointer"
+  >
+    {label}
+  </div>
+);
 
 const ThemeIcon = ({ active, onClick, icon }) => (
   <button

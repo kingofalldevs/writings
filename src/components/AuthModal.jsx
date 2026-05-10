@@ -56,7 +56,7 @@ const AuthModal = ({ isOpen, onClose }) => {
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.95, opacity: 0, y: 20 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white dark:bg-zinc-900 shadow-2xl border border-zinc-200 dark:border-zinc-800"
+        className="relative w-full max-w-md max-h-[calc(100vh-40px)] overflow-y-auto rounded-3xl bg-white dark:bg-zinc-900 shadow-2xl border border-zinc-200 dark:border-zinc-800 custom-scrollbar"
         style={{ 
           backgroundColor: 'var(--bg-color)',
           borderColor: 'var(--border-color)',

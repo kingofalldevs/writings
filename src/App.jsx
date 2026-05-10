@@ -37,7 +37,7 @@ function AppContent() {
   const [currentWorkId, setCurrentWorkId] = useState(null);
   const [currentWorkName, setCurrentWorkName] = useState('');
   const [isNamingModalOpen, setIsNamingModalOpen] = useState(false);
-  const [isBinderOpen, setIsBinderOpen] = useState(true);
+  const [isBinderOpen, setIsBinderOpen] = useState(window.innerWidth > 768);
   const [notif, setNotif] = useState({ isOpen: false, title: '', message: '', type: 'success', copyText: null, onConfirm: null, confirmText: 'Got it', cancelText: 'Cancel' });
   const { user, logout, loading } = useAuth();
 
@@ -595,6 +595,7 @@ function AppContent() {
             onAddItem={handleAddItem}
             onDeleteItem={handleDeleteItem}
             onRenameItem={handleRenameItem}
+            onClose={() => setIsBinderOpen(false)}
           />
         )}
 
