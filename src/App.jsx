@@ -455,6 +455,16 @@ function AppContent() {
     }
   };
 
+  // Check for payment success in URL
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      showNotif('Welcome to Writings Pro!', 'Your subscription is active and your features are being unlocked.', 'success');
+      // Clean up the URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [showNotif]);
+
   // Auto-save logic
   React.useEffect(() => {
     if (user && currentWorkId && editorContent !== undefined) {
