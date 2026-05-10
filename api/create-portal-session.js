@@ -8,11 +8,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { customerId } = req.body || {};
-
-    if (!customerId) {
-      return res.status(400).json({ error: 'Missing customerId' });
-    }
+    let { customerId, userEmail } = req.body || {};
 
     const apiKey = process.env.DODO_API_KEY;
     if (!apiKey) {
@@ -24,8 +20,24 @@ export default async function handler(req, res) {
       environment: process.env.DODO_ENVIRONMENT || 'test_mode',
     });
 
+    // If customerId is missing, try to find it by email
+    if (!customerId && userEmail) {
+      console.log(`Searching for customer by email: ${userEmail}`);
+      const customers = await client.customers.list({ email: userEmail });
+      
+      // PagePromise usually has an 'items' array or similar
+      const customer = customers.items?.find(c => c.email === userEmail);
+      if (customer) {
+        customerId = customer.customer_id;
+        console.log(`Found customerId: ${customerId} for ${userEmail}`);
+      }
+    }
+
+    if (!customerId) {
+      return res.status(400).json({ error: 'Customer not found. Please ensure you have an active subscription.' });
+    }
+
     // Create a customer portal session
-    // Based on Dodo Payments documentation for generating magic links
     const session = await client.customers.customerPortal.create(customerId);
 
     if (!session || !session.link) {

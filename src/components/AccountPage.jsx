@@ -10,21 +10,15 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
   const handleManageBilling = async () => {
     const customerId = user?.subscription?.customerId;
     
-    if (!customerId) {
-      showNotif(
-        'Subscription Not Found', 
-        'We couldn\'t find an active customer ID for your account. Please contact support if you believe this is an error.', 
-        'warning'
-      );
-      return;
-    }
-
     setLoadingPortal(true);
     try {
       const response = await fetch('/api/create-portal-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerId }),
+        body: JSON.stringify({ 
+          customerId,
+          userEmail: user?.email 
+        }),
       });
 
       const data = await response.json();
