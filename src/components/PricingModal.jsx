@@ -119,8 +119,14 @@ const PricingModal = ({ isOpen, onClose }) => {
           </button>
 
           <div className="text-center mb-10">
-            <h2 className="text-4xl font-bold mb-4 tracking-tight">Upgrade Your Practice</h2>
-            <p className="text-muted text-lg mb-8">Unlock the full power of the Living OS.</p>
+            <h2 className="text-4xl font-bold mb-4 tracking-tight">
+              {user?.subscription?.status === 'active' ? 'Your Subscription' : 'Upgrade Your Practice'}
+            </h2>
+            <p className="text-muted text-lg mb-8">
+              {user?.subscription?.status === 'active' 
+                ? 'You are currently on the Writings Pro plan.' 
+                : 'Unlock the full power of the Living OS.'}
+            </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
               {/* Monthly / Yearly toggle */}
@@ -141,8 +147,10 @@ const PricingModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-            {plans.map((plan) => (
+          <div className={`grid ${user?.subscription?.status === 'active' ? 'grid-cols-1 max-w-sm' : 'md:grid-cols-2 max-w-2xl'} gap-6 mx-auto`}>
+            {plans
+              .filter(p => user?.subscription?.status === 'active' ? p.id === 'pro' : true)
+              .map((plan) => (
               <div
                 key={plan.id}
                 className={`relative flex flex-col p-6 rounded-2xl transition-all ${

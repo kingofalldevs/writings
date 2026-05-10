@@ -122,8 +122,13 @@ const PricingPage = ({ onStart, onBack }) => {
           className="text-center mb-16 w-full max-w-4xl"
           style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
         >
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight font-serif">
+            {user?.subscription?.status === 'active' ? 'Your Subscription' : 'Upgrade Your Practice'}
+          </h1>
           <p style={{ fontSize: '18px', opacity: 0.5, maxWidth: '540px', margin: '0 auto 40px', fontWeight: 300 }}>
-            Start for free and stay for the deep work. Upgrade to Pro for unlimited AI, portfolios, and advanced research tools.
+            {user?.subscription?.status === 'active' 
+              ? 'You are currently on the Writings Pro plan. Manage your billing and subscription details below.' 
+              : 'Start for free and stay for the deep work. Upgrade to Pro for unlimited AI, portfolios, and advanced research tools.'}
           </p>
 
           {/* Monthly / Yearly toggle */}
@@ -157,11 +162,15 @@ const PricingPage = ({ onStart, onBack }) => {
 
         {/* Plan cards */}
         <div style={{
-          width: '100%', maxWidth: '900px',
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          width: '100%', 
+          maxWidth: user?.subscription?.status === 'active' ? '450px' : '900px',
+          display: 'grid', 
+          gridTemplateColumns: user?.subscription?.status === 'active' ? '1fr' : 'repeat(auto-fit, minmax(300px, 1fr))',
           gap: '24px', padding: '20px 0'
         }}>
-          {plans.map((plan, index) => (
+          {plans
+            .filter(p => user?.subscription?.status === 'active' ? p.id === 'pro' : true)
+            .map((plan, index) => (
             <motion.div
               key={plan.id}
               initial={{ opacity: 0, y: 30 }}
