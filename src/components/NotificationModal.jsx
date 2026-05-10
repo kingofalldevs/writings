@@ -76,7 +76,7 @@ const NotificationModal = ({
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
             className="fixed inset-0 z-[201] flex items-center justify-center p-6 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-sm rounded-[28px] bg-background border border-foreground/10 shadow-[0_32px_80px_rgba(0,0,0,0.25)] overflow-hidden">
+            <div className="pointer-events-auto w-full max-w-sm rounded-2xl bg-background border border-foreground/10 overflow-hidden">
 
               {/* Close */}
               <div className="flex justify-end px-6 pt-5">

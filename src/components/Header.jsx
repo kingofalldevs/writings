@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, Sparkles, Menu, LogOut, User, Sun, Moon, Coffee, FilePlus, Library, Music, Columns, Share2, ExternalLink, Globe } from 'lucide-react';
+import { Upload, Sparkles, Menu, LogOut, User, Sun, Moon, Coffee, FilePlus, Library, Music, Columns, Share2, ExternalLink, Globe, Palette } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import * as pdfjsLib from 'pdfjs-dist';
@@ -95,7 +95,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
             <path d="M22 12H18L15 21L9 3L6 12H2" className="stroke-accent" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
-        <span className="text-xl font-medium tracking-tight">Crescendo</span>
+        <span className="text-xl font-medium tracking-tight">Writings</span>
       </div>
 
       <div className="flex items-center gap-4 flex-1 justify-start ml-8">
@@ -127,7 +127,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
           {user && (
             <div className="flex items-center gap-2 mr-2">
               <motion.button
-                whileHover={{ scale: 1.05, y: -1 }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={onPricing}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent/10 text-accent hover:bg-accent/20 transition-all text-[11px] font-bold tracking-widest uppercase"
@@ -138,10 +138,10 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
               </motion.button>
 
               <motion.button
-                whileHover={{ scale: 1.05, y: -1 }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={onQuickPublish}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-background hover:shadow-[0_8px_20px_-4px_rgba(var(--accent-rgb),0.4)] transition-all text-[11px] font-bold tracking-widest uppercase shadow-lg shadow-accent/20"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-background transition-all text-[11px] font-bold tracking-widest uppercase"
                 title="Instant Publish to Portfolio"
               >
                 <Globe size={14} />
@@ -276,8 +276,8 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
                     }}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-foreground/5 transition-all text-sm font-semibold"
                   >
-                    <ExternalLink size={16} className="opacity-60" />
-                    Portfolio Website
+                    <Palette size={16} className="opacity-60" />
+                    Manage Portfolio
                   </button>
                   <button
                     onClick={() => {

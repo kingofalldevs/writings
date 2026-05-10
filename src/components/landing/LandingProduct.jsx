@@ -27,10 +27,10 @@ const LandingProduct = () => {
         className="text-center mb-16"
       >
         <h2 className="font-medium tracking-tight mb-6 font-sans text-[clamp(40px,5vw,56px)] leading-[1.1] text-center text-foreground">
-          Crescendo offers you a <span className="text-accent">Calm space for writing</span> <br className="hidden md:block" /> and one click - publish to portfolio.
+          Writings offers you a <span className="text-accent">Calm space for writing</span> <br className="hidden md:block" /> and one click - publish to portfolio.
         </h2>
         <p className="font-light opacity-70 max-w-3xl mx-auto text-foreground text-[22px] text-center leading-relaxed">
-          Focus on what matters most—your writing. Crescendo provides a distraction-free Editor, an Ideabase and Binder to organize your thoughts, draft your chapters, and instantly share your finished work with the world through a beautiful, professional author portfolio.
+          Focus on what matters most—your writing. Writings provides a distraction-free Editor, an Ideabase and Binder to organize your thoughts, draft your chapters, and instantly share your finished work with the world through a beautiful, professional author portfolio.
         </p>
       </motion.div>
 
@@ -39,7 +39,7 @@ const LandingProduct = () => {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        className="flex gap-4 p-1.5 rounded-full glass shadow-lg mt-12 mb-14 bg-foreground/[0.03] border border-foreground/10"
+        className="flex gap-4 p-1.5 rounded-full mt-12 mb-14 bg-foreground/[0.03] border border-foreground/10"
       >
         {Object.values(themes).map((theme) => (
           <button
@@ -61,7 +61,7 @@ const LandingProduct = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 1, delay: 0.2 }}
-        className="w-full relative rounded-[24px] overflow-hidden glass shadow-2xl border border-white/10 aspect-video bg-black/40"
+        className="w-full relative rounded-2xl overflow-hidden border border-foreground/10 aspect-video bg-black/40"
       >
         <AnimatePresence mode="wait">
           <motion.img

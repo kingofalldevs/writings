@@ -9,7 +9,7 @@ const PhilosophyPage = ({ onStart, onBack, onPricing, onAria }) => {
     {
       icon: Leaf,
       title: "Digital Minimalism",
-      description: "We believe in stripping away the noise. Crescendo is designed to be a silent partner, providing exactly what you need and nothing more."
+      description: "We believe in stripping away the noise. Writings is designed to be a silent partner, providing exactly what you need and nothing more."
     },
     {
       icon: Wind,
@@ -64,7 +64,7 @@ const PhilosophyPage = ({ onStart, onBack, onPricing, onAria }) => {
               <span style={{ color: 'var(--accent-color)', fontStyle: 'italic' }}>Modern Scholar.</span>
             </h1>
             <p style={{ fontSize: '22px', opacity: 0.6, maxWidth: '700px', margin: '0 auto', fontWeight: 300, lineHeight: 1.6 }}>
-              In an age of infinite distraction, we build for depth. Crescendo is a return to intentionality, a sanctuary for those who seek to master their craft.
+              In an age of infinite distraction, we build for depth. Writings is a return to intentionality, a sanctuary for those who seek to master their craft.
             </p>
           </motion.div>
         </section>
@@ -110,10 +110,10 @@ const PhilosophyPage = ({ onStart, onBack, onPricing, onAria }) => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', alignItems: 'center' }}>
               <h2 style={{ fontSize: '40px', fontWeight: 500, letterSpacing: '-0.02em' }}>The Architecture of Focus.</h2>
               <p style={{ fontSize: '20px', lineHeight: 1.8, opacity: 0.7, fontWeight: 300 }}>
-                Crescendo was born from a simple realization: the tools we use to think shouldn't be the ones that distract us. We've spent years obsessing over the "tactile" feel of digital space—the way music should sit in the background, the way a font should read on a late-night study session, and the way an AI should suggest a connection without breaking your train of thought.
+                Writings was born from a simple realization: the tools we use to think shouldn't be the ones that distract us. We've spent years obsessing over the "tactile" feel of digital space—the way music should sit in the background, the way a font should read on a late-night study session, and the way an AI should suggest a connection without breaking your train of thought.
               </p>
               <p style={{ fontSize: '20px', lineHeight: 1.8, opacity: 0.7, fontWeight: 300 }}>
-                Every pixel in the Living OS is optimized for **low-entropy interaction**. This means less energy spent on navigation and more energy spent on synthesis. We don't want you to "use" Crescendo; we want you to inhabit it.
+                Every pixel in the Living OS is optimized for **low-entropy interaction**. This means less energy spent on navigation and more energy spent on synthesis. We don't want you to "use" Writings; we want you to inhabit it.
               </p>
             </div>
 

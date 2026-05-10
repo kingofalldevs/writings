@@ -63,7 +63,7 @@ const LandingCTA = ({ onStart }) => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onStart}
-          className="group flex items-center gap-3 px-12 py-5 rounded-full bg-foreground text-background text-base font-semibold cursor-pointer transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_20px_40px_rgba(0,0,0,0.1)] relative overflow-hidden active:scale-95 border-2 border-accent/20 hover:border-accent/50"
+          className="group flex items-center gap-3 px-12 py-5 rounded-full bg-foreground text-background text-base font-semibold cursor-pointer transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] relative overflow-hidden active:scale-95 border-2 border-accent/20 hover:border-accent/50"
         >
           <span className="relative z-10">Sign in</span>
           <ArrowRight className="relative z-10" size={20} />

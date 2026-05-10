@@ -9,7 +9,7 @@ export const getDeepSeekResponse = async (userMessage, context) => {
   }
 
   try {
-    const systemPrompt = `You are Aria, the Crescendo AI companion—a perceptive creative writing partner.
+    const systemPrompt = `You are Aria, the Writings AI companion—a perceptive creative writing partner.
 Your tone is natural, professional, and grounded.
 
 You have access to two layers of context:

@@ -6,7 +6,7 @@
 
   <!-- Homepage -->
   <url>
-    <loc>https://www.crescendo.best/</loc>
+    <loc>https://writings.page/</loc>
     <lastmod>2026-05-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -14,7 +14,7 @@
 
   <!-- Auth / Sign In -->
   <url>
-    <loc>https://www.crescendo.best/auth</loc>
+    <loc>https://writings.page/auth</loc>
     <lastmod>2026-05-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -22,7 +22,7 @@
 
   <!-- Pricing -->
   <url>
-    <loc>https://www.crescendo.best/pricing</loc>
+    <loc>https://writings.page/pricing</loc>
     <lastmod>2026-05-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

@@ -6,6 +6,7 @@ import LandingReviews from './landing/LandingReviews';
 import LandingCTA from './landing/LandingCTA';
 import LandingFAQ from './landing/LandingFAQ';
 import LandingFooter from './landing/LandingFooter';
+import LandingDomainClaim from './landing/LandingDomainClaim';
 
 const LandingPage = ({ user, onAccount, onStart, onPricing, onAria, onPhilosophy }) => {
   return (
@@ -26,6 +27,11 @@ const LandingPage = ({ user, onAccount, onStart, onPricing, onAria, onPhilosophy
       {/* Start with Product Showcase Section */}
       <div className="relative z-10 w-full bg-foreground/[0.01] pt-32">
         <LandingProduct />
+      </div>
+
+      {/* Domain Claim Section */}
+      <div className="relative z-10 w-full">
+        <LandingDomainClaim />
       </div>
 
       {/* Export Workflow Section */}

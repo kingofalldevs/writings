@@ -71,7 +71,7 @@ const AuthModal = ({ isOpen, onClose }) => {
               {isLogin ? 'Welcome Back' : 'Create Account'}
             </h2>
             <p className="text-sm mt-1.5 opacity-60">
-              {isLogin ? 'Sign in to your Crescendo account' : 'Start your focused journey today'}
+              {isLogin ? 'Sign in to your Writings account' : 'Start your focused journey today'}
             </p>
           </div>
           <button

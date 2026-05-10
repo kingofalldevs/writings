@@ -6,7 +6,7 @@ const reviews = [
   {
     name: "Alex Rivera",
     role: "Senior Research Fellow, MIT",
-    content: "Crescendo has completely transformed how I handle deep research. The distraction-free environment is unlike anything I've used before.",
+    content: "Writings has completely transformed how I handle deep research. The distraction-free environment is unlike anything I've used before.",
     rating: 5
   },
   {
@@ -62,26 +62,24 @@ const LandingReviews = () => {
             transition={{ delay: index * 0.1, duration: 0.8 }}
             className="group"
             style={{ 
-              background: 'var(--card-bg)', 
+              background: 'var(--foreground-002)', 
               border: '1px solid var(--border-color)',
-              borderRadius: '32px',
+              borderRadius: '24px',
               padding: '40px',
               display: 'flex',
               flexDirection: 'column',
               gap: '32px',
               position: 'relative',
-              transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+              transition: 'all 0.3s ease',
               height: '100%'
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
               e.currentTarget.style.borderColor = 'var(--accent-color)';
-              e.currentTarget.style.boxShadow = '0 20px 40px rgba(var(--accent-rgb), 0.1)';
+              e.currentTarget.style.background = 'var(--foreground-004)';
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.transform = 'translateY(0)';
               e.currentTarget.style.borderColor = 'var(--border-color)';
-              e.currentTarget.style.boxShadow = 'none';
+              e.currentTarget.style.background = 'var(--foreground-002)';
             }}
           >
             <div className="flex justify-between items-start">

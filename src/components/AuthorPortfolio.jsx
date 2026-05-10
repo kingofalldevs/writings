@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { Book, Library, ArrowLeft, BookOpen, User, ExternalLink, Share2, Sparkles, Sun, Moon, Coffee, ChevronDown } from 'lucide-react';
+import { Book, Library, ArrowLeft, BookOpen, User, ExternalLink, Share2, Sparkles, Sun, Moon, Coffee, ChevronDown, Link as LinkIcon, Mail } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -32,23 +32,19 @@ const AuthorPortfolio = ({ authorUsername }) => {
         if (docSnap.exists()) {
           const data = docSnap.data();
           
-          const allWorks = data.works;
+          const allWorks = data.works || [];
           const folders = allWorks.filter(w => w.type === 'folder');
           const documents = allWorks.filter(w => w.type === 'document');
 
-          // Helper to get all documents inside a folder recursively
           const getDocsInFolder = (folderId) => {
             let docs = documents.filter(d => d.parentId === folderId);
             const subFolders = folders.filter(f => f.parentId === folderId);
-            
             subFolders.forEach(sub => {
               docs = [...docs, ...getDocsInFolder(sub.id)];
             });
-            
             return docs;
           };
 
-          // Only show folders that don't have a parent folder in the collection
           const topLevelFolders = folders.filter(f => 
             !f.parentId || !folders.some(parent => parent.id === f.parentId)
           );
@@ -109,7 +105,7 @@ const AuthorPortfolio = ({ authorUsername }) => {
           <Library size={64} className="mx-auto mb-8 text-accent opacity-20" />
           <h2 className="text-3xl font-bold mb-4 font-serif">Portfolio Not Found</h2>
           <p className="text-muted mb-8 leading-relaxed">{error}</p>
-          <a href="/" className="px-8 py-4 bg-accent text-background rounded-full font-bold hover:opacity-90 transition-all inline-block shadow-lg shadow-accent/20">
+          <a href="/" className="px-8 py-4 bg-accent text-background rounded-full font-bold hover:opacity-90 transition-all inline-block">
             Back to Home
           </a>
         </motion.div>
@@ -117,15 +113,14 @@ const AuthorPortfolio = ({ authorUsername }) => {
     );
   }
 
+  const accentColor = portfolio.accentColor || '#72B9AA';
+  const fontFamily = portfolio.themeFont === 'sans' ? 'sans-serif' : "'Playfair Display', serif";
+
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-accent selection:text-background">
-      {/* Navigation - Landing Style */}
-      <div className={`fixed top-0 left-0 right-0 z-[100] flex justify-center pointer-events-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled ? 'p-6' : 'p-0'}`}>
-        <nav className={`w-full flex items-center justify-between pointer-events-auto transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isScrolled 
-            ? 'max-w-[1200px] px-8 py-4 bg-background/60 backdrop-blur-2xl rounded-[32px] border border-foreground/10 shadow-2xl' 
-            : 'max-w-full px-12 py-6 bg-transparent border-transparent'
-        }`}>
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-accent selection:text-background" style={{ fontFamily }}>
+      {/* Navigation - Static Style */}
+      <div className="w-full flex justify-center p-0 border-b border-foreground/5 bg-background">
+        <nav className="w-full max-w-full px-12 py-8 flex items-center justify-between">
           {/* Left: Author Name as Logo */}
           <div 
             onClick={() => setSelectedWork(null)}
@@ -133,18 +128,15 @@ const AuthorPortfolio = ({ authorUsername }) => {
           >
             <div className="transition-transform group-hover:scale-110">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22 12H18L15 21L9 3L6 12H2" className="stroke-accent" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M22 12H18L15 21L9 3L6 12H2" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
             <span className="text-xl font-bold tracking-tighter text-foreground">{portfolio.authorName}</span>
           </div>
 
-          <div className="hidden md:flex items-center gap-10">
-          </div>
-
           {/* Right: Actions */}
           <div className="flex items-center gap-6">
-            <div className="flex items-center p-1 rounded-full border border-foreground/10 bg-foreground/5 gap-0.5">
+            <div className="hidden sm:flex items-center p-1 rounded-full border border-foreground/10 bg-foreground/5 gap-0.5">
               <ThemeIcon 
                 active={theme === 'light'} 
                 onClick={() => toggleTheme('light')} 
@@ -164,13 +156,7 @@ const AuthorPortfolio = ({ authorUsername }) => {
 
             <a
               href="/"
-              className="hidden sm:block bg-transparent border-none text-sm font-medium text-foreground/60 cursor-pointer transition-opacity hover:opacity-100 no-underline"
-            >
-              Crescendo App
-            </a>
-            <a
-              href="/"
-              className="px-6 py-2.5 rounded-full border border-foreground/10 bg-foreground/5 text-foreground text-sm font-semibold cursor-pointer transition-all hover:bg-foreground/[0.08] hover:border-foreground/25 no-underline shadow-sm"
+              className="px-6 py-2.5 rounded-full bg-foreground text-background text-sm font-semibold cursor-pointer transition-all hover:opacity-90 no-underline"
             >
               Start Writing
             </a>
@@ -188,7 +174,7 @@ const AuthorPortfolio = ({ authorUsername }) => {
             className="fixed inset-0 z-[110] bg-background overflow-y-auto pt-20 custom-scrollbar"
           >
             <div className={`fixed top-0 left-0 right-0 z-[120] flex justify-center p-6`}>
-              <nav className={`w-full max-w-[1200px] px-8 py-4 bg-background/60 backdrop-blur-2xl rounded-[32px] border border-foreground/10 shadow-2xl flex items-center justify-between`}>
+              <nav className={`w-full max-w-[1200px] px-8 py-4 bg-background/60 backdrop-blur-2xl rounded-2xl border border-foreground/10 flex items-center justify-between`}>
                 <button 
                   onClick={() => setSelectedWork(null)}
                   className="flex items-center gap-3 px-6 py-2 rounded-full hover:bg-foreground/5 transition-all group"
@@ -197,7 +183,7 @@ const AuthorPortfolio = ({ authorUsername }) => {
                   <span className="text-xs font-bold tracking-widest uppercase">Back to Library</span>
                 </button>
                 <div className="flex-1 text-center hidden md:block">
-                  <span className="text-sm font-serif italic opacity-50 truncate max-w-[300px] inline-block">Reading: {selectedWork.name}</span>
+                  <span className="text-sm italic opacity-50 truncate max-w-[300px] inline-block">Reading: {selectedWork.name}</span>
                 </div>
                 <div className="flex items-center gap-4">
                    <button className="p-3 rounded-full hover:bg-foreground/5 transition-all">
@@ -214,17 +200,17 @@ const AuthorPortfolio = ({ authorUsername }) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <h1 className="text-5xl md:text-7xl font-bold mb-8 font-serif leading-tight tracking-tight text-foreground">
+                  <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight tracking-tight text-foreground">
                     {selectedWork.name || 'Untitled'}
                   </h1>
                   <div className="flex items-center justify-center gap-4 text-muted mb-16">
-                    <div className="w-8 h-[1px] bg-foreground/10" />
+                    <div className="w-8 h-[1px] opacity-20" style={{ backgroundColor: accentColor }} />
                     <span className="text-sm font-bold tracking-widest uppercase">{portfolio.authorName}</span>
-                    <div className="w-8 h-[1px] bg-foreground/10" />
+                    <div className="w-8 h-[1px] opacity-20" style={{ backgroundColor: accentColor }} />
                   </div>
 
                   {/* Table of Contents */}
-                  <div className="max-w-md mx-auto p-10 glass rounded-3xl border border-foreground/5 text-left">
+                  <div className="max-w-md mx-auto p-10 rounded-3xl border border-foreground/5 bg-foreground/[0.02] text-left">
                     <h3 className="text-xs font-bold tracking-[0.3em] uppercase opacity-40 mb-8 text-center">Table of Contents</h3>
                     <div className="space-y-4">
                        {selectedWork.children.map((chapter, idx) => (
@@ -233,7 +219,7 @@ const AuthorPortfolio = ({ authorUsername }) => {
                           href={`#chapter-${idx}`}
                           className="flex items-baseline justify-between group no-underline"
                          >
-                           <span className="text-sm font-serif italic opacity-60 group-hover:opacity-100 group-hover:text-accent transition-all">
+                           <span className="text-sm italic opacity-60 group-hover:opacity-100 transition-all">
                              {idx + 1}. {chapter.name}
                            </span>
                            <div className="flex-1 border-b border-dotted border-foreground/10 mx-4 translate-y-[-4px]" />
@@ -245,7 +231,7 @@ const AuthorPortfolio = ({ authorUsername }) => {
                 </motion.div>
               </header>
               
-              <div className="prose-container font-serif text-xl md:text-2xl leading-[2.2] text-foreground/90 selection:bg-accent/20">
+              <div className="prose-container text-xl md:text-2xl leading-[2.2] text-foreground/90 selection:bg-accent/20">
                 {selectedWork.children.map((chapter, idx) => (
                   <section 
                     key={chapter.id} 
@@ -254,8 +240,8 @@ const AuthorPortfolio = ({ authorUsername }) => {
                   >
                     <div className="flex flex-col items-center mb-16 opacity-30">
                        <span className="text-xs font-bold tracking-[0.5em] uppercase mb-4">Chapter {idx + 1}</span>
-                       <h2 className="text-2xl font-serif italic">{chapter.name}</h2>
-                       <div className="w-12 h-[1px] bg-foreground mt-8" />
+                       <h2 className="text-2xl italic">{chapter.name}</h2>
+                       <div className="w-12 h-[1px] mt-8" style={{ backgroundColor: accentColor }} />
                     </div>
                     <div className="whitespace-pre-wrap">
                       {chapter.content}
@@ -273,23 +259,57 @@ const AuthorPortfolio = ({ authorUsername }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="pt-40"
+            className="pt-24"
           >
-            {/* Simple Text Hero */}
+            {/* Customizable Hero */}
             <section className="max-w-4xl mx-auto px-8 mb-32 text-center">
                <motion.div
                  initial={{ opacity: 0, y: 20 }}
                  animate={{ opacity: 1, y: 0 }}
                  transition={{ duration: 0.8 }}
                >
-                  <h1 className="text-5xl md:text-7xl font-bold mb-10 font-serif tracking-tight leading-[1.1]">
+                  {portfolio.profileImage && (
+                    <motion.div 
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="w-32 h-32 md:w-40 md:h-40 mx-auto mb-10 rounded-[2.5rem] overflow-hidden border border-foreground/10 p-2 bg-foreground/5"
+                    >
+                      <img 
+                        src={portfolio.profileImage} 
+                        alt={portfolio.authorName} 
+                        className="w-full h-full object-cover rounded-[2rem]"
+                      />
+                    </motion.div>
+                  )}
+                  <h1 className="text-6xl md:text-8xl font-bold mb-10 tracking-tight leading-[1.1]">
                     {portfolio.authorName}
                   </h1>
-                  <p className="text-xl md:text-2xl text-foreground/80 font-serif italic mb-12 leading-relaxed">
+                  <p className="text-2xl md:text-3xl text-foreground/80 italic mb-12 leading-relaxed">
                     "{portfolio.bio || "Crafting narratives at the intersection of architecture, philosophy, and the quiet moments of the everyday."}"
                   </p>
-                  <div className="flex flex-col items-center gap-6">
-                    <div className="h-[1px] w-12 bg-accent/30" />
+                  
+                  {/* Social Links & Bio Details */}
+                  <div className="flex flex-col items-center gap-10">
+                    <div className="h-[1px] w-16 opacity-30" style={{ backgroundColor: accentColor }} />
+                    
+                    <div className="flex items-center gap-8">
+                       {portfolio.socialTwitter && (
+                         <a href={`https://twitter.com/${portfolio.socialTwitter.replace('@','')}`} target="_blank" className="opacity-40 hover:opacity-100 transition-all hover:scale-110" style={{ color: accentColor }}>
+                           <Share2 size={20} />
+                         </a>
+                       )}
+                       {portfolio.socialSubstack && (
+                         <a href={`https://${portfolio.socialSubstack}`} target="_blank" className="opacity-40 hover:opacity-100 transition-all hover:scale-110" style={{ color: accentColor }}>
+                           <Mail size={20} />
+                         </a>
+                       )}
+                       {portfolio.socialWeb && (
+                         <a href={`https://${portfolio.socialWeb}`} target="_blank" className="opacity-40 hover:opacity-100 transition-all hover:scale-110" style={{ color: accentColor }}>
+                           <LinkIcon size={20} />
+                         </a>
+                       )}
+                    </div>
+
                     <div className="max-w-2xl">
                       <p className="text-xs font-bold tracking-[0.4em] uppercase opacity-40 mb-4">Inspirations & Influence</p>
                       <p className="text-sm leading-relaxed text-muted">
@@ -305,8 +325,8 @@ const AuthorPortfolio = ({ authorUsername }) => {
                <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
                   <div className="max-w-xl">
                     <p className="text-xs font-bold tracking-[0.3em] uppercase opacity-40 mb-4">Library of {portfolio.authorName}</p>
-                    <h2 className="text-5xl md:text-6xl font-bold mb-6 font-serif tracking-tight">Selected Works</h2>
-                    <div className="h-1 w-24 bg-accent rounded-full" />
+                    <h2 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight">Selected Works</h2>
+                    <div className="h-1 w-24 rounded-full" style={{ backgroundColor: accentColor }} />
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-bold tracking-widest uppercase opacity-30">{portfolio.works.length} Volumes</p>
@@ -325,19 +345,19 @@ const AuthorPortfolio = ({ authorUsername }) => {
                       className="group cursor-pointer"
                     >
                       {/* Premium Book Card */}
-                      <div className="aspect-[3/4] relative rounded-lg overflow-hidden glass border border-foreground/10 mb-8 shadow-2xl group-hover:-translate-y-4 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]">
+                      <div className="aspect-[3/4] relative rounded-lg overflow-hidden border border-foreground/10 mb-8 bg-foreground/[0.01] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]">
                          {/* Spine Highlight */}
                          <div className="absolute top-0 left-0 w-8 h-full bg-foreground/5 border-r border-foreground/5 z-10" />
                          
                          {/* Cover Content */}
                          <div className="absolute inset-0 p-12 pl-16 flex flex-col justify-between">
                             <div>
-                               <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-10 group-hover:bg-accent group-hover:text-background transition-colors duration-500">
+                               <div className="w-10 h-10 rounded-lg bg-foreground/5 flex items-center justify-center mb-10 group-hover:text-background transition-colors duration-500" style={{ '--hover-bg': accentColor }}>
                                   <Book size={20} />
                                </div>
-                               <h3 className="text-3xl md:text-4xl font-bold font-serif leading-[1.1] tracking-tight group-hover:text-accent transition-colors duration-500 line-clamp-4">
+                               <h3 className="text-3xl md:text-4xl font-bold leading-[1.1] tracking-tight group-hover:opacity-70 transition-opacity duration-500 line-clamp-4">
                                   {work.name || 'Untitled'}
-                               </h3>
+                                </h3>
                             </div>
                             
                             <div className="space-y-6">
@@ -352,10 +372,10 @@ const AuthorPortfolio = ({ authorUsername }) => {
                          </div>
 
                          {/* Hover Overlay */}
-                         <div className="absolute inset-0 bg-accent opacity-0 group-hover:opacity-[0.03] transition-opacity duration-700" />
+                         <div className="absolute inset-0 opacity-0 group-hover:opacity-[0.03] transition-opacity duration-700" style={{ backgroundColor: accentColor }} />
                          
                          {/* Text Snippet on hover */}
-                         <div className="absolute inset-x-12 bottom-24 p-6 glass rounded-2xl translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 delay-100 pointer-events-none">
+                         <div className="absolute inset-x-8 bottom-24 p-6 bg-background/80 backdrop-blur-md rounded-2xl border border-foreground/5 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 delay-100 pointer-events-none">
                             <p className="text-xs italic leading-relaxed line-clamp-3 opacity-70">
                                {work.content?.substring(0, 200)}...
                             </p>
@@ -364,7 +384,7 @@ const AuthorPortfolio = ({ authorUsername }) => {
 
                       <div className="flex items-center justify-between group-hover:px-2 transition-all duration-500">
                          <h4 className="font-bold text-sm tracking-tight">{work.name || 'Untitled'}</h4>
-                         <div className="flex items-center gap-2 text-accent opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0">
+                         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0" style={{ color: accentColor }}>
                             <span className="text-[10px] font-bold tracking-widest uppercase">Open</span>
                             <ExternalLink size={12} />
                          </div>
@@ -375,8 +395,8 @@ const AuthorPortfolio = ({ authorUsername }) => {
 
                {portfolio.works.length === 0 && (
                  <div className="text-center py-40 border-2 border-dashed border-foreground/10 rounded-[4rem]">
-                   <p className="text-2xl font-serif italic text-muted mb-8">No volumes have been released yet.</p>
-                   <a href="/" className="text-accent font-bold hover:underline">Start the first draft →</a>
+                   <p className="text-2xl italic text-muted mb-8">No volumes have been released yet.</p>
+                   <a href="/" className="font-bold hover:underline" style={{ color: accentColor }}>Start the first draft →</a>
                  </div>
                )}
             </section>

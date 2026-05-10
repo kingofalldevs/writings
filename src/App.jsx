@@ -346,7 +346,7 @@ function AppContent() {
         portfolioData = {
           authorName: user.displayName || username,
           username: username.toLowerCase(),
-          bio: "Author at Crescendo.",
+          bio: "Author at Writings.",
           inspirations: "Minimalism and Narrative."
         };
       }
@@ -546,6 +546,7 @@ function AppContent() {
         user={user}
         onBack={() => setView('dashboard')}
         onStart={() => setView('dashboard')}
+        showNotif={showNotif}
       />
     );
   }

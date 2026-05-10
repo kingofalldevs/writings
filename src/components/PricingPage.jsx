@@ -22,8 +22,8 @@ const plans = [
     highlight: false,
   },
   {
-    id: 'crescendo',
-    name: 'Crescendo',
+    id: 'writings',
+    name: 'Writings',
     price: 8,
     description: 'The full Living OS experience for deep thinkers.',
     features: [
@@ -43,7 +43,7 @@ const plans = [
     price: 15,
     description: 'For serious writers who demand the absolute best.',
     features: [
-      'Everything in Crescendo',
+      'Everything in Writings',
       'Priority AI Response',
       'Exclusive Beta Features',
       'Priority Support',

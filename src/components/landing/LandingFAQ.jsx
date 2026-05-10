@@ -4,28 +4,24 @@ import { Plus, Minus } from 'lucide-react';
 
 const faqs = [
   {
-    question: "What exactly is Crescendo?",
-    answer: "Crescendo is a minimalist workspace designed specifically for deep cognitive work. It combines a distraction-free writing environment, a powerful PDF reader,and an optional AI assistant to help you to be more productive into a single, unified workspace."
+    question: "What exactly is Writings?",
+    answer: "Writings is a minimalist workspace designed specifically for deep cognitive work. It combines a distraction-free writing environment, a powerful PDF reader,and an optional AI assistant to help you to be more productive into a single, unified workspace."
   },
   {
-    question: "Do I need to do any settings for my work or portfolio?",
-    answer: "No, you don't need to do any settings for your work or portfolio. Crescendo is designed to be plug-and-play. Just start typing and we will handle the rest for you."
+    question: "How do I publish my portfolio?",
+    answer: "No, you don't need to do any settings for your work or portfolio. Writings is designed to be plug-and-play. Just start typing and we will handle the rest for you."
   },
   {
-    question: "Is my data secure and private?",
-    answer: "Absolutely. We use industry-standard encryption for all data storage. Your documents and notes are private to you, and we never sell your data to third parties. We believe your creative process is sacred."
+    question: "Is there a limit to how much I can write?",
+    answer: "No, we believe in providing a space where you can let your ideas flow without restrictions. Whether you're working on a short story or a massive novel, we've got you covered."
   },
   {
-    question: "How does Aria AI work with my documents?",
-    answer: "Aria acts as a collaborative partner. When you upload a document, Aria 'reads' it to provide context-aware summaries, help you brainstorm ideas, or answer specific questions. Your data is only used to assist you in real-time and is never used to train global AI models."
+    question: "Can I use Writings for free?",
+    answer: "Yes! We offer a Zen (Free) plan that includes our core distraction-free writing environment, basic Ideabase organization, and one-click portfolio publishing."
   },
   {
-    question: "Can I use Crescendo for free?",
-    answer: "Yes! We offer a generous free tier that includes all core focus features and a monthly allowance of AI interactions. For power users who need unlimited storage and advanced AI capabilities, we offer a premium subscription."
-  },
-  {
-    question: "How does Crescendo handle my ideas and works- am I safe??",
-    answer: "Your work is yours. We offer you a lincense on every idea you add to your ideabase and make sure to protect your data and privacy. We use industry-standard encryption for all data storage. Your documents and notes are private to you, and we never sell your data to third parties. We believe your creative process is sacred."
+    question: "How does Writings handle my ideas and works- am I safe??",
+    answer: "Security and privacy are at our core. Your works are yours and yours alone. We use industry-standard encryption and security protocols to ensure that your intellectual property is protected."
   }
 ];
 
@@ -33,19 +29,20 @@ const LandingFAQ = () => {
   const [activeIndex, setActiveIndex] = useState(null);
 
   return (
-    <section className="relative w-full py-32 px-8 flex flex-col items-center">
-      <div className="w-full max-w-3xl flex flex-col items-center">
+    <section className="relative w-full py-32 px-8 z-10 max-w-[1200px] mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr,2fr] gap-20">
+        {/* Section Title */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="flex flex-col gap-6"
         >
-          <h2 className="text-4xl md:text-5xl font-medium tracking-tight mb-6 font-sans text-foreground">
-            Frequently Asked <span className="text-accent">Questions</span>
+          <h2 className="font-medium tracking-tight font-sans text-[clamp(40px,5vw,48px)] leading-[1.1] text-foreground">
+            Frequently Asked <span className="text-accent italic">Questions.</span>
           </h2>
-          <p className="text-lg opacity-60 font-light max-w-xl mx-auto">
-            Everything you need to know about the Crescendo experience and how it can transform your workflow.
+          <p className="text-xl font-light opacity-60 leading-relaxed">
+            Everything you need to know about the Writings experience and how it can transform your workflow.
           </p>
         </motion.div>
 
@@ -57,8 +54,8 @@ const LandingFAQ = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className={`rounded-2xl border transition-all duration-300 ${activeIndex === index
-                ? 'bg-foreground/[0.03] border-accent/30 shadow-lg shadow-accent/5'
+              className={`rounded-xl border transition-all duration-300 ${activeIndex === index
+                ? 'bg-foreground/[0.03] border-accent/30'
                 : 'bg-transparent border-foreground/10 hover:border-foreground/20'
                 }`}
             >

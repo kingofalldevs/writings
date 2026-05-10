@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Save, ArrowLeft, Globe, Edit3, Sparkles } from 'lucide-react';
+import { Save, ArrowLeft, Globe, Edit3, Sparkles, Share2, ExternalLink, Link as LinkIcon, BookOpen, Mail, User } from 'lucide-react';
 import LandingNav from './landing/LandingNav';
 import LandingFooter from './landing/LandingFooter';
 import { db } from '../firebase';
 import { doc, getDoc, setDoc, serverTimestamp, getDocs, collection, query } from 'firebase/firestore';
 
-const PortfolioEditor = ({ user, onBack, onStart }) => {
+const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
   const [loading, setLoading] = useState(true);
   const [publishing, setPublishing] = useState(false);
   const [formData, setFormData] = useState({
     authorName: '',
     username: '',
     bio: '',
-    inspirations: ''
+    inspirations: '',
+    themeFont: 'serif',
+    accentColor: '#72B9AA',
+    profileImage: '',
+    socialTwitter: '',
+    socialSubstack: '',
+    socialWeb: ''
   });
 
   useEffect(() => {
@@ -30,14 +36,26 @@ const PortfolioEditor = ({ user, onBack, onStart }) => {
             authorName: data.authorName || user.displayName || '',
             username: data.username || defaultUsername,
             bio: data.bio || '',
-            inspirations: data.inspirations || ''
+            inspirations: data.inspirations || '',
+            themeFont: data.themeFont || 'serif',
+            accentColor: data.accentColor || '#72B9AA',
+            profileImage: data.profileImage || '',
+            socialTwitter: data.socialTwitter || '',
+            socialSubstack: data.socialSubstack || '',
+            socialWeb: data.socialWeb || ''
           });
         } else {
           setFormData({
             authorName: user.displayName || '',
             username: defaultUsername,
             bio: '',
-            inspirations: ''
+            inspirations: '',
+            themeFont: 'serif',
+            accentColor: '#72B9AA',
+            profileImage: '',
+            socialTwitter: '',
+            socialSubstack: '',
+            socialWeb: ''
           });
         }
       } catch (err) {
@@ -62,14 +80,20 @@ const PortfolioEditor = ({ user, onBack, onStart }) => {
         username: formData.username.toLowerCase(),
         bio: formData.bio,
         inspirations: formData.inspirations,
+        themeFont: formData.themeFont,
+        accentColor: formData.accentColor,
+        profileImage: formData.profileImage,
+        socialTwitter: formData.socialTwitter,
+        socialSubstack: formData.socialSubstack,
+        socialWeb: formData.socialWeb,
         works: works,
         timestamp: serverTimestamp()
       });
       
-      alert("Portfolio published successfully!");
+      showNotif("Portfolio Live", "Your changes have been published successfully.", "success");
     } catch (err) {
       console.error(err);
-      alert("Failed to publish portfolio.");
+      showNotif("Publish Failed", "Something went wrong. Please try again.", "error");
     } finally {
       setPublishing(false);
     }
@@ -90,7 +114,7 @@ const PortfolioEditor = ({ user, onBack, onStart }) => {
       <LandingNav user={user} onStart={onStart} onHomeClick={onBack} onAccountClick={() => {}} onPricingClick={() => {}} />
 
       <main className="flex-grow pt-32 px-8 pb-32">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-16 gap-8">
             <div className="flex items-center gap-4">
@@ -122,25 +146,83 @@ const PortfolioEditor = ({ user, onBack, onStart }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr,0.8fr] gap-16">
             {/* Editor Side */}
             <div className="space-y-12">
                <section className="space-y-6">
                  <div className="flex items-center gap-2 text-accent">
                    <Edit3 size={18} />
-                   <h2 className="text-xs font-bold tracking-[0.3em] uppercase">Hero Content</h2>
+                   <h2 className="text-xs font-bold tracking-[0.3em] uppercase">Core Profile</h2>
                  </div>
                  
                  <div className="space-y-8 p-8 rounded-4xl border border-foreground/5 bg-card/30 backdrop-blur-sm">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Author Name</label>
-                      <input 
-                        type="text"
-                        value={formData.authorName}
-                        onChange={(e) => setFormData({...formData, authorName: e.target.value})}
-                        className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 ring-accent/50 transition-all font-serif text-lg"
-                        placeholder="Your Pen Name"
-                      />
+                     {/* Profile Photo Upload */}
+                     <div className="flex flex-col md:flex-row items-center gap-8 mb-4 pb-8 border-b border-foreground/5">
+                        <div className="relative group">
+                          <div className="w-24 h-24 rounded-2xl bg-foreground/5 overflow-hidden border border-foreground/10 flex items-center justify-center">
+                             {formData.profileImage ? (
+                               <img src={formData.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                             ) : (
+                               <User size={32} className="opacity-20" />
+                             )}
+                          </div>
+                          <label className="absolute inset-0 flex items-center justify-center bg-background/80 opacity-0 group-hover:opacity-100 transition-all cursor-pointer rounded-2xl">
+                             <span className="text-[10px] font-bold uppercase tracking-widest">Change</span>
+                             <input 
+                               type="file" 
+                               accept="image/*" 
+                               className="hidden" 
+                               onChange={(e) => {
+                                 const file = e.target.files[0];
+                                 if (file) {
+                                   const reader = new FileReader();
+                                   reader.onloadend = () => {
+                                     setFormData(prev => ({ ...prev, profileImage: reader.result }));
+                                   };
+                                   reader.readAsDataURL(file);
+                                 }
+                               }}
+                             />
+                          </label>
+                        </div>
+                        <div className="flex-grow text-center md:text-left">
+                           <h3 className="text-sm font-bold tracking-tight mb-1">Profile Photograph</h3>
+                           <p className="text-xs opacity-40">Add a professional portrait to build trust with your readers.</p>
+                           {formData.profileImage && (
+                             <button 
+                               onClick={() => setFormData(prev => ({ ...prev, profileImage: '' }))}
+                               className="text-[10px] font-bold text-red-500 uppercase tracking-widest mt-3 hover:underline"
+                             >
+                               Remove Photo
+                             </button>
+                           )}
+                        </div>
+                     </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Author Name</label>
+                        <input 
+                          type="text"
+                          value={formData.authorName}
+                          onChange={(e) => setFormData({...formData, authorName: e.target.value})}
+                          className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 ring-accent/50 transition-all font-serif text-lg"
+                          placeholder="Your Pen Name"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Unique Handle (URL)</label>
+                        <div className="relative">
+                          <span className="absolute left-6 top-1/2 -translate-y-1/2 opacity-30 text-sm font-mono">writings.page/?author=</span>
+                          <input 
+                            type="text"
+                            value={formData.username}
+                            onChange={(e) => setFormData({...formData, username: e.target.value.replace(/[^a-z0-9]/gi, '').toLowerCase()})}
+                            className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 pl-[160px] outline-none focus:ring-2 ring-accent/50 transition-all font-mono text-sm"
+                            placeholder="username"
+                          />
+                        </div>
+                      </div>
                     </div>
 
                     <div className="space-y-2">
@@ -148,7 +230,7 @@ const PortfolioEditor = ({ user, onBack, onStart }) => {
                       <textarea 
                         value={formData.bio}
                         onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                        className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 ring-accent/50 transition-all font-serif text-lg h-32 resize-none"
+                        className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 ring-accent/50 transition-all font-serif text-lg h-24 resize-none"
                         placeholder="Crafting narratives at the intersection of..."
                       />
                     </div>
@@ -162,21 +244,95 @@ const PortfolioEditor = ({ user, onBack, onStart }) => {
                         placeholder="Inspired by the minimalist lines of..."
                       />
                     </div>
+                 </div>
+               </section>
 
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Unique Handle (URL)</label>
-                      <div className="relative">
-                        <span className="absolute left-6 top-1/2 -translate-y-1/2 opacity-30 text-sm font-mono">crescendo.app/?author=</span>
-                        <input 
-                          type="text"
-                          value={formData.username}
-                          onChange={(e) => setFormData({...formData, username: e.target.value.replace(/[^a-z0-9]/gi, '').toLowerCase()})}
-                          className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 pl-[160px] outline-none focus:ring-2 ring-accent/50 transition-all font-mono text-sm"
-                          placeholder="username"
-                        />
-                      </div>
-                      <p className="text-[10px] opacity-30 ml-1">This will be your unique shareable link.</p>
-                    </div>
+               <section className="space-y-6">
+                 <div className="flex items-center gap-2 text-accent">
+                   <Sparkles size={18} />
+                   <h2 className="text-xs font-bold tracking-[0.3em] uppercase">Visual Identity</h2>
+                 </div>
+                 
+                 <div className="space-y-8 p-8 rounded-4xl border border-foreground/5 bg-card/30 backdrop-blur-sm">
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                     <div className="space-y-2">
+                       <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Typography</label>
+                       <div className="flex p-1 bg-foreground/5 rounded-xl gap-1">
+                         <button 
+                           onClick={() => setFormData({...formData, themeFont: 'serif'})}
+                           className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${formData.themeFont === 'serif' ? 'bg-background text-foreground shadow-sm' : 'opacity-40'}`}
+                         >
+                           Classic Serif
+                         </button>
+                         <button 
+                           onClick={() => setFormData({...formData, themeFont: 'sans'})}
+                           className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${formData.themeFont === 'sans' ? 'bg-background text-foreground shadow-sm' : 'opacity-40'}`}
+                         >
+                           Modern Sans
+                         </button>
+                       </div>
+                     </div>
+                     
+                     <div className="space-y-2">
+                       <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Accent Color</label>
+                       <div className="flex items-center gap-3">
+                         <input 
+                           type="color"
+                           value={formData.accentColor}
+                           onChange={(e) => setFormData({...formData, accentColor: e.target.value})}
+                           className="w-12 h-12 rounded-xl bg-transparent border-none cursor-pointer p-0 overflow-hidden"
+                         />
+                         <input 
+                           type="text"
+                           value={formData.accentColor}
+                           onChange={(e) => setFormData({...formData, accentColor: e.target.value})}
+                           className="flex-1 bg-foreground/5 border-none rounded-xl px-4 py-2.5 outline-none font-mono text-xs uppercase"
+                         />
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+               </section>
+
+               <section className="space-y-6">
+                 <div className="flex items-center gap-2 text-accent">
+                   <Globe size={18} />
+                   <h2 className="text-xs font-bold tracking-[0.3em] uppercase">Social Presence</h2>
+                 </div>
+                 
+                 <div className="space-y-6 p-8 rounded-4xl border border-foreground/5 bg-card/30 backdrop-blur-sm">
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                     <div className="space-y-2">
+                       <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">X (Twitter)</label>
+                       <input 
+                         type="text"
+                         value={formData.socialTwitter}
+                         onChange={(e) => setFormData({...formData, socialTwitter: e.target.value})}
+                         className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 ring-accent/50 transition-all text-sm"
+                         placeholder="@username"
+                       />
+                     </div>
+                     <div className="space-y-2">
+                       <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Substack</label>
+                       <input 
+                         type="text"
+                         value={formData.socialSubstack}
+                         onChange={(e) => setFormData({...formData, socialSubstack: e.target.value})}
+                         className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 ring-accent/50 transition-all text-sm"
+                         placeholder="name.substack.com"
+                       />
+                     </div>
+                     <div className="space-y-2">
+                       <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Website</label>
+                       <input 
+                         type="text"
+                         value={formData.socialWeb}
+                         onChange={(e) => setFormData({...formData, socialWeb: e.target.value})}
+                         className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 ring-accent/50 transition-all text-sm"
+                         placeholder="yourdomain.com"
+                       />
+                     </div>
+                   </div>
                  </div>
                </section>
             </div>
@@ -189,16 +345,21 @@ const PortfolioEditor = ({ user, onBack, onStart }) => {
                    <h2 className="text-xs font-bold tracking-[0.3em] uppercase">Live Preview</h2>
                  </div>
                  
-                 <div className="rounded-4xl border border-foreground/10 bg-background shadow-2xl overflow-hidden aspect-[4/5] relative">
-                    <div className="p-12 text-center h-full flex flex-col justify-center items-center">
-                       <h1 className="text-4xl font-bold mb-6 font-serif tracking-tight leading-tight">
+                 <div className="rounded-4xl border border-foreground/10 bg-background overflow-hidden aspect-[3/4] relative flex flex-col shadow-2xl">
+                    <div className="p-12 text-center flex-grow flex flex-col justify-center items-center" style={{ fontFamily: formData.themeFont === 'serif' ? "'Playfair Display', serif" : 'sans-serif' }}>
+                       {formData.profileImage && (
+                         <div className="w-20 h-20 rounded-2xl overflow-hidden mb-6 mx-auto border border-foreground/10">
+                            <img src={formData.profileImage} alt="Preview" className="w-full h-full object-cover" />
+                         </div>
+                       )}
+                       <h1 className="text-4xl font-bold mb-6 tracking-tight leading-tight">
                         {formData.authorName || 'Your Name'}
                       </h1>
-                      <p className="text-lg text-foreground/80 font-serif italic mb-8 leading-relaxed max-w-sm">
+                      <p className="text-lg text-foreground/80 italic mb-8 leading-relaxed max-w-sm">
                         "{formData.bio || 'Your bio will appear here...'}"
                       </p>
                       <div className="flex flex-col items-center gap-4">
-                        <div className="h-[1px] w-8 bg-accent/30" />
+                        <div className="h-[1px] w-8" style={{ backgroundColor: formData.accentColor, opacity: 0.3 }} />
                         <div className="max-w-xs">
                           <p className="text-[10px] font-bold tracking-[0.4em] uppercase opacity-40 mb-2">Inspirations</p>
                           <p className="text-[10px] leading-relaxed text-muted line-clamp-3">
@@ -208,6 +369,13 @@ const PortfolioEditor = ({ user, onBack, onStart }) => {
                       </div>
                     </div>
                     
+                    {/* Fake Browser Nav */}
+                    <div className="p-4 border-t border-foreground/5 flex items-center justify-center gap-4">
+                        <div className="w-2 h-2 rounded-full opacity-20" style={{ backgroundColor: formData.accentColor }} />
+                        <div className="w-2 h-2 rounded-full opacity-20" style={{ backgroundColor: formData.accentColor }} />
+                        <div className="w-2 h-2 rounded-full opacity-20" style={{ backgroundColor: formData.accentColor }} />
+                    </div>
+
                     <div className="absolute inset-0 border-[12px] border-foreground/5 rounded-4xl pointer-events-none" />
                  </div>
                </div>

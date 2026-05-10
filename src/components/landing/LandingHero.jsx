@@ -66,7 +66,7 @@ const LandingHero = ({ onStart }) => {
             rotate: { duration: config.duration * 1.5, repeat: Infinity, ease: "easeInOut", delay: config.delay },
             opacity: { duration: 2, ease: "easeOut" }
           }}
-          className="absolute rounded-full bg-[#72B9AA] flex items-center justify-center -z-10 pointer-events-none blur-[3px] shadow-[0_8px_32px_rgba(114,185,170,0.2)]"
+          className="absolute rounded-full bg-[#72B9AA] flex items-center justify-center -z-10 pointer-events-none blur-[3px]"
           style={{
             top: config.top,
             left: config.left,
@@ -112,7 +112,7 @@ const LandingHero = ({ onStart }) => {
       >
         <button
           onClick={onStart}
-          className="group relative overflow-hidden flex items-center gap-3 px-12 py-5 rounded-full bg-accent text-background text-lg font-semibold transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_20px_40px_rgba(var(--accent-rgb),0.25)] hover:-translate-y-1 hover:shadow-[0_30px_60px_rgba(var(--accent-rgb),0.35)]"
+          className="group relative overflow-hidden flex items-center gap-3 px-12 py-5 rounded-full bg-accent text-background text-lg font-semibold transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] border border-accent/20"
         >
           <span>Start Your Journey</span>
           <ArrowRight

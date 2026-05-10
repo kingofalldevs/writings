@@ -14,7 +14,7 @@ const LandingFooter = () => {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-accent">
               <path d="M2 12h4l3-9 5 18 3-9h5"/>
             </svg>
-            <span className="text-xl font-bold tracking-tight">Crescendo</span>
+            <span className="text-xl font-bold tracking-tight">Writings</span>
           </div>
           <p className="text-sm font-light leading-relaxed opacity-70 max-w-[240px]">
             The minimalist operating system for deep work, research, and cognitive excellence. Designed for flow.
@@ -62,7 +62,7 @@ const LandingFooter = () => {
 
       {/* Bottom Bar */}
       <div className="w-full max-w-[1200px] flex flex-col sm:flex-row justify-between items-center gap-6 mt-20 pt-8 border-t border-accent/10">
-        <p className="text-[12px] font-light opacity-40">© 2026 Crescendo Inc. All rights reserved.</p>
+        <p className="text-[12px] font-light opacity-40">© 2026 Writings Inc. All rights reserved.</p>
         <div className="flex gap-8">
           <FooterBottomLink label="Terms of Service" />
           <FooterBottomLink label="Security" />

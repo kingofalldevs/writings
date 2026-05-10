@@ -66,7 +66,7 @@ const LandingExport = () => {
           Export to your <span className="text-accent italic">workflow.</span>
         </h2>
         <p className="text-xl font-light opacity-60 max-w-2xl mx-auto leading-relaxed">
-          Your writing shouldn't be trapped. Crescendo connects with the platforms you already use, making publishing as effortless as the writing process itself.
+          Your writing shouldn't be trapped. Writings connects with the platforms you already use, making publishing as effortless as the writing process itself.
         </p>
       </motion.div>
 
@@ -79,10 +79,9 @@ const LandingExport = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
-            whileHover={{ y: -8 }}
-            className="group relative flex flex-col items-center p-8 rounded-[32px] glass border border-foreground/5 bg-foreground/[0.02] hover:bg-background transition-all duration-300 shadow-sm hover:shadow-xl hover:border-accent/20"
+            className="group relative flex flex-col items-center p-8 rounded-2xl border border-foreground/10 bg-foreground/[0.02] hover:bg-foreground/[0.04] transition-all duration-300"
           >
-            <div className="mb-6 w-16 h-16 rounded-2xl bg-background shadow-inner flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-foreground/5">
+            <div className="mb-6 w-16 h-16 rounded-xl flex items-center justify-center transition-transform duration-500">
               {item.icon}
             </div>
             

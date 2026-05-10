@@ -18,7 +18,7 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
     <div className={`fixed top-0 left-0 right-0 z-[100] flex justify-center pointer-events-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled ? 'p-6' : 'p-0'}`}>
       <nav className={`w-full flex items-center justify-between pointer-events-auto transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
         isScrolled 
-          ? 'max-w-[1200px] px-8 py-4 bg-background/80 backdrop-blur-xl rounded-[32px] border border-foreground/10 shadow-2xl' 
+          ? 'max-w-[1200px] px-8 py-4 bg-background/80 backdrop-blur-xl rounded-2xl border border-foreground/10' 
           : 'max-w-full px-12 py-6 bg-transparent border-transparent'
       }`}>
         {/* Left: Logo */}
@@ -31,7 +31,7 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
               <path d="M22 12H18L15 21L9 3L6 12H2" className="stroke-accent" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <span className="text-xl font-bold tracking-tighter text-foreground">Crescendo</span>
+          <span className="text-xl font-bold tracking-tight text-foreground">Writings</span>
         </div>
 
         {/* Center: Main Links */}
