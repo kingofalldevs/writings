@@ -1,7 +1,5 @@
 const PLAN_PRODUCT_IDS = {
-  zen: process.env.DODO_PRODUCT_ZEN,
-  crescendo: process.env.DODO_PRODUCT_CRESCENDO,
-  purist: process.env.DODO_PRODUCT_PURIST,
+  pro: process.env.DODO_PRODUCT_PRO,
 };
 
 export default async function handler(req, res) {
