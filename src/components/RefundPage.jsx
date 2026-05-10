@@ -41,7 +41,7 @@ const RefundPage = ({ onStart, onBack, onPricing, onAria, onPhilosophy, onTerms,
 
             <section>
               <h2 className="text-xl font-bold mb-4">4. Contact Us</h2>
-              <p>If you would like to request a refund, please contact our support team with your account details and let us know how we failed to meet your expectations.</p>
+              <p>If you would like to request a refund, please contact our support team at <a href="mailto:support@writings.page" className="text-accent underline hover:opacity-80">support@writings.page</a> with your account details and let us know how we failed to meet your expectations.</p>
             </section>
           </div>
         </motion.div>

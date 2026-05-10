@@ -48,6 +48,11 @@ const TermsPage = ({ onBack, onPricing, onAria, onPhilosophy, onTerms, onPrivacy
               <h2 className="text-xl font-bold mb-4">5. Limitation of Liability</h2>
               <p>Writings is provided "as is". We are not liable for any data loss or service interruptions. We recommend maintaining backups of your important work.</p>
             </section>
+
+            <section>
+              <h2 className="text-xl font-bold mb-4">6. Contact Us</h2>
+              <p>If you have any questions about these Terms, please contact us at <a href="mailto:support@writings.page" className="text-accent underline hover:opacity-80">support@writings.page</a>.</p>
+            </section>
           </div>
         </motion.div>
       </div>

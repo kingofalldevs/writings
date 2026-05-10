@@ -46,7 +46,7 @@ const PrivacyPage = ({ onBack, onPricing, onAria, onPhilosophy, onTerms, onPriva
 
             <section>
               <h2 className="text-xl font-bold mb-4">5. Your Rights</h2>
-              <p>You have the right to access, export, or delete your data at any time through the account settings or by contacting our support team.</p>
+              <p>You have the right to access, export, or delete your data at any time through the account settings or by contacting our support team at <a href="mailto:support@writings.page" className="text-accent underline hover:opacity-80">support@writings.page</a>.</p>
             </section>
           </div>
         </motion.div>
