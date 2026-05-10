@@ -38,9 +38,19 @@ export default async function handler(req, res) {
   try {
     switch (type) {
       case 'subscription.created':
-      case 'subscription.active': {
-        const { customer_id, subscription_id, product_id, customer_email, next_billing_date } = data;
-        const plan = PRODUCT_TO_PLAN[product_id] || 'unknown';
+      case 'subscription.active':
+      case 'subscription.updated': {
+        const { customer_id, subscription_id, product_id, next_billing_date } = data;
+        
+        // Robust email detection (Dodo might nest this)
+        const customer_email = data.customer_email || data.customer?.email || data.email;
+        
+        if (!customer_email) {
+          console.error('No customer email found in webhook data');
+          return res.status(400).json({ error: 'No email provided' });
+        }
+
+        const plan = PRODUCT_TO_PLAN[product_id] || 'pro'; // Default to pro if product ID matches
 
         // Find user by email and update their subscription
         const usersRef = db.collection('users');
@@ -50,15 +60,18 @@ export default async function handler(req, res) {
           const userDoc = snapshot.docs[0];
           await userDoc.ref.update({
             subscription: {
-              status: type === 'subscription.active' ? 'active' : 'trialing',
+              status: (type === 'subscription.active' || type === 'subscription.updated') ? 'active' : 'trialing',
               plan,
-              productId: product_id,
-              subscriptionId: subscription_id,
-              customerId: customer_id,
+              productId: product_id || null,
+              subscriptionId: subscription_id || null,
+              customerId: customer_id || null,
               currentPeriodEnd: next_billing_date || null,
               updatedAt: new Date().toISOString(),
             },
           });
+          console.log(`Successfully updated subscription for ${customer_email}`);
+        } else {
+          console.warn(`No user found in Firestore for email: ${customer_email}`);
         }
         break;
       }
