@@ -1,19 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
+import LandingNav from './landing/LandingNav';
+import LandingFooter from './landing/LandingFooter';
 
-const TermsPage = ({ onBack }) => {
+const TermsPage = ({ onBack, onPricing, onAria, onPhilosophy, onTerms, onPrivacy, onStart }) => {
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-accent/20">
-      <div className="max-w-3xl mx-auto px-6 py-20 md:py-32">
-        <button 
-          onClick={onBack}
-          className="flex items-center gap-2 opacity-40 hover:opacity-100 transition-opacity mb-12 group"
-        >
-          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="text-sm font-medium">Back</span>
-        </button>
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-accent/20 flex flex-col">
+      <LandingNav 
+        onStart={onStart} 
+        onHomeClick={onBack} 
+        onPricingClick={onPricing} 
+        onAriaClick={onAria}
+        onPhilosophyClick={onPhilosophy}
+      />
 
+      <div className="flex-grow max-w-3xl mx-auto px-6 py-20 md:py-32">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -50,6 +51,8 @@ const TermsPage = ({ onBack }) => {
           </div>
         </motion.div>
       </div>
+
+      <LandingFooter onTerms={onTerms} onPrivacy={onPrivacy} />
     </div>
   );
 };

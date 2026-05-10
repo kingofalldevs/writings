@@ -4,7 +4,7 @@ import { Leaf, Wind, Sun, Coffee, ArrowRight } from 'lucide-react';
 import LandingNav from './landing/LandingNav';
 import LandingFooter from './landing/LandingFooter';
 
-const PhilosophyPage = ({ onStart, onBack, onPricing, onAria }) => {
+const PhilosophyPage = ({ onStart, onBack, onPricing, onAria, onPhilosophy, onTerms, onPrivacy }) => {
   const pillars = [
     {
       icon: Leaf,
@@ -30,6 +30,7 @@ const PhilosophyPage = ({ onStart, onBack, onPricing, onAria }) => {
         onHomeClick={onBack} 
         onPricingClick={onPricing} 
         onAriaClick={onAria}
+        onPhilosophyClick={onPhilosophy}
       />
 
       <main className="flex-grow">
@@ -159,7 +160,7 @@ const PhilosophyPage = ({ onStart, onBack, onPricing, onAria }) => {
         </section>
       </main>
 
-      <LandingFooter />
+      <LandingFooter onTerms={onTerms} onPrivacy={onPrivacy} />
     </div>
   );
 };

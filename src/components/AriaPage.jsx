@@ -4,7 +4,7 @@ import { Sparkles, Brain, Search, MessageSquare, ArrowRight } from 'lucide-react
 import LandingNav from './landing/LandingNav';
 import LandingFooter from './landing/LandingFooter';
 
-const AriaPage = ({ onStart, onBack }) => {
+const AriaPage = ({ onStart, onBack, onPricing, onAria, onPhilosophy, onTerms, onPrivacy }) => {
   const ariaFeatures = [
     {
       icon: <Sparkles size={24} />,
@@ -25,7 +25,13 @@ const AriaPage = ({ onStart, onBack }) => {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }}>
-      <LandingNav onStart={onStart} onHomeClick={onBack} onAriaClick={() => {}} onPricingClick={() => {}} />
+      <LandingNav 
+        onStart={onStart} 
+        onHomeClick={onBack} 
+        onAriaClick={onAria} 
+        onPricingClick={onPricing} 
+        onPhilosophyClick={onPhilosophy}
+      />
 
       <main className="flex-grow">
         {/* Hero Section */}
@@ -311,7 +317,7 @@ const AriaPage = ({ onStart, onBack }) => {
         </section>
       </main>
 
-      <LandingFooter />
+      <LandingFooter onTerms={onTerms} onPrivacy={onPrivacy} />
     </div>
   );
 };

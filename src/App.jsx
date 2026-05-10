@@ -508,11 +508,11 @@ function AppContent() {
   }
 
   if (view === 'terms') {
-    return <TermsPage onBack={() => setView('landing')} />;
+    return <TermsPage onBack={() => setView('landing')} onPricing={() => setView('pricing')} onAria={() => setView('aria')} onPhilosophy={() => setView('philosophy')} onTerms={() => setView('terms')} onPrivacy={() => setView('privacy')} />;
   }
 
   if (view === 'privacy') {
-    return <PrivacyPage onBack={() => setView('landing')} />;
+    return <PrivacyPage onBack={() => setView('landing')} onPricing={() => setView('pricing')} onAria={() => setView('aria')} onPhilosophy={() => setView('philosophy')} onTerms={() => setView('terms')} onPrivacy={() => setView('privacy')} />;
   }
 
   if (view === 'pricing') {
@@ -521,8 +521,18 @@ function AppContent() {
         <PricingPage
           onStart={handleStartJourney}
           onBack={() => setView('landing')}
+          onPricing={() => setView('pricing')}
+          onAria={() => setView('aria')}
+          onPhilosophy={() => setView('philosophy')}
+          onTerms={() => setView('terms')}
+          onPrivacy={() => setView('privacy')}
         />
-        <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+        <AuthModal 
+          isOpen={isAuthModalOpen} 
+          onClose={() => setIsAuthModalOpen(false)} 
+          onTerms={() => { setIsAuthModalOpen(false); setView('terms'); }}
+          onPrivacy={() => { setIsAuthModalOpen(false); setView('privacy'); }}
+        />
       </>
     );
   }
@@ -533,8 +543,18 @@ function AppContent() {
         <AriaPage
           onStart={handleStartJourney}
           onBack={() => setView('landing')}
+          onPricing={() => setView('pricing')}
+          onAria={() => setView('aria')}
+          onPhilosophy={() => setView('philosophy')}
+          onTerms={() => setView('terms')}
+          onPrivacy={() => setView('privacy')}
         />
-        <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+        <AuthModal 
+          isOpen={isAuthModalOpen} 
+          onClose={() => setIsAuthModalOpen(false)} 
+          onTerms={() => { setIsAuthModalOpen(false); setView('terms'); }}
+          onPrivacy={() => { setIsAuthModalOpen(false); setView('privacy'); }}
+        />
       </>
     );
   }
@@ -547,8 +567,16 @@ function AppContent() {
           onBack={() => setView('landing')}
           onPricing={() => setView('pricing')}
           onAria={() => setView('aria')}
+          onPhilosophy={() => setView('philosophy')}
+          onTerms={() => setView('terms')}
+          onPrivacy={() => setView('privacy')}
         />
-        <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+        <AuthModal 
+          isOpen={isAuthModalOpen} 
+          onClose={() => setIsAuthModalOpen(false)} 
+          onTerms={() => { setIsAuthModalOpen(false); setView('terms'); }}
+          onPrivacy={() => { setIsAuthModalOpen(false); setView('privacy'); }}
+        />
       </>
     );
   }

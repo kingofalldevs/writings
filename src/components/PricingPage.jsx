@@ -39,7 +39,7 @@ const plans = [
   },
 ];
 
-const PricingPage = ({ onStart, onBack }) => {
+const PricingPage = ({ onStart, onBack, onPricing, onAria, onPhilosophy, onTerms, onPrivacy }) => {
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [loadingPlan, setLoadingPlan] = useState(null);
   const { user } = useAuth();
@@ -113,7 +113,13 @@ const PricingPage = ({ onStart, onBack }) => {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }}>
-      <LandingNav onStart={onStart} onPricingClick={() => {}} onHomeClick={onBack} />
+      <LandingNav 
+        onStart={onStart} 
+        onPricingClick={onPricing} 
+        onAriaClick={onAria}
+        onPhilosophyClick={onPhilosophy}
+        onHomeClick={onBack} 
+      />
 
       <main className="flex-grow flex flex-col items-center py-32 px-8">
         <motion.div
@@ -286,7 +292,7 @@ const PricingPage = ({ onStart, onBack }) => {
         </motion.p>
       </main>
 
-      <LandingFooter />
+      <LandingFooter onTerms={onTerms} onPrivacy={onPrivacy} />
     </div>
   );
 };
