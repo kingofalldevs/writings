@@ -131,10 +131,10 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
                 whileTap={{ scale: 0.95 }}
                 onClick={onPricing}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent/10 text-accent hover:bg-accent/20 transition-all text-[11px] font-bold tracking-widest uppercase"
-                title="Upgrade Plan"
+                title={user?.subscription?.status === 'active' ? "Manage Subscription" : "Upgrade Plan"}
               >
                 <Sparkles size={14} />
-                <span>Upgrade</span>
+                <span>{user?.subscription?.status === 'active' ? 'Pro' : 'Upgrade'}</span>
               </motion.button>
 
               <motion.button

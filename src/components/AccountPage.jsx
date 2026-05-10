@@ -76,25 +76,38 @@ const AccountPage = ({ user, onLogout, onBack, onStart }) => {
                     </div>
                     <div>
                       <h2 className="text-xl font-bold font-serif">Subscription</h2>
-                      <p className="text-xs opacity-40 mt-0.5 uppercase tracking-widest font-bold">Zen Plan</p>
+                      <p className="text-xs opacity-40 mt-0.5 uppercase tracking-widest font-bold">
+                        {user?.subscription?.status === 'active' ? 'Writings Pro' : 'Zen Plan'}
+                      </p>
                     </div>
                   </div>
-                  <span className="px-5 py-2 rounded-full bg-accent/10 text-accent text-[11px] font-bold tracking-widest uppercase border border-accent/5">
-                    Free Forever
+                  <span className={`px-5 py-2 rounded-full text-[11px] font-bold tracking-widest uppercase border ${
+                    user?.subscription?.status === 'active' 
+                      ? 'bg-accent/10 text-accent border-accent/20' 
+                      : 'bg-foreground/5 text-muted border-foreground/5'
+                  }`}>
+                    {user?.subscription?.status === 'active' ? 'Premium Active' : 'Free Forever'}
                   </span>
                 </div>
                 
                 <p className="text-foreground/70 mb-10 leading-relaxed max-w-xl">
-                  You're currently exploring the calm basics. Upgrade to <span className="font-bold text-foreground">Writings Pro</span> for unlimited AI assistance, binaural soundscapes, and advanced manuscript exports.
+                  {user?.subscription?.status === 'active' 
+                    ? "Thank you for supporting meditative writing. Your Pro features are unlocked across all devices."
+                    : "You're currently exploring the calm basics. Upgrade to Writings Pro for unlimited AI assistance, binaural soundscapes, and advanced manuscript exports."}
                 </p>
 
                 <div className="flex items-center gap-4">
-                  <button className="px-8 py-4 rounded-full bg-accent text-background font-bold text-sm transition-all hover:opacity-90">
-                    Explore Pro Plans
+                  <button 
+                    onClick={onPricing}
+                    className="px-8 py-4 rounded-full bg-accent text-background font-bold text-sm transition-all hover:opacity-90"
+                  >
+                    {user?.subscription?.status === 'active' ? 'Manage Subscription' : 'Explore Pro Plans'}
                   </button>
-                  <button className="px-8 py-4 rounded-full border border-foreground/10 hover:bg-foreground/5 transition-all text-sm font-bold">
-                    View Benefits
-                  </button>
+                  {user?.subscription?.status !== 'active' && (
+                    <button className="px-8 py-4 rounded-full border border-foreground/10 hover:bg-foreground/5 transition-all text-sm font-bold">
+                      View Benefits
+                    </button>
+                  )}
                 </div>
               </section>
             </div>
@@ -106,7 +119,11 @@ const AccountPage = ({ user, onLogout, onBack, onStart }) => {
                 <div>
                   <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-30 mb-6">Privacy & Access</h3>
                   <div className="space-y-4">
-                    <ActionButton icon={<Receipt size={16} />} label="Manage Billing" />
+                    <ActionButton 
+                      icon={<Receipt size={16} />} 
+                      label="Manage Billing" 
+                      onClick={() => window.location.href = 'https://app.dodopayments.com/customer-portal'}
+                    />
                     <ActionButton icon={<Key size={16} />} label="Reset Password" />
                     <ActionButton icon={<Shield size={16} />} label="Two-Factor Auth" />
                   </div>
