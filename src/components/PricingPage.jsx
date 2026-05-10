@@ -181,21 +181,27 @@ const PricingPage = ({ onStart, onBack }) => {
               </div>
 
               <button
-                onClick={() => plan.id !== 'free' && handleCheckout(plan)}
-                disabled={loadingPlan === plan.id || (user && plan.id === 'free')}
+                onClick={() => {
+                  if (user?.subscription?.status === 'active' && plan.id === 'pro') {
+                    window.location.href = 'https://app.dodopayments.com/customer-portal';
+                    return;
+                  }
+                  plan.id !== 'free' && handleCheckout(plan);
+                }}
+                disabled={loadingPlan === plan.id || (user && plan.id === 'free' && user?.subscription?.status !== 'active')}
                 className="w-full rounded-full font-bold transition-all duration-300 flex items-center justify-center gap-3 group/btn"
                 style={{
                   padding: '16px 0',
                   backgroundColor: plan.highlight ? 'var(--text-color)' : 'rgba(var(--accent-rgb), 0.03)',
                   color: plan.highlight ? 'var(--bg-color)' : 'var(--text-color)',
                   border: plan.highlight ? 'none' : '1.5px solid var(--border-color)',
-                  cursor: (user && plan.id === 'free') ? 'default' : (loadingPlan === plan.id ? 'wait' : 'pointer'),
+                  cursor: (user && plan.id === 'free' && user?.subscription?.status !== 'active') ? 'default' : (loadingPlan === plan.id ? 'wait' : 'pointer'),
                   fontSize: '15px', letterSpacing: '0.04em',
                   boxShadow: plan.highlight ? '0 12px 24px rgba(0,0,0,0.1)' : 'none',
-                  opacity: (loadingPlan === plan.id || (user && plan.id === 'free')) ? 0.7 : 1,
+                  opacity: (loadingPlan === plan.id || (user && plan.id === 'free' && user?.subscription?.status !== 'active')) ? 0.7 : 1,
                 }}
                 onMouseEnter={e => {
-                  if (loadingPlan || (user && plan.id === 'free')) return;
+                  if (loadingPlan || (user && plan.id === 'free' && user?.subscription?.status !== 'active')) return;
                   if (!plan.highlight) {
                     e.currentTarget.style.borderColor = 'var(--accent-color)';
                     e.currentTarget.style.backgroundColor = 'rgba(var(--accent-rgb), 0.06)';
@@ -206,7 +212,7 @@ const PricingPage = ({ onStart, onBack }) => {
                   }
                 }}
                 onMouseLeave={e => {
-                  if (user && plan.id === 'free') return;
+                  if (user && plan.id === 'free' && user?.subscription?.status !== 'active') return;
                   if (!plan.highlight) {
                     e.currentTarget.style.borderColor = 'var(--border-color)';
                     e.currentTarget.style.backgroundColor = 'rgba(var(--accent-rgb), 0.03)';
@@ -221,8 +227,10 @@ const PricingPage = ({ onStart, onBack }) => {
                   <span>Preparing checkout...</span>
                 ) : (
                   <>
-                    <span>{user && plan.id === 'free' ? 'Current Plan' : plan.cta}</span>
-                    {!(user && plan.id === 'free') && <ArrowRight size={18} className="group-hover/btn:translate-x-1.5 transition-transform duration-300" />}
+                    <span>{user && plan.id === 'free' && user?.subscription?.status !== 'active' ? 'Current Plan' : (
+                      user?.subscription?.status === 'active' && plan.id === 'pro' ? 'Manage Subscription' : plan.cta
+                    )}</span>
+                    {!(user && plan.id === 'free' && user?.subscription?.status !== 'active') && <ArrowRight size={18} className="group-hover/btn:translate-x-1.5 transition-transform duration-300" />}
                   </>
                 )}
               </button>

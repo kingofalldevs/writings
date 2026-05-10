@@ -20,9 +20,27 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+      if (authUser) {
+        // Fetch extra profile data (like subscription) from Firestore
+        const { getFirestore, doc, onSnapshot } = await import('firebase/firestore');
+        const db = getFirestore();
+        const unsubDoc = onSnapshot(doc(db, 'users', authUser.uid), (docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setUser({ ...authUser, ...data });
+          } else {
+            setUser(authUser);
+          }
+          setLoading(false);
+        });
+        return () => {
+          unsubDoc();
+        };
+      } else {
+        setUser(null);
+        setLoading(false);
+      }
     });
 
     return unsubscribe;

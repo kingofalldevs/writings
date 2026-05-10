@@ -147,19 +147,27 @@ const PricingModal = ({ isOpen, onClose }) => {
                 </div>
 
                 <button
-                  onClick={() => plan.id !== 'free' && handleCheckout(plan)}
-                  disabled={loadingPlan === plan.id || (user && plan.id === 'free')}
+                  onClick={() => {
+                    if (user?.subscription?.status === 'active' && plan.id === 'pro') {
+                      window.location.href = 'https://app.dodopayments.com/customer-portal';
+                      return;
+                    }
+                    plan.id !== 'free' && handleCheckout(plan);
+                  }}
+                  disabled={loadingPlan === plan.id || (user && plan.id === 'free' && user?.subscription?.status !== 'active')}
                   className={`w-full py-3 rounded-full font-bold flex items-center justify-center gap-2 transition-all ${
                     plan.highlight
                       ? 'bg-text-color text-bg-color hover:scale-[1.02]'
                       : 'bg-accent/5 text-foreground hover:bg-accent/10 border border-foreground/10'
-                  } ${(user && plan.id === 'free') ? 'opacity-50 cursor-default' : ''}`}
+                  } ${(user && plan.id === 'free' && user?.subscription?.status !== 'active') ? 'opacity-50 cursor-default' : ''}`}
                   style={plan.highlight ? { backgroundColor: 'var(--text-color)', color: 'var(--bg-color)' } : {}}
                 >
                   {loadingPlan === plan.id ? 'Loading...' : (
                     <>
-                      {user && plan.id === 'free' ? 'Current Plan' : plan.cta}
-                      {!(user && plan.id === 'free') && <ArrowRight size={16} />}
+                      {user && plan.id === 'free' && user?.subscription?.status !== 'active' ? 'Current Plan' : (
+                        user?.subscription?.status === 'active' && plan.id === 'pro' ? 'Manage Subscription' : plan.cta
+                      )}
+                      {!(user && plan.id === 'free' && user?.subscription?.status !== 'active') && <ArrowRight size={16} />}
                     </>
                   )}
                 </button>

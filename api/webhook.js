@@ -31,9 +31,7 @@ function verifySignature(rawBody, signature, secret) {
 
 // Map Dodo plan/product ID to our internal plan slug
 const PRODUCT_TO_PLAN = {
-  [process.env.DODO_PRODUCT_ZEN]: 'zen',
-  [process.env.DODO_PRODUCT_CRESCENDO]: 'crescendo',
-  [process.env.DODO_PRODUCT_PURIST]: 'purist',
+  [process.env.DODO_PRODUCT_PRO]: 'pro',
 };
 
 export default async function handler(req, res) {

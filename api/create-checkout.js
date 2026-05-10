@@ -42,7 +42,10 @@ export default async function handler(req, res) {
       environment: process.env.DODO_ENVIRONMENT || 'test_mode',
     });
 
-    const appUrl = process.env.VITE_APP_URL || 'http://localhost:3001';
+    // Determine the redirect URL (Vercel provides VERCEL_URL for serverless functions)
+    const protocol = req.headers['x-forwarded-proto'] || 'http';
+    const host = req.headers.host || process.env.VERCEL_URL || 'localhost:3001';
+    const appUrl = process.env.VITE_APP_URL || (host.includes('localhost') ? `http://${host}` : `${protocol}://${host}`);
 
     const subscription = await client.subscriptions.create({
       billing: {
