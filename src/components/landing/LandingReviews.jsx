@@ -25,33 +25,26 @@ const reviews = [
 
 const LandingReviews = () => {
   return (
-    <section className="relative w-full px-8 flex flex-col items-center" style={{ backgroundColor: 'transparent', paddingTop: '200px', paddingBottom: '160px' }}>
+    <section className="relative w-full px-6 md:px-8 flex flex-col items-center py-20 md:py-32 overflow-hidden">
 
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="text-center"
-        style={{ marginBottom: '96px' }}
+        className="text-center mb-16 md:mb-24"
       >
         <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4em', color: 'var(--accent-color)', marginBottom: '24px', display: 'block' }}>Institutional Proof</span>
         <h2 
           className="font-medium tracking-tight" 
-          style={{ fontSize: 'clamp(32px, 4vw, 56px)', color: 'var(--text-color)', lineHeight: 1.1, whiteSpace: 'nowrap' }}
+          style={{ fontSize: 'clamp(28px, 5vw, 56px)', color: 'var(--text-color)', lineHeight: 1.1 }}
         >
           Built for those who demand <span style={{ color: 'var(--accent-color)' }}>excellence</span>.
         </h2>
       </motion.div>
 
       <div 
-        style={{ 
-          width: '100%',
-          maxWidth: '1200px',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '32px'
-        }}
+        className="w-full max-w-[1200px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
       >
         {reviews.map((review, index) => (
           <motion.div
@@ -60,18 +53,10 @@ const LandingReviews = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1, duration: 0.8 }}
-            className="group"
+            className="group p-8 md:p-10 flex flex-col gap-8 relative transition-all duration-300 h-full rounded-[32px]"
             style={{ 
               background: 'var(--foreground-002)', 
               border: '1px solid var(--border-color)',
-              borderRadius: '24px',
-              padding: '40px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '32px',
-              position: 'relative',
-              transition: 'all 0.3s ease',
-              height: '100%'
             }}
             onMouseEnter={e => {
               e.currentTarget.style.borderColor = 'var(--accent-color)';
