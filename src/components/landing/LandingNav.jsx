@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, Moon, Sun, Coffee, Menu } from 'lucide-react';
+import { ChevronDown, Moon, Sun, Coffee, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -85,9 +85,9 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
             {/* Mobile Menu Button */}
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="flex lg:hidden items-center justify-center w-10 h-10 rounded-full border border-foreground/10 bg-foreground/5 text-foreground"
+              className="flex lg:hidden items-center justify-center w-10 h-10 rounded-full border border-foreground/10 bg-foreground/5 text-foreground transition-transform hover:scale-110 active:scale-95"
             >
-              <Menu size={20} />
+              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
@@ -96,28 +96,44 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 mt-4 mx-6 p-6 rounded-3xl glass pointer-events-auto lg:hidden"
-          >
-            <div className="flex flex-col gap-6">
-              <MobileNavLink label="Philosophy" onClick={() => { onPhilosophyClick(); setIsMobileMenuOpen(false); }} />
-              <MobileNavLink label="Aria AI" onClick={() => { onAriaClick(); setIsMobileMenuOpen(false); }} />
-              <MobileNavLink label="Pricing" onClick={() => { onPricingClick(); setIsMobileMenuOpen(false); }} />
-              <div className="pt-6 border-t border-foreground/10 flex flex-col gap-6">
-                 <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-widest opacity-40">Appearance</span>
-                    <div className="flex items-center p-1 rounded-full border border-foreground/10 bg-foreground/5 gap-0.5">
-                      <ThemeIcon active={theme === 'light'} onClick={() => toggleTheme('light')} icon={<Sun size={14} />} />
-                      <ThemeIcon active={theme === 'sepia'} onClick={() => toggleTheme('sepia')} icon={<Coffee size={14} />} />
-                      <ThemeIcon active={theme === 'dark'} onClick={() => toggleTheme('dark')} icon={<Moon size={14} />} />
-                    </div>
-                 </div>
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 bg-background/40 backdrop-blur-sm z-[90] lg:hidden"
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="absolute top-full left-0 right-0 mt-4 mx-6 p-8 rounded-[2.5rem] glass border border-foreground/10 shadow-2xl pointer-events-auto lg:hidden z-[100]"
+            >
+              <div className="flex flex-col gap-8">
+                <div className="flex flex-col gap-6">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-30">Explore</span>
+                  <div className="flex flex-col gap-5">
+                    <MobileNavLink label="Philosophy" onClick={() => { onPhilosophyClick(); setIsMobileMenuOpen(false); }} />
+                    <MobileNavLink label="Aria AI Beta" onClick={() => { onAriaClick(); setIsMobileMenuOpen(false); }} />
+                    <MobileNavLink label="Pricing & Plans" onClick={() => { onPricingClick(); setIsMobileMenuOpen(false); }} />
+                  </div>
+                </div>
+
+                <div className="pt-8 border-t border-foreground/10 flex flex-col gap-6">
+                   <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-30">Theme</span>
+                      <div className="flex items-center p-1 rounded-full border border-foreground/10 bg-foreground/5 gap-0.5">
+                        <ThemeIcon active={theme === 'light'} onClick={() => toggleTheme('light')} icon={<Sun size={14} />} />
+                        <ThemeIcon active={theme === 'sepia'} onClick={() => toggleTheme('sepia')} icon={<Coffee size={14} />} />
+                        <ThemeIcon active={theme === 'dark'} onClick={() => toggleTheme('dark')} icon={<Moon size={14} />} />
+                      </div>
+                   </div>
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
