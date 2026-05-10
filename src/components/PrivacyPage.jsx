@@ -6,7 +6,7 @@ const PrivacyPage = ({ onBack }) => {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-accent/20">
       <div className="max-w-3xl mx-auto px-6 py-20 md:py-32">
-        <button 
+        <button
           onClick={onBack}
           className="flex items-center gap-2 opacity-40 hover:opacity-100 transition-opacity mb-12 group"
         >
@@ -30,11 +30,11 @@ const PrivacyPage = ({ onBack }) => {
 
             <section>
               <h2 className="text-xl font-bold mb-4">2. Use of Data</h2>
-              <p>Your data is used solely to provide and improve Writings. We do not sell your personal information or your writing content to third parties.</p>
+              <p>Your data is used solely to provide you with the best experience like (syncing documents between devices, ideabase features etc). We do not sell your personal information or your writing content to third parties.</p>
             </section>
 
             <section>
-              <h2 className="text-xl font-bold mb-4">3. AI Features</h2>
+              <h2 className="text-xl font-bold mb-4">3. AI Features - Optional to Use</h2>
               <p>When using Aria (AI Assistant), context from your documents may be processed by AI models to provide assistance. This data is not used to train global AI models.</p>
             </section>
 
