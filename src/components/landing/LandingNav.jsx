@@ -3,6 +3,7 @@ import { ChevronDown, Moon, Sun, Coffee, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../context/ThemeContext';
 
+// Force build update for mobile responsiveness
 const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick, onPhilosophyClick, onHomeClick }) => {
   const { theme, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -21,7 +22,7 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
       <nav className={`w-full flex items-center justify-between pointer-events-auto transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
         isScrolled 
           ? 'max-w-[1200px] px-8 py-4 bg-background/80 backdrop-blur-xl rounded-2xl border border-foreground/10' 
-          : 'max-w-full px-8 md:px-12 py-6 bg-transparent border-transparent'
+          : 'max-w-full px-6 md:px-12 py-6 bg-transparent border-transparent'
       }`}>
         {/* Left: Logo */}
         <div 
@@ -36,8 +37,8 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
           <span className="text-xl font-bold tracking-tight text-foreground">Writings</span>
         </div>
 
-        {/* Center: Main Links */}
-        <div className="hidden lg:flex items-center gap-10">
+        {/* Center: Main Links (Hidden on Tablet/Mobile) */}
+        <div className="hidden xl:flex items-center gap-10">
           <NavLink label="Philosophy" hasChevron onClick={onPhilosophyClick} />
           <div className="flex items-center gap-2">
             <NavLink label="Aria AI" onClick={onAriaClick} />
@@ -48,7 +49,8 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2 md:gap-6">
-          <div className="hidden sm:flex items-center p-1 rounded-full border border-foreground/10 bg-foreground/5 gap-0.5">
+          {/* Theme Switcher - Hidden on small mobile */}
+          <div className="hidden md:flex items-center p-1 rounded-full border border-foreground/10 bg-foreground/5 gap-0.5">
             <ThemeIcon 
               active={theme === 'light'} 
               onClick={() => toggleTheme('light')} 
@@ -66,26 +68,19 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
             />
           </div>
 
-          <div className="flex items-center gap-2">
-            {!user && (
-              <button
-                onClick={onStart}
-                className="hidden sm:block bg-transparent border-none text-sm font-medium text-foreground/60 cursor-pointer transition-opacity hover:opacity-100"
-              >
-                Sign In
-              </button>
-            )}
+          <div className="flex items-center gap-3">
+            {/* Get Started - Hidden on mobile, shown on Tablet+ */}
             <button
               onClick={onStart}
-              className="px-5 md:px-6 py-2.5 rounded-full border border-foreground/10 bg-foreground/5 text-foreground text-sm font-semibold cursor-pointer transition-all hover:bg-foreground/[0.08] hover:border-foreground/25"
+              className="hidden sm:flex px-5 md:px-6 py-2.5 rounded-full border border-foreground/10 bg-foreground/5 text-foreground text-sm font-semibold cursor-pointer transition-all hover:bg-foreground/[0.08] hover:border-foreground/25"
             >
               {user ? 'Dashboard' : 'Get Started'}
             </button>
 
-            {/* Mobile Menu Button */}
+            {/* Hamburger Button - Visible on Tablet and Mobile */}
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="flex lg:hidden items-center justify-center w-10 h-10 rounded-full border border-foreground/10 bg-foreground/5 text-foreground transition-transform hover:scale-110 active:scale-95"
+              className="flex xl:hidden items-center justify-center w-10 h-10 rounded-full border border-foreground/10 bg-foreground/5 text-foreground transition-all hover:bg-foreground/10"
             >
               {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -102,28 +97,30 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-background/40 backdrop-blur-sm z-[90] lg:hidden"
+              className="fixed inset-0 bg-background/60 backdrop-blur-md z-[90] xl:hidden"
             />
             <motion.div
               initial={{ opacity: 0, y: -20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="absolute top-full left-0 right-0 mt-4 mx-6 p-8 rounded-[2.5rem] glass border border-foreground/10 shadow-2xl pointer-events-auto lg:hidden z-[100]"
+              className="absolute top-full left-0 right-0 mt-4 mx-6 p-8 rounded-[2.5rem] glass border border-foreground/10 shadow-2xl pointer-events-auto xl:hidden z-[100]"
             >
               <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-6">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-30">Explore</span>
-                  <div className="flex flex-col gap-5">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-30">Menu</span>
+                  <div className="flex flex-col gap-6">
                     <MobileNavLink label="Philosophy" onClick={() => { onPhilosophyClick(); setIsMobileMenuOpen(false); }} />
                     <MobileNavLink label="Aria AI Beta" onClick={() => { onAriaClick(); setIsMobileMenuOpen(false); }} />
                     <MobileNavLink label="Pricing & Plans" onClick={() => { onPricingClick(); setIsMobileMenuOpen(false); }} />
+                    {!user && <MobileNavLink label="Sign In" onClick={() => { onStart(); setIsMobileMenuOpen(false); }} />}
+                    {user && <MobileNavLink label="Dashboard" onClick={() => { onStart(); setIsMobileMenuOpen(false); }} />}
                   </div>
                 </div>
 
                 <div className="pt-8 border-t border-foreground/10 flex flex-col gap-6">
                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-30">Theme</span>
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-30">Appearance</span>
                       <div className="flex items-center p-1 rounded-full border border-foreground/10 bg-foreground/5 gap-0.5">
                         <ThemeIcon active={theme === 'light'} onClick={() => toggleTheme('light')} icon={<Sun size={14} />} />
                         <ThemeIcon active={theme === 'sepia'} onClick={() => toggleTheme('sepia')} icon={<Coffee size={14} />} />
