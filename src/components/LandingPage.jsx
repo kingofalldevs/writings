@@ -31,7 +31,7 @@ const LandingPage = ({ user, onAccount, onStart, onPricing, onAria, onPhilosophy
 
       {/* Domain Claim Section */}
       <div className="relative z-10 w-full">
-        <LandingDomainClaim />
+        <LandingDomainClaim onStart={onStart} />
       </div>
 
       {/* Export Workflow Section */}

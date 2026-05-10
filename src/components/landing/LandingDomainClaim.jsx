@@ -2,8 +2,13 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 
-const LandingDomainClaim = () => {
+const LandingDomainClaim = ({ onStart }) => {
   const [handle, setHandle] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (onStart) onStart();
+  };
 
   return (
     <section className="relative w-full flex flex-col items-center py-20 md:py-32 px-6 md:px-8 z-10 max-w-[1200px] mx-auto overflow-hidden">
@@ -31,7 +36,7 @@ const LandingDomainClaim = () => {
         transition={{ duration: 0.8, delay: 0.2 }}
         className="w-full max-w-xl relative"
       >
-        <div className="relative group">
+        <form onSubmit={handleSubmit} className="relative group">
           <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center bg-foreground/[0.02] border border-foreground/10 rounded-2xl p-2 focus-within:border-accent/40 transition-all duration-300">
             <div className="flex-1 flex items-center pl-6 pr-4">
               <input
@@ -49,13 +54,16 @@ const LandingDomainClaim = () => {
               <span className="sm:hidden text-center text-sm font-light text-foreground/30 mb-2">
                 .writings.page
               </span>
-              <button className="bg-accent text-background px-8 py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-[0.98]">
+              <button 
+                type="submit"
+                className="bg-accent text-background px-8 py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-[0.98]"
+              >
                 Secure
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
-        </div>
+        </form>
         
         <motion.p 
           initial={{ opacity: 0 }}
