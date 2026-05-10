@@ -25,11 +25,19 @@ export function AuthProvider({ children }) {
         // Fetch extra profile data (like subscription) from Firestore
         const { getFirestore, doc, onSnapshot } = await import('firebase/firestore');
         const db = getFirestore();
-        const unsubDoc = onSnapshot(doc(db, 'users', authUser.uid), (docSnap) => {
+        const unsubDoc = onSnapshot(doc(db, 'users', authUser.uid), async (docSnap) => {
           if (docSnap.exists()) {
             const data = docSnap.data();
             setUser({ ...authUser, ...data });
           } else {
+            // Create the user document so the Webhook can find them by email
+            const { setDoc } = await import('firebase/firestore');
+            await setDoc(doc(db, 'users', authUser.uid), {
+              email: authUser.email,
+              displayName: authUser.displayName,
+              createdAt: new Date().toISOString()
+            }, { merge: true });
+            
             setUser(authUser);
           }
           setLoading(false);
