@@ -32,8 +32,9 @@ const PricingModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const getPrice = (plan) => {
-    if (billingCycle === 'yearly') return Math.round(plan.price * 0.8);
-    return plan.price;
+    if (plan.id === 'free') return 0;
+    if (billingCycle === 'yearly') return 100;
+    return 10;
   };
 
   const handleCheckout = async (plan) => {
@@ -133,7 +134,7 @@ const PricingModal = ({ isOpen, onClose }) => {
                 
                 <div className="mb-6 flex items-baseline gap-1">
                   <span className="text-4xl font-bold">${getPrice(plan)}</span>
-                  <span className="text-sm text-muted">/mo</span>
+                  <span className="text-sm text-muted">{billingCycle === 'yearly' && plan.id !== 'free' ? '/year' : '/mo'}</span>
                 </div>
 
                 <div className="flex-1 flex flex-col gap-4 mb-8">

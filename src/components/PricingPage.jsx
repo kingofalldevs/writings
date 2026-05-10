@@ -45,8 +45,9 @@ const PricingPage = ({ onStart, onBack }) => {
   const { user } = useAuth();
 
   const getPrice = (plan) => {
-    if (billingCycle === 'yearly') return Math.round(plan.price * 0.8);
-    return plan.price;
+    if (plan.id === 'free') return 0;
+    if (billingCycle === 'yearly') return 100;
+    return 10;
   };
 
   const handleCheckout = async (plan) => {
@@ -166,7 +167,7 @@ const PricingPage = ({ onStart, onBack }) => {
 
               <div className="flex items-baseline gap-2">
                 <span className="text-5xl font-bold tracking-tight">${getPrice(plan)}</span>
-                <span className="text-sm opacity-40 font-medium">/month</span>
+                <span className="text-sm opacity-40 font-medium">{billingCycle === 'yearly' && plan.id !== 'free' ? '/year' : '/month'}</span>
               </div>
 
 
