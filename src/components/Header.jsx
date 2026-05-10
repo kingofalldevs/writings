@@ -279,20 +279,19 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
                     <Palette size={16} className="opacity-60" />
                     Manage Portfolio
                   </button>
-                  <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      if (user) {
-                        onAccount();
-                      } else {
+
+                  {!user && (
+                    <button
+                      onClick={() => {
+                        setIsMenuOpen(false);
                         onSignIn();
-                      }
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-foreground/5 transition-all text-sm font-semibold"
-                  >
-                    <User size={16} className="opacity-60" />
-                    Account
-                  </button>
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-foreground/5 transition-all text-sm font-semibold"
+                    >
+                      <User size={16} className="opacity-60" />
+                      Sign In
+                    </button>
+                  )}
                   
                   {user && (
                     <>

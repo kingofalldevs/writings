@@ -64,12 +64,14 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
             />
           </div>
 
-          <button
-            onClick={user ? onAccountClick : onStart}
-            className="hidden sm:block bg-transparent border-none text-sm font-medium text-foreground/60 cursor-pointer transition-opacity hover:opacity-100"
-          >
-            {user ? 'Account' : 'Sign In'}
-          </button>
+          {!user && (
+            <button
+              onClick={onStart}
+              className="hidden sm:block bg-transparent border-none text-sm font-medium text-foreground/60 cursor-pointer transition-opacity hover:opacity-100"
+            >
+              Sign In
+            </button>
+          )}
           <button
             onClick={onStart}
             className="px-6 py-2.5 rounded-full border border-foreground/10 bg-foreground/5 text-foreground text-sm font-semibold cursor-pointer transition-all hover:bg-foreground/[0.08] hover:border-foreground/25"
