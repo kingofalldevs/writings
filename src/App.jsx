@@ -18,6 +18,8 @@ import AuthorPortfolio from './components/AuthorPortfolio';
 import AccountPage from './components/AccountPage';
 import PortfolioEditor from './components/PortfolioEditor';
 import NotificationModal from './components/NotificationModal';
+import TermsPage from './components/TermsPage';
+import PrivacyPage from './components/PrivacyPage';
 import { useAuth } from './context/AuthContext';
 import Binder from './components/Binder';
 import { db } from './firebase';
@@ -25,7 +27,7 @@ import { collection, addDoc, updateDoc, doc, setDoc, serverTimestamp, onSnapshot
 import { tracks } from './data/tracks';
 
 function AppContent() {
-  const [view, setView] = useState('landing'); // 'landing', 'pricing', 'aria', 'philosophy', 'dashboard', 'account', 'portfolio-editor'
+  const [view, setView] = useState('landing'); // 'landing', 'pricing', 'aria', 'philosophy', 'dashboard', 'account', 'portfolio-editor', 'terms', 'privacy'
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
@@ -492,10 +494,25 @@ function AppContent() {
           onPricing={() => setView('pricing')}
           onAria={() => setView('aria')}
           onPhilosophy={() => setView('philosophy')}
+          onTerms={() => setView('terms')}
+          onPrivacy={() => setView('privacy')}
         />
-        <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+        <AuthModal 
+          isOpen={isAuthModalOpen} 
+          onClose={() => setIsAuthModalOpen(false)} 
+          onTerms={() => { setIsAuthModalOpen(false); setView('terms'); }}
+          onPrivacy={() => { setIsAuthModalOpen(false); setView('privacy'); }}
+        />
       </>
     );
+  }
+
+  if (view === 'terms') {
+    return <TermsPage onBack={() => setView('landing')} />;
+  }
+
+  if (view === 'privacy') {
+    return <PrivacyPage onBack={() => setView('landing')} />;
   }
 
   if (view === 'pricing') {

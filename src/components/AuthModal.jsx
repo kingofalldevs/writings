@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-const AuthModal = ({ isOpen, onClose }) => {
+const AuthModal = ({ isOpen, onClose, onTerms, onPrivacy }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { loginWithGoogle } = useAuth();
@@ -101,7 +101,7 @@ const AuthModal = ({ isOpen, onClose }) => {
             </button>
             
             <p className="text-[11px] text-center opacity-40 leading-relaxed px-4">
-              By continuing, you agree to our Terms of Service and Privacy Policy.
+              By continuing, you agree to our <button onClick={onTerms} className="underline hover:text-accent transition-colors font-bold">Terms of Service</button> and <button onClick={onPrivacy} className="underline hover:text-accent transition-colors font-bold">Privacy Policy</button>.
             </p>
           </div>
         </div>

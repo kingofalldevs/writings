@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 
-const LandingFooter = () => {
+const LandingFooter = ({ onTerms, onPrivacy }) => {
   return (
     <footer className="w-full flex flex-col items-center z-10 overflow-hidden pt-24 pb-12 px-8">
 
@@ -37,7 +37,9 @@ const LandingFooter = () => {
           <div className="flex flex-col gap-4">
             <FooterLink label="Philosophy" />
             <FooterLink label="Manifesto" />
-            <FooterLink label="Privacy Policy" />
+            <button onClick={onPrivacy} className="text-sm font-light opacity-60 no-underline transition-all hover:opacity-100 hover:text-accent text-left">
+              Privacy Policy
+            </button>
           </div>
         </div>
 
@@ -64,7 +66,12 @@ const LandingFooter = () => {
       <div className="w-full max-w-[1200px] flex flex-col sm:flex-row justify-between items-center gap-6 mt-20 pt-8 border-t border-accent/10">
         <p className="text-[12px] font-light opacity-40">© 2026 Writings Inc. All rights reserved.</p>
         <div className="flex gap-8">
-          <FooterBottomLink label="Terms of Service" />
+          <button onClick={onTerms} className="text-[12px] opacity-40 no-underline transition-opacity hover:opacity-100">
+            Terms of Service
+          </button>
+          <button onClick={onPrivacy} className="text-[12px] opacity-40 no-underline transition-opacity hover:opacity-100">
+            Privacy Policy
+          </button>
           <FooterBottomLink label="Security" />
           <FooterBottomLink label="Cookies" />
         </div>

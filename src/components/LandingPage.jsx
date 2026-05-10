@@ -8,7 +8,7 @@ import LandingFAQ from './landing/LandingFAQ';
 import LandingFooter from './landing/LandingFooter';
 import LandingDomainClaim from './landing/LandingDomainClaim';
 
-const LandingPage = ({ user, onAccount, onStart, onPricing, onAria, onPhilosophy }) => {
+const LandingPage = ({ user, onAccount, onStart, onPricing, onAria, onPhilosophy, onTerms, onPrivacy }) => {
   return (
     <div className="relative flex flex-col overflow-x-hidden bg-background min-h-screen w-screen">
 
@@ -54,7 +54,7 @@ const LandingPage = ({ user, onAccount, onStart, onPricing, onAria, onPhilosophy
       </div>
 
       {/* Footer: fixed height at bottom */}
-      <LandingFooter />
+      <LandingFooter onTerms={onTerms} onPrivacy={onPrivacy} />
     </div>
   );
 };
