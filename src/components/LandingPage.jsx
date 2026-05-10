@@ -1,4 +1,4 @@
-import LandingHero from './landing/LandingHero';
+import React from 'react';
 import LandingNav from './landing/LandingNav';
 import LandingProduct from './landing/LandingProduct';
 import LandingExport from './landing/LandingExport';
@@ -24,13 +24,8 @@ const LandingPage = ({ user, onAccount, onStart, onPricing, onAria, onPhilosophy
         onHomeClick={() => {}} 
       />
 
-      {/* Hero Section */}
-      <div className="relative z-10 w-full flex flex-col items-center">
-        <LandingHero onStart={onStart} />
-      </div>
-
       {/* Start with Product Showcase Section */}
-      <div className="relative z-10 w-full bg-foreground/[0.01]">
+      <div className="relative z-10 w-full bg-foreground/[0.01] pt-32">
         <LandingProduct />
       </div>
 
