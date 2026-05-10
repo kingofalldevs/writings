@@ -25,23 +25,23 @@ const RefundPage = ({ onStart, onBack, onPricing, onAria, onPhilosophy, onTerms,
 
           <div className="space-y-12 opacity-80 leading-relaxed">
             <section>
-              <h2 className="text-xl font-bold mb-4">1. General Refund Policy</h2>
-              <p>We stand behind our product and your satisfaction with it is important to us. However, because our product is a digital good delivered via Internet download we generally offer no refunds.</p>
+              <h2 className="text-xl font-bold mb-4">1. Satisfaction Guarantee</h2>
+              <p>We stand behind our product and your satisfaction is extremely important to us. If you are not completely satisfied with Writings, we offer a guaranteed 50% refund on your recent purchase.</p>
             </section>
 
             <section>
               <h2 className="text-xl font-bold mb-4">2. Subscription Cancellations</h2>
-              <p>You may cancel your subscription at any time. Your cancellation will take effect at the end of the current paid term. If you have any questions or are unsatisfied with the product, please contact us.</p>
+              <p>You may cancel your subscription at any time. Your cancellation will take effect at the end of the current paid term. If you cancel and are unsatisfied, you may request the 50% refund for your most recent payment.</p>
             </section>
 
             <section>
-              <h2 className="text-xl font-bold mb-4">3. Exceptions</h2>
-              <p>Refund requests made within 14 days of your original purchase may be considered on a case-by-case basis and granted at the sole discretion of our team. No refunds will be provided after 14 days from the original purchase.</p>
+              <h2 className="text-xl font-bold mb-4">3. Eligibility Window</h2>
+              <p>Refund requests must be made within 30 days of your original purchase or latest subscription renewal. Refund requests outside of this window will not be accommodated.</p>
             </section>
 
             <section>
               <h2 className="text-xl font-bold mb-4">4. Contact Us</h2>
-              <p>If you would like to request a refund, please contact our support team with your account details and the reason for your request.</p>
+              <p>If you would like to request a refund, please contact our support team with your account details and let us know how we failed to meet your expectations.</p>
             </section>
           </div>
         </motion.div>
