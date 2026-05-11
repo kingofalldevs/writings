@@ -129,14 +129,17 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={onPricing}
+                onClick={() => {
+                  console.log("Current User Subscription:", user?.subscription);
+                  onPricing();
+                }}
                 className="flex items-center gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-full bg-accent/10 text-accent hover:bg-accent/20 transition-all text-[10px] md:text-[11px] font-bold tracking-widest uppercase"
-                title={user?.subscription?.status === 'active' ? "Manage Subscription" : "Upgrade Plan"}
+                title={(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') ? "Manage Subscription" : "Upgrade Plan"}
               >
                 <Sparkles size={14} />
-                <span className="hidden sm:inline">{user?.subscription?.status === 'active' ? 'Pro' : 'Upgrade'}</span>
-                {! (user?.subscription?.status === 'active') && <span className="sm:hidden text-[9px]">UP</span>}
-                {user?.subscription?.status === 'active' && <span className="sm:hidden text-[9px]">PRO</span>}
+                <span className="hidden sm:inline">{(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') ? 'Pro' : 'Upgrade'}</span>
+                {! (user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') && <span className="sm:hidden text-[9px]">UP</span>}
+                {(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') && <span className="sm:hidden text-[9px]">PRO</span>}
               </motion.button>
 
               <motion.button

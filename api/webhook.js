@@ -69,7 +69,7 @@ export default async function handler(req, res) {
           
           await userDoc.ref.update({
             subscription: {
-              status: (currentStatus === 'active' || currentStatus === 'trialing') ? 'active' : currentStatus,
+              status: 'active', // Force 'active' for any success event
               plan,
               productId: product_id || null,
               subscriptionId: subscription_id || null,
@@ -77,7 +77,7 @@ export default async function handler(req, res) {
               updatedAt: new Date().toISOString(),
             },
           });
-          console.log(`[POLAR WEBHOOK] SUCCESS: Updated user ${customer_email} to status: active`);
+          console.log(`[POLAR WEBHOOK] SUCCESS: Updated user document ${userDoc.id} (${customer_email}) to status: active`);
         } else {
           console.warn(`[POLAR WEBHOOK] WARNING: User with email ${customer_email} not found in Firestore.`);
           // Diagnostic: log the first 5 users to see what's in there
