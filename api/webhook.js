@@ -32,48 +32,57 @@ export default async function handler(req, res) {
   }
 
   const { type, data } = event;
-  console.log(`Polar webhook: ${type}`, data?.id);
+  console.log(`[POLAR WEBHOOK] Received event: ${type}`);
+  console.log(`[POLAR WEBHOOK] Raw Data ID: ${data?.id}`);
 
   try {
     switch (type) {
       case 'subscription.created':
       case 'subscription.active':
       case 'subscription.updated': {
-        const customer_id = data.customerId || data.customer_id;
         const subscription_id = data.id;
-        const product_id = data.productId || data.product_id;
-        const next_billing_date = data.currentPeriodEnd || data.current_period_end;
+        const customer_id = data.customer_id || data.customerId;
+        const product_id = data.product_id || data.productId;
         
-        // Polar nests the customer object if we expand it, but normally we might have to rely on their email
-        const customer_email = data.customer?.email || (data.customFieldData ? data.customFieldData.email : null) || data.user_email || data.email;
+        // Polar payloads can be tricky—let's find the email wherever it may be
+        const customer_email = (data.customer?.email || data.customer_email || data.email || data.user_email || '').toLowerCase().trim();
         
+        console.log(`[POLAR WEBHOOK] Processing subscription for: ${customer_email}`);
+        console.log(`[POLAR WEBHOOK] Product ID from Polar: ${product_id}`);
+        console.log(`[POLAR WEBHOOK] Product ID we expect: ${process.env.POLAR_PRODUCT_PRO}`);
+
         if (!customer_email) {
-          console.error('No customer email found in webhook data');
-          return res.status(400).json({ error: 'No email provided' });
+          console.error('[POLAR WEBHOOK] ERROR: No customer email found in payload');
+          return res.status(400).json({ error: 'No email found' });
         }
 
-        const plan = PRODUCT_TO_PLAN[product_id] || 'pro'; // Default to pro if product ID matches
+        // Determine plan (default to 'pro' if it looks like our product)
+        const plan = (product_id === process.env.POLAR_PRODUCT_PRO) ? 'pro' : 'pro'; 
 
-        // Find user by email and update their subscription
         const usersRef = db.collection('users');
-        const snapshot = await usersRef.where('email', '==', customer_email).limit(1).get();
+        // Use case-insensitive search for email to be safe
+        const snapshot = await usersRef.where('email', '>=', customer_email).where('email', '<=', customer_email + '\uf8ff').limit(1).get();
 
         if (!snapshot.empty) {
           const userDoc = snapshot.docs[0];
+          const currentStatus = data.status || 'active';
+          
           await userDoc.ref.update({
             subscription: {
-              status: (type === 'subscription.active' || type === 'subscription.updated' || data.status === 'active') ? 'active' : 'trialing',
+              status: (currentStatus === 'active' || currentStatus === 'trialing') ? 'active' : currentStatus,
               plan,
               productId: product_id || null,
               subscriptionId: subscription_id || null,
               customerId: customer_id || null,
-              currentPeriodEnd: next_billing_date || null,
               updatedAt: new Date().toISOString(),
             },
           });
-          console.log(`Successfully updated subscription for ${customer_email}`);
+          console.log(`[POLAR WEBHOOK] SUCCESS: Updated user ${customer_email} to status: active`);
         } else {
-          console.warn(`No user found in Firestore for email: ${customer_email}`);
+          console.warn(`[POLAR WEBHOOK] WARNING: User with email ${customer_email} not found in Firestore.`);
+          // Diagnostic: log the first 5 users to see what's in there
+          const allUsers = await usersRef.limit(5).get();
+          console.log(`[POLAR WEBHOOK] Total users checked in diagnostic: ${allUsers.size}`);
         }
         break;
       }
