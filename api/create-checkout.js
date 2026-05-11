@@ -32,13 +32,18 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'SDK load error', details: importErr.message });
     }
 
-    const apiKey = process.env.POLAR_ACCESS_TOKEN;
+    const apiKey = process.env.POLAR_ACCESS_TOKEN?.trim();
     if (!apiKey) {
       return res.status(500).json({ error: 'POLAR_ACCESS_TOKEN env variable is not set' });
     }
 
+    // Detect if we are using a sandbox token
+    const isSandbox = apiKey.startsWith('polar_at_s_');
+    console.log(`Initializing Polar SDK (Mode: ${isSandbox ? 'Sandbox' : 'Production'})`);
+
     const polar = new Polar({
       accessToken: apiKey,
+      server: isSandbox ? 'sandbox' : 'production',
     });
 
     // Determine the redirect URL (Vercel provides VERCEL_URL for serverless functions)
