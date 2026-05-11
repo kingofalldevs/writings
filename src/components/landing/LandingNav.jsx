@@ -31,9 +31,9 @@ const LandingNav = ({ user, onAccountClick, onStart, onPricingClick, onAriaClick
         >
           <div className="transition-transform group-hover:scale-110">
             <svg width="32" height="28" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M2 9c5-5 13-5 14 0s9 5 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M2 14c5-5 13-5 14 0s9 5 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M2 19c5-5 13-5 14 0s9 5 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 5c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 12c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 19c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
           <span className="text-xl font-bold tracking-tight text-foreground">Writings</span>
