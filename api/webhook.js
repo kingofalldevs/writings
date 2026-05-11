@@ -61,23 +61,25 @@ export default async function handler(req, res) {
 
         const usersRef = db.collection('users');
         // Use case-insensitive search for email to be safe
-        const snapshot = await usersRef.where('email', '>=', customer_email).where('email', '<=', customer_email + '\uf8ff').limit(1).get();
+        const snapshot = await usersRef.where('email', '>=', customer_email).where('email', '<=', customer_email + '\uf8ff').get();
 
         if (!snapshot.empty) {
-          const userDoc = snapshot.docs[0];
-          const currentStatus = data.status || 'active';
-          
-          await userDoc.ref.update({
-            subscription: {
-              status: 'active', // Force 'active' for any success event
-              plan,
-              productId: product_id || null,
-              subscriptionId: subscription_id || null,
-              customerId: customer_id || null,
-              updatedAt: new Date().toISOString(),
-            },
+          const updatePromises = snapshot.docs.map(userDoc => {
+            console.log(`[POLAR WEBHOOK] Updating document: ${userDoc.id} for ${customer_email}`);
+            return userDoc.ref.update({
+              subscription: {
+                status: 'active',
+                plan,
+                productId: product_id || null,
+                subscriptionId: subscription_id || null,
+                customerId: customer_id || null,
+                updatedAt: new Date().toISOString(),
+              },
+            });
           });
-          console.log(`[POLAR WEBHOOK] SUCCESS: Updated user document ${userDoc.id} (${customer_email}) to status: active`);
+          
+          await Promise.all(updatePromises);
+          console.log(`[POLAR WEBHOOK] SUCCESS: Updated ${snapshot.size} user document(s) for ${customer_email}`);
         } else {
           console.warn(`[POLAR WEBHOOK] WARNING: User with email ${customer_email} not found in Firestore.`);
           // Diagnostic: log the first 5 users to see what's in there
