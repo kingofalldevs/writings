@@ -46,7 +46,7 @@ export default async function handler(req, res) {
     const host = req.headers.host || process.env.VERCEL_URL || 'localhost:3001';
     const appUrl = process.env.VITE_APP_URL || (host.includes('localhost') ? `http://${host}` : `${protocol}://${host}`);
 
-    const checkout = await polar.checkouts.custom.create({
+    const checkout = await polar.checkouts.create({
       productId: productId,
       customerEmail: userEmail,
       customerName: userName || userEmail.split('@')[0],
