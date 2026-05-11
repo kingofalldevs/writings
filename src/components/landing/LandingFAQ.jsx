@@ -30,13 +30,13 @@ const LandingFAQ = () => {
 
   return (
     <section className="relative w-full py-32 px-8 z-10 max-w-[1200px] mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr,2fr] gap-20">
+      <div className="flex flex-col items-center gap-16">
         {/* Section Title */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex flex-col gap-6"
+          className="flex flex-col items-center text-center gap-6 max-w-2xl mx-auto"
         >
           <h2 className="font-medium tracking-tight font-sans text-[clamp(40px,5vw,48px)] leading-[1.1] text-foreground">
             Frequently Asked <span className="text-accent italic">Questions.</span>
@@ -46,7 +46,7 @@ const LandingFAQ = () => {
           </p>
         </motion.div>
 
-        <div className="w-full flex flex-col gap-4">
+        <div className="w-full max-w-3xl flex flex-col gap-4 mx-auto">
           {faqs.map((faq, index) => (
             <motion.div
               key={index}
