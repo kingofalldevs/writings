@@ -40,8 +40,8 @@ export default async function handler(req, res) {
     // Safe diagnostic logging (doesn't leak full token)
     console.log(`Diagnostic: Token Prefix="${apiKey.substring(0, 12)}...", Length=${apiKey.length}`);
 
-    // Detect if we are using a sandbox token
-    const isSandbox = apiKey.startsWith('polar_at_s_');
+    // Detect if we are using a sandbox token or explicit environment
+    const isSandbox = apiKey.startsWith('polar_at_s_') || process.env.POLAR_ENVIRONMENT === 'sandbox';
     console.log(`Initializing Polar SDK (Mode: ${isSandbox ? 'Sandbox' : 'Production'})`);
 
     const polar = new Polar({

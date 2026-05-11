@@ -13,8 +13,8 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'POLAR_ACCESS_TOKEN env variable is not set' });
     }
 
-    // Detect if we are using a sandbox token
-    const isSandbox = apiKey.startsWith('polar_at_s_');
+    // Detect if we are using a sandbox token or explicit environment
+    const isSandbox = apiKey.startsWith('polar_at_s_') || process.env.POLAR_ENVIRONMENT === 'sandbox';
     
     let Polar;
     try {
