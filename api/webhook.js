@@ -19,13 +19,12 @@ export default async function handler(req, res) {
     return res.status(405).end('Method Not Allowed');
   }
 
-  // Map Dodo plan/product ID to our internal plan slug
+  // Map Polar product ID to our internal plan slug
   const PRODUCT_TO_PLAN = {
-    [process.env.DODO_PRODUCT_PRO]: 'pro',
+    [process.env.POLAR_PRODUCT_PRO]: 'pro',
   };
 
   // Vercel serverless functions automatically parse the JSON body.
-  // We use req.body directly to avoid stream consumption issues.
   const event = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
   if (!event || !event.type) {
@@ -33,17 +32,20 @@ export default async function handler(req, res) {
   }
 
   const { type, data } = event;
-  console.log(`Dodo webhook: ${type}`, data?.subscription_id);
+  console.log(`Polar webhook: ${type}`, data?.id);
 
   try {
     switch (type) {
       case 'subscription.created':
       case 'subscription.active':
       case 'subscription.updated': {
-        const { customer_id, subscription_id, product_id, next_billing_date } = data;
+        const customer_id = data.customerId || data.customer_id;
+        const subscription_id = data.id;
+        const product_id = data.productId || data.product_id;
+        const next_billing_date = data.currentPeriodEnd || data.current_period_end;
         
-        // Robust email detection (Dodo might nest this)
-        const customer_email = data.customer_email || data.customer?.email || data.email;
+        // Polar nests the customer object if we expand it, but normally we might have to rely on their email
+        const customer_email = data.customer?.email || (data.customFieldData ? data.customFieldData.email : null) || data.user_email || data.email;
         
         if (!customer_email) {
           console.error('No customer email found in webhook data');
@@ -60,7 +62,7 @@ export default async function handler(req, res) {
           const userDoc = snapshot.docs[0];
           await userDoc.ref.update({
             subscription: {
-              status: (type === 'subscription.active' || type === 'subscription.updated') ? 'active' : 'trialing',
+              status: (type === 'subscription.active' || type === 'subscription.updated' || data.status === 'active') ? 'active' : 'trialing',
               plan,
               productId: product_id || null,
               subscriptionId: subscription_id || null,
@@ -76,9 +78,13 @@ export default async function handler(req, res) {
         break;
       }
 
-      case 'subscription.cancelled':
-      case 'subscription.expired': {
-        const { subscription_id, customer_email } = data;
+      case 'subscription.canceled':
+      case 'subscription.revoked': {
+        const subscription_id = data.id;
+        const customer_email = data.customer?.email || data.email;
+        
+        if (!customer_email) break;
+        
         const usersRef = db.collection('users');
         const snapshot = await usersRef.where('email', '==', customer_email).limit(1).get();
 
@@ -91,22 +97,8 @@ export default async function handler(req, res) {
         break;
       }
 
-      case 'subscription.on_hold': {
-        const { customer_email } = data;
-        const usersRef = db.collection('users');
-        const snapshot = await usersRef.where('email', '==', customer_email).limit(1).get();
-
-        if (!snapshot.empty) {
-          await snapshot.docs[0].ref.update({
-            'subscription.status': 'past_due',
-            'subscription.updatedAt': new Date().toISOString(),
-          });
-        }
-        break;
-      }
-
       default:
-        console.log(`Unhandled Dodo event: ${type}`);
+        console.log(`Unhandled Polar event: ${type}`);
     }
 
     return res.status(200).json({ received: true });

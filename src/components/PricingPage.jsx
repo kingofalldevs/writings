@@ -288,7 +288,7 @@ const PricingPage = ({ onStart, onBack, onPricing, onAria, onPhilosophy, onTerms
           transition={{ delay: 0.5 }}
           style={{ marginTop: '48px', fontSize: '13px', opacity: 0.35, textAlign: 'center' }}
         >
-          Payments processed securely by Dodo Payments · Cancel anytime · No hidden fees
+          Payments processed securely by Polar.sh · Cancel anytime · No hidden fees
         </motion.p>
       </main>
 

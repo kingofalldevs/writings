@@ -1,5 +1,3 @@
-import DodoPayments from 'dodopayments';
-
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
@@ -10,25 +8,32 @@ export default async function handler(req, res) {
   try {
     let { customerId, userEmail } = req.body || {};
 
-    const apiKey = process.env.DODO_API_KEY;
+    const apiKey = process.env.POLAR_ACCESS_TOKEN;
     if (!apiKey) {
-      return res.status(500).json({ error: 'DODO_API_KEY env variable is not set' });
+      return res.status(500).json({ error: 'POLAR_ACCESS_TOKEN env variable is not set' });
     }
 
-    const client = new DodoPayments({
-      bearerToken: apiKey,
-      environment: process.env.DODO_ENVIRONMENT || 'test_mode',
+    let Polar;
+    try {
+      const mod = await import('@polar-sh/sdk');
+      Polar = mod.Polar;
+    } catch (importErr) {
+      console.error('SDK import failed:', importErr.message);
+      return res.status(500).json({ error: 'SDK load error', details: importErr.message });
+    }
+
+    const polar = new Polar({
+      accessToken: apiKey,
     });
 
     // If customerId is missing, try to find it by email
     if (!customerId && userEmail) {
       console.log(`Searching for customer by email: ${userEmail}`);
-      const customers = await client.customers.list({ email: userEmail });
+      const customers = await polar.customers.list({ email: userEmail });
       
-      // PagePromise usually has an 'items' array or similar
       const customer = customers.items?.find(c => c.email === userEmail);
       if (customer) {
-        customerId = customer.customer_id;
+        customerId = customer.id;
         console.log(`Found customerId: ${customerId} for ${userEmail}`);
       }
     }
@@ -38,19 +43,21 @@ export default async function handler(req, res) {
     }
 
     // Create a customer portal session
-    const session = await client.customers.customerPortal.create(customerId);
+    const session = await polar.customerSessions.create({
+      customerId: customerId,
+    });
 
-    if (!session || !session.link) {
+    if (!session || !session.customerPortalUrl) {
       return res.status(500).json({
         error: 'Failed to generate portal link',
         response: session,
       });
     }
 
-    return res.status(200).json({ portalUrl: session.link });
+    return res.status(200).json({ portalUrl: session.customerPortalUrl });
 
   } catch (error) {
-    console.error('Dodo Portal error:', error);
+    console.error('Polar Portal error:', error);
     return res.status(500).json({
       error: 'Portal access failed',
       details: error?.message || String(error),

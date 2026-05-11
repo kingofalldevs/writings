@@ -85,7 +85,7 @@ const PricingModal = ({ isOpen, onClose }) => {
       if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       } else {
-        // Show the real Dodo error so we can debug it
+        // Show the real Polar error so we can debug it
         const msg = data.details || data.error || 'Failed to start checkout.';
         alert(`Checkout error: ${msg}`);
       }
@@ -211,7 +211,7 @@ const PricingModal = ({ isOpen, onClose }) => {
             ))}
           </div>
           
-          <p className="text-center text-xs text-muted mt-8">Secure payments via Dodo Payments. Cancel anytime.</p>
+          <p className="text-center text-xs text-muted mt-8">Secure payments via Polar.sh. Cancel anytime.</p>
         </motion.div>
       </motion.div>
     </AnimatePresence>
