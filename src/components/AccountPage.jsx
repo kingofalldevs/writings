@@ -6,6 +6,7 @@ import LandingFooter from './landing/LandingFooter';
 
 const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) => {
   const [loadingPortal, setLoadingPortal] = React.useState(false);
+  const [loadingSync, setLoadingSync] = React.useState(false);
 
   const handleManageBilling = async () => {
     const customerId = user?.subscription?.customerId;
@@ -35,7 +36,43 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
         'Unable to open the billing portal. Please try again later or contact support.', 
         'error'
       );
+    } finally {
       setLoadingPortal(false);
+    }
+  };
+
+  const handleSyncSubscription = async () => {
+    setLoadingSync(true);
+    try {
+      const response = await fetch('/api/sync-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email: user?.email,
+          uid: user?.uid 
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showNotif(
+          'Sync Successful', 
+          'Your Pro status has been restored. Happy writing!', 
+          'success'
+        );
+      } else {
+        throw new Error(data.error || 'No active subscription found.');
+      }
+    } catch (err) {
+      console.error('Sync error:', err);
+      showNotif(
+        'Sync Failed', 
+        err.message || 'Unable to sync subscription. Please ensure you have an active plan on Polar.', 
+        'error'
+      );
+    } finally {
+      setLoadingSync(false);
     }
   };
 
@@ -130,7 +167,7 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
                     : "You're currently exploring the calm basics. Upgrade to Writings Pro for unlimited AI assistance, binaural soundscapes, and advanced manuscript exports."}
                 </p>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-4">
                   <button 
                     onClick={user?.subscription?.status === 'active' ? handleManageBilling : onPricing}
                     disabled={loadingPortal}
@@ -139,8 +176,12 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
                     {loadingPortal ? 'Opening Portal...' : (user?.subscription?.status === 'active' ? 'Manage Subscription' : 'Explore Pro Plans')}
                   </button>
                   {user?.subscription?.status !== 'active' && (
-                    <button className="px-8 py-4 rounded-full border border-foreground/10 hover:bg-foreground/5 transition-all text-sm font-bold">
-                      View Benefits
+                    <button 
+                      onClick={handleSyncSubscription}
+                      disabled={loadingSync}
+                      className="px-8 py-4 rounded-full border border-foreground/10 hover:bg-foreground/5 transition-all text-sm font-bold flex items-center gap-2"
+                    >
+                      {loadingSync ? 'Syncing...' : 'Sync Subscription'}
                     </button>
                   )}
                 </div>
