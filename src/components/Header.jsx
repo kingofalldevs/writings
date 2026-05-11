@@ -92,9 +92,9 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
       >
         <div className="flex items-center justify-center w-6 h-6 transition-transform group-hover:scale-110">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 6c3-9 9-9 9 0s6 9 9 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M3 12c3-9 9-9 9 0s6 9 9 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M3 18c3-9 9-9 9 0s6 9 9 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 9c4-4 10-4 10 0s6 4 10 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 14c4-4 10-4 10 0s6 4 10 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 19c4-4 10-4 10 0s6 4 10 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
         </div>
         <span className="text-lg md:text-xl font-medium tracking-tight">Writings</span>
