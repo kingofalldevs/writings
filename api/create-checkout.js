@@ -47,7 +47,7 @@ export default async function handler(req, res) {
     const appUrl = process.env.VITE_APP_URL || (host.includes('localhost') ? `http://${host}` : `${protocol}://${host}`);
 
     const checkout = await polar.checkouts.create({
-      productId: productId,
+      products: [productId],
       customerEmail: userEmail,
       customerName: userName || userEmail.split('@')[0],
       successUrl: `${appUrl}/?payment=success&plan=${planId}`,
