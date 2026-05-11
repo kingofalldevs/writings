@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, Volume2, Music, ChevronUp, X } from 'lucide-react';
 import { motion } from 'framer-motion';

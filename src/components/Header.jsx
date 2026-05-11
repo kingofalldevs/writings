@@ -1,12 +1,12 @@
+'use client';
 import React from 'react';
 import { Upload, Sparkles, Menu, LogOut, User, Sun, Moon, Coffee, FilePlus, Library, Music, Columns, Share2, ExternalLink, Globe, Palette, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import * as pdfjsLib from 'pdfjs-dist';
 
-// More reliable worker setup for Vite
-import pdfWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
+// Use CDN for worker in Next.js
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
   const Header = ({ 
     onUpload, 

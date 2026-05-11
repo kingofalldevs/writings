@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
@@ -29,17 +31,25 @@ import { collection, addDoc, updateDoc, doc, setDoc, serverTimestamp, onSnapshot
 import { tracks } from './data/tracks';
 
 function AppContent() {
-  const [view, setView] = useState(() => {
-    const path = window.location.pathname.toLowerCase();
-    if (path.includes('/terms')) return 'terms';
-    if (path.includes('/privacy')) return 'privacy';
-    if (path.includes('/refund')) return 'refund';
-    if (path.includes('/pricing')) return 'pricing';
-    if (path.includes('/aria')) return 'aria';
-    if (path.includes('/philosophy')) return 'philosophy';
-    if (path.includes('/editor')) return 'editor';
-    return 'landing';
-  }); // 'landing', 'pricing', 'aria', 'philosophy', 'dashboard', 'editor', 'account', 'portfolio-editor', 'terms', 'privacy'
+  const router = useRouter();
+  const pathname = usePathname();
+  
+  const [view, setView] = useState('landing');
+
+  useEffect(() => {
+    const path = pathname.toLowerCase();
+    if (path.includes('/terms')) setView('terms');
+    else if (path.includes('/privacy')) setView('privacy');
+    else if (path.includes('/refund')) setView('refund');
+    else if (path.includes('/pricing')) setView('pricing');
+    else if (path.includes('/aria')) setView('aria');
+    else if (path.includes('/philosophy')) setView('philosophy');
+    else if (path.includes('/editor')) setView('editor');
+    else if (path.includes('/dashboard')) setView('dashboard');
+    else if (path.includes('/account')) setView('account');
+    else if (path.includes('/portfolio-editor')) setView('portfolio-editor');
+    else setView('landing');
+  }, [pathname]);
 
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [isAIOpen, setIsAIOpen] = useState(false);
@@ -52,7 +62,7 @@ function AppContent() {
   const [currentWorkId, setCurrentWorkId] = useState(null);
   const [currentWorkName, setCurrentWorkName] = useState('');
   const [isNamingModalOpen, setIsNamingModalOpen] = useState(false);
-  const [isBinderOpen, setIsBinderOpen] = useState(window.innerWidth > 768);
+  const [isBinderOpen, setIsBinderOpen] = useState(false); // initialized after mount
   const [notif, setNotif] = useState({ isOpen: false, title: '', message: '', type: 'success', copyText: null, onConfirm: null, confirmText: 'Got it', cancelText: 'Cancel' });
   const { user, logout, loading } = useAuth();
 
@@ -60,6 +70,11 @@ function AppContent() {
     setNotif({ isOpen: true, title, message, type, copyText: extras.copyText || null, onConfirm: extras.onConfirm || null, confirmText: extras.confirmText || 'Got it', cancelText: extras.cancelText || 'Cancel' });
   };
   const closeNotif = () => setNotif(n => ({ ...n, isOpen: false }));
+
+  // Initialize binder open state based on screen size after mount
+  React.useEffect(() => {
+    setIsBinderOpen(window.innerWidth > 768);
+  }, []);
 
   // Keyboard shortcuts for Zen Mode
   React.useEffect(() => {
@@ -158,19 +173,47 @@ function AppContent() {
     }
   }, [user]);
 
-  // Redirect to dashboard when logged in
-  React.useEffect(() => {
-    if (!loading && user && (view === 'landing' || view === 'pricing' || view === 'aria' || view === 'philosophy')) {
-      handleNavigate('dashboard');
+  // Redirect public landing pages to their standalone Next.js routes
+  useEffect(() => {
+    const path = pathname.toLowerCase();
+    const publicRoutes = ['/terms', '/privacy', '/refund', '/pricing', '/aria', '/philosophy'];
+    const isPublic = publicRoutes.some(r => path.startsWith(r));
+    // If we're on a public route, let the dedicated Next.js page handle it
+    // If we're on / or the root, redirect to /dashboard if logged in, otherwise stay
+    if (path === '/' && !loading && user) {
+      router.push('/dashboard');
     }
-  }, [user, loading, view]);
+
+    // If we're on a protected route and not logged in, redirect to home
+    const protectedRoutes = ['/dashboard', '/editor', '/account', '/portfolio-editor'];
+    const isProtected = protectedRoutes.some(r => path.startsWith(r));
+    if (isProtected && !loading && !user) {
+      router.push('/');
+    }
+  }, [pathname, user, loading, router]);
 
   const handleNavigate = (newView) => {
-    let path = '/';
-    if (newView !== 'landing' && newView !== 'dashboard' && newView !== 'editor' && newView !== 'account' && newView !== 'portfolio-editor') {
-      path = `/${newView}`;
+    const publicRoutes = {
+      landing: '/',
+      pricing: '/pricing',
+      aria: '/aria',
+      philosophy: '/philosophy',
+      terms: '/terms',
+      privacy: '/privacy',
+      refund: '/refund',
+    };
+    
+    if (publicRoutes[newView]) {
+      router.push(publicRoutes[newView]);
+      return;
     }
-    window.history.pushState({}, '', path);
+    
+    let path = '/dashboard';
+    if (newView === 'editor') path = '/editor';
+    else if (newView === 'account') path = '/account';
+    else if (newView === 'portfolio-editor') path = '/portfolio-editor';
+    
+    router.push(path);
     setView(newView);
   };
 
@@ -181,6 +224,8 @@ function AppContent() {
       setIsAuthModalOpen(true);
     }
   };
+
+
 
   const handleEditorFocus = () => {
     if (!currentWorkId && !currentWorkName && editorContent === '') {
@@ -472,7 +517,7 @@ function AppContent() {
         timestamp: serverTimestamp()
       });
 
-      const shareUrl = `${window.location.origin}/?author=${portfolioData.username.toLowerCase()}`;
+      const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/author/${portfolioData.username.toLowerCase()}`;
       navigator.clipboard.writeText(shareUrl);
       showNotif('Portfolio updated!', 'Your portfolio is live. Link copied to clipboard.', 'success', { copyText: shareUrl });
     } catch (e) {
@@ -511,7 +556,7 @@ function AppContent() {
         timestamp: serverTimestamp()
       });
 
-      const shareUrl = `${window.location.origin}/?author=${username.toLowerCase()}`;
+      const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/author/${username.toLowerCase()}`;
       navigator.clipboard.writeText(shareUrl);
       showNotif('Portfolio is live! 🎉', 'Your author page is published. Link copied to clipboard.', 'success', { copyText: shareUrl });
     } catch (e) {
@@ -568,13 +613,14 @@ function AppContent() {
 
   // Check for payment success in URL
   React.useEffect(() => {
+    if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     if (params.get('payment') === 'success') {
       showNotif('Welcome to Writings Pro!', 'Your subscription is active and your features are being unlocked.', 'success');
       // Clean up the URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, [showNotif]);
+  }, []);
 
   // Auto-save logic
   React.useEffect(() => {
@@ -873,19 +919,7 @@ function AppContent() {
 }
 
 function App() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const shareId = urlParams.get('share');
-  const authorUsername = urlParams.get('author');
-
-  return (
-    <AuthProvider>
-      <ThemeProvider>
-        {authorUsername ? <AuthorPortfolio authorUsername={authorUsername} /> :
-          shareId ? <SharedNovelView shareId={shareId} /> :
-            <AppContent />}
-      </ThemeProvider>
-    </AuthProvider>
-  );
+  return <AppContent />;
 }
 
 export default App;

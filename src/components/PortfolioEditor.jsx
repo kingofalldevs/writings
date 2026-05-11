@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Save, ArrowLeft, Globe, Edit3, Sparkles, Share2, ExternalLink, Link as LinkIcon, BookOpen, Mail, User } from 'lucide-react';
@@ -5,8 +6,10 @@ import LandingNav from './landing/LandingNav';
 import LandingFooter from './landing/LandingFooter';
 import { db } from '../firebase';
 import { doc, getDoc, setDoc, serverTimestamp, getDocs, collection, query } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
 
 const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [publishing, setPublishing] = useState(false);
   const [formData, setFormData] = useState({
@@ -17,6 +20,7 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
     themeFont: 'serif',
     accentColor: '#72B9AA',
     profileImage: '',
+    bannerImage: '',
     socialTwitter: '',
     socialSubstack: '',
     socialWeb: ''
@@ -40,6 +44,7 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
             themeFont: data.themeFont || 'serif',
             accentColor: data.accentColor || '#72B9AA',
             profileImage: data.profileImage || '',
+            bannerImage: data.bannerImage || '',
             socialTwitter: data.socialTwitter || '',
             socialSubstack: data.socialSubstack || '',
             socialWeb: data.socialWeb || ''
@@ -53,9 +58,12 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
             themeFont: 'serif',
             accentColor: '#72B9AA',
             profileImage: '',
+            bannerImage: '',
             socialTwitter: '',
             socialSubstack: '',
-            socialWeb: ''
+            socialWeb: '',
+            socialLinkedin: '',
+            socialMedium: ''
           });
         }
       } catch (err) {
@@ -66,6 +74,35 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
     };
     fetchExisting();
   }, [user]);
+
+  const compressImage = (base64Str, maxWidth = 1200, maxHeight = 800) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = base64Str;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.6)); // Compress to JPEG with 0.6 quality
+      };
+    });
+  };
 
   const handlePublish = async () => {
     if (!user) return;
@@ -83,9 +120,12 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
         themeFont: formData.themeFont,
         accentColor: formData.accentColor,
         profileImage: formData.profileImage,
+        bannerImage: formData.bannerImage,
         socialTwitter: formData.socialTwitter,
         socialSubstack: formData.socialSubstack,
         socialWeb: formData.socialWeb,
+        socialLinkedin: formData.socialLinkedin,
+        socialMedium: formData.socialMedium,
         works: works,
         timestamp: serverTimestamp()
       });
@@ -111,7 +151,15 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <LandingNav user={user} onStart={onStart} onHomeClick={onBack} onAccountClick={() => {}} onPricingClick={() => {}} />
+      <LandingNav 
+        user={user} 
+        onStart={onStart} 
+        onHomeClick={() => router.push('/')}
+        onAccountClick={() => router.push('/account')}
+        onPricingClick={() => router.push('/pricing')}
+        onAriaClick={() => router.push('/aria')}
+        onPhilosophyClick={() => router.push('/philosophy')}
+      />
 
       <main className="flex-grow pt-32 px-8 pb-32">
         <div className="max-w-6xl mx-auto">
@@ -129,7 +177,7 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
             
             <div className="flex items-center gap-4">
                <button 
-                onClick={() => window.open(`/?author=${formData.username}`, '_blank')}
+                onClick={() => window.open(`/author/${formData.username}`, '_blank')}
                 className="flex items-center gap-2 px-6 py-3 rounded-full border border-foreground/10 hover:bg-foreground/5 transition-all text-sm font-bold"
                >
                  <Globe size={18} />
@@ -155,18 +203,18 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
                    <h2 className="text-xs font-bold tracking-[0.3em] uppercase">Core Profile</h2>
                  </div>
                  
-                 <div className="space-y-8 p-8 rounded-4xl border border-foreground/5 bg-card/30 backdrop-blur-sm">
+                  <div className="space-y-8 p-8 rounded-4xl border border-foreground/5 bg-card/30 backdrop-blur-sm">
                      {/* Profile Photo Upload */}
                      <div className="flex flex-col md:flex-row items-center gap-8 mb-4 pb-8 border-b border-foreground/5">
                         <div className="relative group">
-                          <div className="w-24 h-24 rounded-2xl bg-foreground/5 overflow-hidden border border-foreground/10 flex items-center justify-center">
+                          <div className="w-24 h-24 rounded-full bg-foreground/5 overflow-hidden border border-foreground/10 flex items-center justify-center">
                              {formData.profileImage ? (
                                <img src={formData.profileImage} alt="Profile" className="w-full h-full object-cover" />
                              ) : (
                                <User size={32} className="opacity-20" />
                              )}
                           </div>
-                          <label className="absolute inset-0 flex items-center justify-center bg-background/80 opacity-0 group-hover:opacity-100 transition-all cursor-pointer rounded-2xl">
+                          <label className="absolute inset-0 flex items-center justify-center bg-background/80 opacity-0 group-hover:opacity-100 transition-all cursor-pointer rounded-full">
                              <span className="text-[10px] font-bold uppercase tracking-widest">Change</span>
                              <input 
                                type="file" 
@@ -176,8 +224,9 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
                                  const file = e.target.files[0];
                                  if (file) {
                                    const reader = new FileReader();
-                                   reader.onloadend = () => {
-                                     setFormData(prev => ({ ...prev, profileImage: reader.result }));
+                                   reader.onloadend = async () => {
+                                     const compressed = await compressImage(reader.result, 400, 400);
+                                     setFormData(prev => ({ ...prev, profileImage: compressed }));
                                    };
                                    reader.readAsDataURL(file);
                                  }
@@ -194,6 +243,51 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
                                className="text-[10px] font-bold text-red-500 uppercase tracking-widest mt-3 hover:underline"
                              >
                                Remove Photo
+                             </button>
+                           )}
+                        </div>
+                     </div>
+
+                     {/* Banner Photo Upload */}
+                     <div className="flex flex-col gap-6 mb-4 pb-8 border-b border-foreground/5">
+                        <div className="flex-grow">
+                           <h3 className="text-sm font-bold tracking-tight mb-1">Portfolio Banner</h3>
+                           <p className="text-xs opacity-40 text-left">This image will appear at the top of your portfolio behind your profile picture.</p>
+                        </div>
+                        <div className="relative group w-full h-40 rounded-3xl bg-foreground/5 overflow-hidden border border-foreground/10 flex items-center justify-center">
+                           {formData.bannerImage ? (
+                             <img src={formData.bannerImage} alt="Banner" className="w-full h-full object-cover" />
+                           ) : (
+                             <div className="flex flex-col items-center gap-2 opacity-20">
+                               <Sparkles size={32} />
+                               <span className="text-[10px] font-bold uppercase tracking-widest">No Banner Set</span>
+                             </div>
+                           )}
+                           <label className="absolute inset-0 flex items-center justify-center bg-background/80 opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
+                              <span className="text-[10px] font-bold uppercase tracking-widest">Change Banner Image</span>
+                              <input 
+                                type="file" 
+                                accept="image/*" 
+                                className="hidden" 
+                                onChange={(e) => {
+                                  const file = e.target.files[0];
+                                  if (file) {
+                                    const reader = new FileReader();
+                                    reader.onloadend = async () => {
+                                      const compressed = await compressImage(reader.result, 1600, 900);
+                                      setFormData(prev => ({ ...prev, bannerImage: compressed }));
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }
+                                }}
+                              />
+                           </label>
+                           {formData.bannerImage && (
+                             <button 
+                               onClick={() => setFormData(prev => ({ ...prev, bannerImage: '' }))}
+                               className="absolute top-4 right-4 p-2 rounded-full bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all z-20"
+                             >
+                               <span className="text-[10px] font-bold uppercase tracking-widest px-2">Remove</span>
                              </button>
                            )}
                         </div>
@@ -301,7 +395,7 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
                  </div>
                  
                  <div className="space-y-6 p-8 rounded-4xl border border-foreground/5 bg-card/30 backdrop-blur-sm">
-                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                      <div className="space-y-2">
                        <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">X (Twitter)</label>
                        <input 
@@ -332,6 +426,26 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
                          placeholder="yourdomain.com"
                        />
                      </div>
+                     <div className="space-y-2">
+                       <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">LinkedIn</label>
+                       <input 
+                         type="text"
+                         value={formData.socialLinkedin}
+                         onChange={(e) => setFormData({...formData, socialLinkedin: e.target.value})}
+                         className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 ring-accent/50 transition-all text-sm"
+                         placeholder="linkedin.com/in/username"
+                       />
+                     </div>
+                     <div className="space-y-2">
+                       <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Medium</label>
+                       <input 
+                         type="text"
+                         value={formData.socialMedium}
+                         onChange={(e) => setFormData({...formData, socialMedium: e.target.value})}
+                         className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 ring-accent/50 transition-all text-sm"
+                         placeholder="medium.com/@username"
+                       />
+                     </div>
                    </div>
                  </div>
                </section>
@@ -346,16 +460,22 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
                  </div>
                  
                  <div className="rounded-4xl border border-foreground/10 bg-background overflow-hidden aspect-[3/4] relative flex flex-col shadow-2xl">
-                    <div className="p-12 text-center flex-grow flex flex-col justify-center items-center" style={{ fontFamily: formData.themeFont === 'serif' ? "'Playfair Display', serif" : 'sans-serif' }}>
+                    {/* Banner Preview */}
+                    <div className="w-full h-32 bg-foreground/5 relative overflow-hidden">
+                       {formData.bannerImage && (
+                         <img src={formData.bannerImage} alt="Banner Preview" className="w-full h-full object-cover" />
+                       )}
+                       <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-60" />
+                    </div>
+
+                    <div className="p-12 text-center flex-grow flex flex-col justify-start items-center -mt-16 relative z-10" style={{ fontFamily: formData.themeFont === 'serif' ? "'Playfair Display', serif" : 'sans-serif' }}>
                        {formData.profileImage && (
-                         <div className="w-20 h-20 rounded-2xl overflow-hidden mb-6 mx-auto border border-foreground/10">
+                         <div className="w-24 h-24 rounded-full overflow-hidden mb-6 mx-auto border-4 border-background shadow-lg">
                             <img src={formData.profileImage} alt="Preview" className="w-full h-full object-cover" />
                          </div>
                        )}
-                       <h1 className="text-4xl font-bold mb-6 tracking-tight leading-tight">
-                        {formData.authorName || 'Your Name'}
-                      </h1>
-                      <p className="text-lg text-foreground/80 italic mb-8 leading-relaxed max-w-sm">
+
+                      <p className="text-xl text-foreground font-serif italic mb-8 leading-relaxed max-w-sm mx-auto">
                         "{formData.bio || 'Your bio will appear here...'}"
                       </p>
                       <div className="flex flex-col items-center gap-4">
@@ -384,7 +504,11 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
         </div>
       </main>
 
-      <LandingFooter />
+      <LandingFooter 
+        onTerms={() => router.push('/terms')} 
+        onPrivacy={() => router.push('/privacy')} 
+        onRefund={() => router.push('/refund')} 
+      />
     </div>
   );
 };

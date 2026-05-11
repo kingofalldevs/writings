@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Folder, Plus, Globe, Clock, LayoutDashboard, Search } from 'lucide-react';
@@ -159,7 +160,7 @@ const Dashboard = ({ user, onCreateArticle, onCreateStory, onOpenWork, onPortfol
                   </div>
                   <div className="flex items-center gap-1.5 text-xs opacity-40 font-medium">
                     <Clock size={12} />
-                    {work.timestamp?.toDate().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                    {work.timestamp?.toDate ? work.timestamp.toDate().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'Just now'}
                   </div>
                 </div>
                 <h4 className="font-bold text-lg truncate mb-1">{work.name}</h4>

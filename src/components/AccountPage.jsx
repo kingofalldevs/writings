@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { User, CreditCard, Shield, LogOut, ArrowLeft, Mail, Crown, Settings, Key, Receipt } from 'lucide-react';

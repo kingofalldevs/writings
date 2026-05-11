@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import LandingNav from './landing/LandingNav';
 import LandingProduct from './landing/LandingProduct';

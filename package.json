@@ -4,15 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev:api": "vercel dev",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@polar-sh/sdk": "^0.47.1",
+    "@tailwindcss/postcss": "^4.3.0",
     "@tailwindcss/vite": "^4.2.4",
     "dodopayments": "^2.31.1",
     "firebase": "^12.12.1",
@@ -20,6 +20,7 @@
     "framer-motion": "^12.38.0",
     "groq-sdk": "^1.1.2",
     "lucide-react": "^1.14.0",
+    "next": "^16.2.6",
     "pdfjs-dist": "^5.7.284",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"
@@ -35,7 +36,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "firebase-tools": "^15.16.0",
     "globals": "^17.5.0",
-    "postcss": "^8.5.13",
+    "postcss": "^8.5.14",
     "tailwindcss": "^4.2.4",
     "vercel": "^53.3.1",
     "vite": "^8.0.10"

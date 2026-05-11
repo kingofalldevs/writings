@@ -29,3 +29,6 @@ dist-ssr
 *.sw?
 .vercel
 .env*.local
+.next/
+build_output.txt
+out/

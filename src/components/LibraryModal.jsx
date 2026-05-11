@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { X, Headphones, FileText, Clock, Trash2 } from 'lucide-react';
 import { tracks } from '../data/tracks';

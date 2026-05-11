@@ -1,10 +1,10 @@
+'use client';
 import React, { useRef } from 'react';
 import { FilePlus, Upload, Library, Sparkles } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 
-// More reliable worker setup for Vite
-import pdfWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
+// Use CDN for worker in Next.js to avoid build issues
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
 const Editor = ({ content, onChange, onFocus, user, onOpenLibrary, onUpload, isSelected }) => {
   const fileInputRef = useRef(null);

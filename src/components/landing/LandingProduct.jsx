@@ -1,12 +1,10 @@
+'use client';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Focus, Sparkles, LineChart } from 'lucide-react';
 
-import darkModeImg from '../../assets/screenshots/dark-mode.png';
-import lightModeImg from '../../assets/screenshots/light-mode.png';
-import sepiaModeImg from '../../assets/screenshots/sepia-mode.png';
-import mobileShowcaseImg from '../../assets/screenshots/mobile-showcase.png';
-import desktopShowcaseImg from '../../assets/screenshots/desktop-showcase.png';
+const desktopShowcaseImg = '/images/desktop-showcase.png';
+const mobileShowcaseImg = '/images/mobile-showcase.png';
 
 const LandingProduct = () => {
   return (
