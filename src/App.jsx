@@ -3,6 +3,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
 import Editor from './components/Editor';
+import Dashboard from './components/Dashboard';
 import AudioPlayer from './components/AudioPlayer';
 import LibraryModal from './components/LibraryModal';
 import AICompanion from './components/AICompanion';
@@ -36,8 +37,9 @@ function AppContent() {
     if (path.includes('/pricing')) return 'pricing';
     if (path.includes('/aria')) return 'aria';
     if (path.includes('/philosophy')) return 'philosophy';
+    if (path.includes('/editor')) return 'editor';
     return 'landing';
-  }); // 'landing', 'pricing', 'aria', 'philosophy', 'dashboard', 'account', 'portfolio-editor', 'terms', 'privacy'
+  }); // 'landing', 'pricing', 'aria', 'philosophy', 'dashboard', 'editor', 'account', 'portfolio-editor', 'terms', 'privacy'
 
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [isAIOpen, setIsAIOpen] = useState(false);
@@ -165,7 +167,7 @@ function AppContent() {
 
   const handleNavigate = (newView) => {
     let path = '/';
-    if (newView !== 'landing' && newView !== 'dashboard' && newView !== 'account' && newView !== 'portfolio-editor') {
+    if (newView !== 'landing' && newView !== 'dashboard' && newView !== 'editor' && newView !== 'account' && newView !== 'portfolio-editor') {
       path = `/${newView}`;
     }
     window.history.pushState({}, '', path);
@@ -300,6 +302,93 @@ function AppContent() {
     } catch (e) {
       console.error("Error adding item: ", e);
     }
+  };
+
+  const handleCreateArticle = async () => {
+    if (!user) return;
+    try {
+      const docRef = await addDoc(collection(db, 'users', user.uid, 'works'), {
+        name: 'Untitled Article',
+        content: '',
+        type: 'document',
+        section: 'ideabase',
+        parentId: null,
+        timestamp: serverTimestamp()
+      });
+      setCurrentWorkId(docRef.id);
+      setCurrentWorkName('Untitled Article');
+      setSelectedItemId(docRef.id);
+      setEditorContent('');
+      handleNavigate('editor');
+    } catch (e) {
+      console.error("Error creating article: ", e);
+    }
+  };
+
+  const handleCreateStory = async () => {
+    if (!user) return;
+    const ideaName = prompt("Enter Story Name:", `Idea ${binderData.ideabase.length + 1}`);
+    if (!ideaName) return;
+
+    try {
+      const ideaRef = await addDoc(collection(db, 'users', user.uid, 'works'), {
+        name: ideaName,
+        type: 'folder',
+        section: 'ideabase',
+        parentId: null,
+        timestamp: serverTimestamp()
+      });
+
+      const storyRef = await addDoc(collection(db, 'users', user.uid, 'works'), {
+        name: 'Storyline',
+        type: 'document',
+        content: '',
+        section: 'ideabase',
+        parentId: ideaRef.id,
+        timestamp: serverTimestamp()
+      });
+
+      await addDoc(collection(db, 'users', user.uid, 'works'), {
+        name: 'Characters',
+        type: 'folder',
+        section: 'ideabase',
+        parentId: ideaRef.id,
+        timestamp: serverTimestamp()
+      });
+
+      await addDoc(collection(db, 'users', user.uid, 'works'), {
+        name: 'Chapters',
+        type: 'folder',
+        section: 'ideabase',
+        parentId: ideaRef.id,
+        timestamp: serverTimestamp()
+      });
+
+      setCurrentWorkId(storyRef.id);
+      setCurrentWorkName('Storyline');
+      setSelectedItemId(storyRef.id);
+      setEditorContent('');
+      setIsBinderOpen(true);
+      handleNavigate('editor');
+    } catch (e) {
+      console.error("Error creating story: ", e);
+    }
+  };
+
+  const handleOpenWork = (work) => {
+    handleNavigate('editor');
+    if (work.type === 'document') {
+        setCurrentWorkId(work.id);
+        setCurrentWorkName(work.name);
+        setSelectedItemId(work.id);
+        setEditorContent(work.content || '');
+    } else {
+        setCurrentWorkId(null);
+        setCurrentWorkName('');
+        setEditorContent('');
+        setSelectedItemId(work.id);
+    }
+    setIsBinderOpen(true);
   };
 
   const handleDeleteItem = (id) => {
@@ -636,6 +725,57 @@ function AppContent() {
     );
   }
 
+  if (view === 'dashboard') {
+    return (
+      <>
+        <Header
+          onUpload={setEditorContent}
+          onShare={handleShareWork}
+          canShare={!!user}
+          onToggleAI={() => setIsAIOpen(o => !o)}
+          isAIOpen={isAIOpen}
+          onTogglePlayer={() => setIsPlayerVisible(o => !o)}
+          isPlayerVisible={isPlayerVisible}
+          onLogoClick={() => handleNavigate('landing')}
+          user={user}
+          onLogout={logout}
+          onAccount={() => handleNavigate('account')}
+          onPortfolioEditor={() => handleNavigate('portfolio-editor')}
+          onQuickPublish={handleQuickPublish}
+          onSignIn={() => setIsAuthModalOpen(true)}
+          onToggleLibrary={() => setIsLibraryOpen(true)}
+          onToggleBinder={() => setIsBinderOpen(o => !o)}
+          isBinderOpen={isBinderOpen}
+          onPricing={() => setIsPricingModalOpen(true)}
+          currentView={view}
+          onHome={() => handleNavigate('dashboard')}
+        />
+        <Dashboard 
+          user={user}
+          onCreateArticle={handleCreateArticle}
+          onCreateStory={handleCreateStory}
+          onOpenWork={handleOpenWork}
+          onPortfolio={() => handleNavigate('portfolio-editor')}
+        />
+        <PricingModal
+          isOpen={isPricingModalOpen}
+          onClose={() => setIsPricingModalOpen(false)}
+        />
+        <NotificationModal
+          isOpen={notif.isOpen}
+          onClose={closeNotif}
+          title={notif.title}
+          message={notif.message}
+          type={notif.type}
+          copyText={notif.copyText}
+          onConfirm={notif.onConfirm}
+          confirmText={notif.confirmText}
+          cancelText={notif.cancelText}
+        />
+      </>
+    );
+  }
+
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       <Header
@@ -657,6 +797,8 @@ function AppContent() {
         onToggleBinder={() => setIsBinderOpen(o => !o)}
         isBinderOpen={isBinderOpen}
         onPricing={() => setIsPricingModalOpen(true)}
+        currentView={view}
+        onHome={() => handleNavigate('dashboard')}
       />
 
       <div className="animate-fade-in flex flex-1 mt-16 overflow-hidden">

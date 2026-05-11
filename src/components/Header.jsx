@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, Sparkles, Menu, LogOut, User, Sun, Moon, Coffee, FilePlus, Library, Music, Columns, Share2, ExternalLink, Globe, Palette } from 'lucide-react';
+import { Upload, Sparkles, Menu, LogOut, User, Sun, Moon, Coffee, FilePlus, Library, Music, Columns, Share2, ExternalLink, Globe, Palette, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import * as pdfjsLib from 'pdfjs-dist';
@@ -26,7 +26,9 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
     onToggleLibrary,
     onToggleBinder,
     isBinderOpen,
-    onPricing
+    onPricing,
+    currentView,
+    onHome
   }) => {
     const { theme, toggleTheme } = useTheme();
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -101,19 +103,32 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
       </div>
 
       <div className="flex items-center gap-2 md:gap-4 flex-1 justify-start ml-4 md:ml-8">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={onToggleBinder}
-          className={`p-2 rounded-xl transition-all duration-300 ${
-            isBinderOpen 
-              ? 'bg-accent/10 text-accent' 
-              : 'text-muted hover:bg-foreground/5'
-          }`}
-          title={isBinderOpen ? "Hide Ideabase" : "Show Ideabase"}
-        >
-          <Columns size={18} />
-        </motion.button>
+        {currentView === 'editor' && (
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onHome}
+            className="p-2 rounded-xl transition-all duration-300 text-muted hover:bg-foreground/5"
+            title="Dashboard"
+          >
+            <LayoutDashboard size={18} />
+          </motion.button>
+        )}
+        {(currentView === 'editor' || currentView === 'dashboard') && (
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onToggleBinder}
+            className={`p-2 rounded-xl transition-all duration-300 ${
+              isBinderOpen 
+                ? 'bg-accent/10 text-accent' 
+                : 'text-muted hover:bg-foreground/5'
+            }`}
+            title={isBinderOpen ? "Hide Ideabase" : "Show Ideabase"}
+          >
+            <Columns size={18} />
+          </motion.button>
+        )}
       </div>
 
       <div className="flex items-center gap-2 md:gap-4">
