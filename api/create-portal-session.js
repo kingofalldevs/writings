@@ -8,14 +8,14 @@ export default async function handler(req, res) {
   try {
     let { customerId, userEmail } = req.body || {};
 
-    const apiKey = process.env.POLAR_ACCESS_TOKEN?.trim();
-    if (!apiKey) {
-      return res.status(500).json({ error: 'POLAR_ACCESS_TOKEN env variable is not set' });
-    }
-
     // Detect if we are using a sandbox token or explicit environment
-    const isSandbox = apiKey.startsWith('polar_at_s_') || process.env.POLAR_ENVIRONMENT === 'sandbox';
+    const isSandbox = apiKey.startsWith('polar_at_s_') || 
+                     apiKey.startsWith('polar_oat_') || 
+                     process.env.POLAR_ENVIRONMENT === 'sandbox';
     
+    const serverMode = isSandbox ? 'sandbox' : 'production';
+    console.log(`Initializing Polar SDK (Mode: ${serverMode})`);
+
     let Polar;
     try {
       const mod = await import('@polar-sh/sdk');
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
 
     const polar = new Polar({
       accessToken: apiKey,
-      server: isSandbox ? 'sandbox' : 'production',
+      server: serverMode,
     });
 
     // If customerId is missing, try to find it by email

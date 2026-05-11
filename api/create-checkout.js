@@ -37,16 +37,19 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'POLAR_ACCESS_TOKEN env variable is not set' });
     }
 
-    // Safe diagnostic logging (doesn't leak full token)
-    console.log(`Diagnostic: Token Prefix="${apiKey.substring(0, 12)}...", Length=${apiKey.length}`);
-
     // Detect if we are using a sandbox token or explicit environment
-    const isSandbox = apiKey.startsWith('polar_at_s_') || process.env.POLAR_ENVIRONMENT === 'sandbox';
-    console.log(`Initializing Polar SDK (Mode: ${isSandbox ? 'Sandbox' : 'Production'})`);
+    // Force sandbox for Organization Access Tokens (oat) by default in this test setup
+    const isSandbox = apiKey.startsWith('polar_at_s_') || 
+                     apiKey.startsWith('polar_oat_') || 
+                     process.env.POLAR_ENVIRONMENT === 'sandbox';
+    
+    const serverMode = isSandbox ? 'sandbox' : 'production';
+    console.log(`Diagnostic: Token Prefix="${apiKey.substring(0, 12)}...", Length=${apiKey.length}`);
+    console.log(`Initializing Polar SDK (Mode: ${serverMode})`);
 
     const polar = new Polar({
       accessToken: apiKey,
-      server: isSandbox ? 'sandbox' : 'production',
+      server: serverMode,
     });
 
     // Determine the redirect URL (Vercel provides VERCEL_URL for serverless functions)
