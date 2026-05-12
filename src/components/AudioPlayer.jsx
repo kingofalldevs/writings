@@ -9,19 +9,18 @@ const AudioPlayer = ({ currentTrack, onToggleLibrary, isVisible, onClose }) => {
   const [sessionTime, setSessionTime] = useState(0);
   const [playerReady, setPlayerReady] = useState(false);
   const playerRef = useRef(null);
-  const iframeContainerRef = useRef(null);
   const intervalRef = useRef(null);
 
   // Load YouTube IFrame API once
   useEffect(() => {
-    if (!window.YT) {
+    if (!window['YT']) {
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
       document.body.appendChild(tag);
     }
 
-    window.onYouTubeIframeAPIReady = () => {
-      playerRef.current = new window.YT.Player('yt-player', {
+    window['onYouTubeIframeAPIReady'] = () => {
+      playerRef.current = new window['YT'].Player('yt-player', {
         height: '1',
         width: '1',
         videoId: currentTrack.youtubeId,
@@ -41,8 +40,8 @@ const AudioPlayer = ({ currentTrack, onToggleLibrary, isVisible, onClose }) => {
       });
     };
 
-    if (window.YT && window.YT.Player) {
-      playerRef.current = new window.YT.Player('yt-player', {
+    if (window['YT'] && window['YT'].Player) {
+      playerRef.current = new window['YT'].Player('yt-player', {
         height: '1',
         width: '1',
         videoId: currentTrack.youtubeId,
@@ -64,9 +63,11 @@ const AudioPlayer = ({ currentTrack, onToggleLibrary, isVisible, onClose }) => {
 
     return () => {
       if (playerRef.current) {
-        try { playerRef.current.destroy(); } catch (e) {}
+        // eslint-disable-next-line no-empty
+        try { playerRef.current.destroy(); } catch (err) {}
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Session timer

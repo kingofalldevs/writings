@@ -1,8 +1,8 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { Book, Library, ArrowLeft, BookOpen, User, ExternalLink, Share2, Sparkles, Sun, Moon, Coffee, ChevronDown, Link as LinkIcon, Mail, Edit3 } from 'lucide-react';
+import { Library, ArrowLeft, BookOpen, Share2, Sun, Moon, Coffee, Link as LinkIcon, Mail, Edit3 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -20,6 +20,22 @@ const ThemeIcon = ({ active, onClick, icon }) => (
   </button>
 );
 
+const LinkedinIcon = (props) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    {...props}
+  >
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect width="4" height="12" x="2" y="9" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
+
 const AuthorPortfolio = ({ authorUsername, initialData }) => {
   const router = useRouter();
   const [portfolio, setPortfolio] = useState(initialData || null);
@@ -27,7 +43,6 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
   const [error, setError] = useState(null);
   const [selectedWork, setSelectedWork] = useState(null);
   const { theme, toggleTheme } = useTheme();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState('stories'); // stories, articles, blog
 
   const nav = {
@@ -41,29 +56,10 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
     onRefund: () => router.push('/refund'),
   };
 
-  const LinkedinIcon = (props) => (
-    <svg 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      {...props}
-    >
-      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-      <rect width="4" height="12" x="2" y="9" />
-      <circle cx="4" cy="4" r="2" />
-    </svg>
-  );
+
 
   useEffect(() => {
     if (initialData) return; // Skip if we already have data from SSR
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
@@ -420,6 +416,7 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
                            {/* Cover Content */}
                            <div className="absolute inset-0 p-12 pl-16 flex flex-col justify-between">
                               <div>
+                                 {/* @ts-ignore */}
                                  <div className="w-10 h-10 rounded-lg bg-foreground/5 flex items-center justify-center mb-10 group-hover:text-background transition-colors duration-500" style={{ '--hover-bg': accentColor }}>
                                     {activeTab === 'stories' ? <Library size={20} /> : <BookOpen size={20} />}
                                  </div>

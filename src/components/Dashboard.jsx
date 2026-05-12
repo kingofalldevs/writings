@@ -1,11 +1,11 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Folder, Plus, Globe, Clock, LayoutDashboard, Search } from 'lucide-react';
 import { db } from '../firebase';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 
-const Dashboard = ({ user, onCreateArticle, onCreateStory, onOpenWork, onPortfolio }) => {
+const Dashboard = ({ user, onCreateArticle, onCreateStory, onCreateBlog, onOpenWork, onPortfolio }) => {
   const [works, setWorks] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -24,7 +24,7 @@ const Dashboard = ({ user, onCreateArticle, onCreateStory, onOpenWork, onPortfol
         // Filter to only show root level items (documents or folders) for the dashboard view
         // Or perhaps just all top-level items that represent a "Work"
         // Let's show folders that represent Stories, and documents that have no parentId
-        const dashboardWorks = worksData.filter(w => !w.parentId);
+        const dashboardWorks = worksData.filter(w => !w['parentId']);
         
         setWorks(dashboardWorks);
       });
@@ -60,7 +60,7 @@ const Dashboard = ({ user, onCreateArticle, onCreateStory, onOpenWork, onPortfol
         </div>
 
         {/* Creation Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -98,6 +98,28 @@ const Dashboard = ({ user, onCreateArticle, onCreateStory, onOpenWork, onPortfol
               <h3 className="text-2xl font-bold mb-2">New Story</h3>
               <p className="text-foreground/60 leading-relaxed">
                 A comprehensive workspace with structured folders for chapters and characters.
+              </p>
+            </div>
+            <div className="absolute top-8 right-8 w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-500">
+              <Plus size={16} className="text-accent" />
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            onClick={onCreateBlog}
+            className="group relative bg-foreground/[0.03] p-8 rounded-3xl cursor-pointer overflow-hidden border border-foreground/5 hover:border-accent/30 transition-all duration-500"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative z-10">
+              <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                <Globe size={24} className="text-accent" />
+              </div>
+              <h3 className="text-2xl font-bold mb-2">New Blog</h3>
+              <p className="text-foreground/60 leading-relaxed">
+                Publish directly to your public portfolio and share your ideas with the world.
               </p>
             </div>
             <div className="absolute top-8 right-8 w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-500">

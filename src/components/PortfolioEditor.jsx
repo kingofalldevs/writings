@@ -1,7 +1,7 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Save, ArrowLeft, Globe, Edit3, Sparkles, Share2, ExternalLink, Link as LinkIcon, BookOpen, Mail, User } from 'lucide-react';
+import { Save, ArrowLeft, Globe, Edit3, Sparkles, User } from 'lucide-react';
 import LandingNav from './landing/LandingNav';
 import LandingFooter from './landing/LandingFooter';
 import { db } from '../firebase';
@@ -23,7 +23,9 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
     bannerImage: '',
     socialTwitter: '',
     socialSubstack: '',
-    socialWeb: ''
+    socialWeb: '',
+    socialLinkedin: '',
+    socialMedium: ''
   });
 
   useEffect(() => {
@@ -47,7 +49,9 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
             bannerImage: data.bannerImage || '',
             socialTwitter: data.socialTwitter || '',
             socialSubstack: data.socialSubstack || '',
-            socialWeb: data.socialWeb || ''
+            socialWeb: data.socialWeb || '',
+            socialLinkedin: data.socialLinkedin || '',
+            socialMedium: data.socialMedium || ''
           });
         } else {
           setFormData({

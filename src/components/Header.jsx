@@ -1,41 +1,40 @@
 'use client';
-import React from 'react';
-import { Upload, Sparkles, Menu, LogOut, User, Sun, Moon, Coffee, FilePlus, Library, Music, Columns, Share2, ExternalLink, Globe, Palette, LayoutDashboard } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Upload, Sparkles, Menu, LogOut, User, Sun, Moon, Coffee, Music, Columns, Share2, Globe, Palette, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import * as pdfjsLib from 'pdfjs-dist';
 
 // Use CDN for worker in Next.js
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib['version']}/build/pdf.worker.min.mjs`;
 
-  const Header = ({ 
-    onUpload, 
-    onShare,
-    canShare,
-    onToggleAI, 
-    isAIOpen, 
-    onTogglePlayer, 
-    isPlayerVisible, 
-    onLogoClick, 
-    user, 
-    onLogout, 
-    onAccount,
-    onPortfolioEditor,
-    onQuickPublish,
-    onSignIn,
-    onToggleLibrary,
-    onToggleBinder,
-    isBinderOpen,
-    onPricing,
-    currentView,
-    onHome
+const Header = ({
+  onUpload,
+  onShare,
+  canShare,
+  onToggleAI,
+  isAIOpen,
+  onTogglePlayer,
+  isPlayerVisible,
+  onLogoClick,
+  user,
+  onLogout,
+  onAccount,
+  onPortfolioEditor,
+  onQuickPublish,
+  onSignIn,
+  onToggleBinder,
+  isBinderOpen,
+  onPricing,
+  currentView,
+  onHome
   }) => {
-    const { theme, toggleTheme } = useTheme();
-    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-    const fileInputRef = React.useRef(null);
-    const menuRef = React.useRef(null);
+  const { theme, toggleTheme } = useTheme();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const fileInputRef = useRef(null);
+  const menuRef = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsMenuOpen(false);
@@ -58,7 +57,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLi
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const textContent = await page.getTextContent();
-      const pageText = textContent.items.map(item => item.str).join(' ');
+      const pageText = textContent.items.map(item => item['str']).join(' ');
       fullText += pageText + '\n\n';
     }
 
@@ -88,16 +87,16 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLi
 
   return (
     <header className="fixed top-0 left-0 w-full h-16 px-4 md:px-8 flex items-center justify-between z-50 bg-background border-b border-foreground/5">
-      <div 
-        className="flex items-center gap-2 md:gap-3 cursor-pointer group shrink-0" 
+      <div
+        className="flex items-center gap-2 md:gap-3 cursor-pointer group shrink-0"
         onClick={onLogoClick}
       >
         <div className="flex items-center justify-center w-6 h-6 transition-transform group-hover:scale-110">
-            <svg width="32" height="28" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M2 5c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M2 12c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M2 19c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+          <svg width="32" height="28" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 5c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M2 12c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M2 19c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </div>
         <span className="text-lg md:text-xl font-medium tracking-tight">Writings</span>
       </div>
@@ -119,11 +118,10 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLi
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onToggleBinder}
-            className={`p-2 rounded-xl transition-all duration-300 ${
-              isBinderOpen 
-                ? 'bg-accent/10 text-accent' 
+            className={`p-2 rounded-xl transition-all duration-300 ${isBinderOpen
+                ? 'bg-accent/10 text-accent'
                 : 'text-muted hover:bg-foreground/5'
-            }`}
+              }`}
             title={isBinderOpen ? "Hide Ideabase" : "Show Ideabase"}
           >
             <Columns size={18} />
@@ -132,12 +130,12 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLi
       </div>
 
       <div className="flex items-center gap-2 md:gap-4">
-        <input 
-          type="file" 
-          ref={fileInputRef} 
-          onChange={handleFileChange} 
-          accept=".txt,.md,.pdf" 
-          className="hidden" 
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          accept=".txt,.md,.pdf"
+          className="hidden"
         />
 
         <div className="relative flex items-center gap-2" ref={menuRef}>
@@ -155,7 +153,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLi
               >
                 <Sparkles size={14} />
                 <span className="hidden sm:inline">{(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') ? 'Pro' : 'Upgrade'}</span>
-                {! (user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') && <span className="sm:hidden text-[9px]">UP</span>}
+                {!(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') && <span className="sm:hidden text-[9px]">UP</span>}
                 {(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') && <span className="sm:hidden text-[9px]">PRO</span>}
               </motion.button>
 
@@ -179,16 +177,16 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLi
             <Menu size={20} />
           </button>
 
-              <AnimatePresence>
-                {isMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 top-full mt-3 w-72 rounded-2xl shadow-2xl glass overflow-hidden z-[100]"
-                  >
+          <AnimatePresence>
+            {isMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                className="absolute right-0 top-full mt-3 w-72 rounded-2xl shadow-2xl glass overflow-hidden z-[100]"
+              >
                 {user && (
-                  <div 
+                  <div
                     onClick={() => {
                       setIsMenuOpen(false);
                       onAccount();
@@ -214,11 +212,10 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLi
                       onToggleAI();
                       setIsMenuOpen(false);
                     }}
-                    className={`flex items-center justify-center w-10 h-10 rounded-full cursor-pointer transition-all duration-300 ${
-                      isAIOpen 
-                        ? 'bg-accent text-background shadow-[0_10px_20px_-5px_rgba(var(--accent-rgb),0.4)]' 
+                    className={`flex items-center justify-center w-10 h-10 rounded-full cursor-pointer transition-all duration-300 ${isAIOpen
+                        ? 'bg-accent text-background shadow-[0_10px_20px_-5px_rgba(var(--accent-rgb),0.4)]'
                         : 'bg-accent/10 text-accent hover:bg-accent/20'
-                    }`}
+                      }`}
                     title={isAIOpen ? "Close Aria" : "Ask Aria"}
                   >
                     <Sparkles size={18} fill={isAIOpen ? 'currentColor' : 'none'} />
@@ -231,11 +228,10 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLi
                       onTogglePlayer();
                       setIsMenuOpen(false);
                     }}
-                    className={`flex items-center justify-center w-10 h-10 rounded-full cursor-pointer transition-all duration-300 ${
-                      isPlayerVisible 
-                        ? 'bg-accent text-background shadow-[0_10px_20px_-5px_rgba(var(--accent-rgb),0.4)]' 
+                    className={`flex items-center justify-center w-10 h-10 rounded-full cursor-pointer transition-all duration-300 ${isPlayerVisible
+                        ? 'bg-accent text-background shadow-[0_10px_20px_-5px_rgba(var(--accent-rgb),0.4)]'
                         : 'bg-accent/10 text-accent hover:bg-accent/20'
-                    }`}
+                      }`}
                     title={isPlayerVisible ? "Close Player" : "Open Player"}
                   >
                     <Music size={18} />
@@ -272,20 +268,20 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLi
 
                 <div className="p-3 border-b border-foreground/10 flex justify-center">
                   <div className="flex items-center p-1 rounded-full border border-foreground/10 bg-foreground/5 gap-0.5">
-                    <ThemeIcon 
-                      active={theme === 'light'} 
-                      onClick={() => toggleTheme('light')} 
-                      icon={<Sun size={14} />} 
+                    <ThemeIcon
+                      active={theme === 'light'}
+                      onClick={() => toggleTheme('light')}
+                      icon={<Sun size={14} />}
                     />
-                    <ThemeIcon 
-                      active={theme === 'sepia'} 
-                      onClick={() => toggleTheme('sepia')} 
-                      icon={<Coffee size={14} />} 
+                    <ThemeIcon
+                      active={theme === 'sepia'}
+                      onClick={() => toggleTheme('sepia')}
+                      icon={<Coffee size={14} />}
                     />
-                    <ThemeIcon 
-                      active={theme === 'dark'} 
-                      onClick={() => toggleTheme('dark')} 
-                      icon={<Moon size={14} />} 
+                    <ThemeIcon
+                      active={theme === 'dark'}
+                      onClick={() => toggleTheme('dark')}
+                      icon={<Moon size={14} />}
                     />
                   </div>
                 </div>
@@ -314,7 +310,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLi
                       Sign In
                     </button>
                   )}
-                  
+
                   {user && (
                     <>
                       <div className="my-1 border-t border-foreground/10"></div>
@@ -343,9 +339,8 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLi
 const ThemeIcon = ({ active, onClick, icon }) => (
   <button
     onClick={onClick}
-    className={`w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-      active ? 'bg-accent text-background opacity-100' : 'bg-transparent text-muted opacity-60 hover:opacity-100'
-    }`}
+    className={`w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${active ? 'bg-accent text-background opacity-100' : 'bg-transparent text-muted opacity-60 hover:opacity-100'
+      }`}
   >
     {icon}
   </button>

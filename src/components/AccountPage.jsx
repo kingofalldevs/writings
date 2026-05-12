@@ -1,25 +1,44 @@
 'use client';
-import React from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, CreditCard, Shield, LogOut, ArrowLeft, Mail, Crown, Settings, Key, Receipt } from 'lucide-react';
+import { User, Shield, LogOut, ArrowLeft, Mail, Crown, Key, Receipt } from 'lucide-react';
 import LandingNav from './landing/LandingNav';
 import LandingFooter from './landing/LandingFooter';
+import { useRouter } from 'next/navigation';
+
+const ActionButton = ({ icon, label, onClick }) => (
+  <button
+    onClick={onClick}
+    className="w-full flex items-center justify-between group px-4 py-3.5 rounded-xl hover:bg-foreground/5 transition-all"
+  >
+    <div className="flex items-center gap-3">
+      <div className="opacity-40 group-hover:opacity-100 group-hover:text-accent transition-all">
+        {icon}
+      </div>
+      <span className="text-sm font-semibold opacity-70 group-hover:opacity-100 transition-all">{label}</span>
+    </div>
+    <div className="opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
+      <ArrowLeft size={14} className="rotate-180" />
+    </div>
+  </button>
+);
 
 const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) => {
-  const [loadingPortal, setLoadingPortal] = React.useState(false);
-  const [loadingSync, setLoadingSync] = React.useState(false);
+  const router = useRouter();
+  const [loadingPortal, setLoadingPortal] = useState(false);
+  const [loadingSync, setLoadingSync] = useState(false);
 
   const handleManageBilling = async () => {
     const customerId = user?.subscription?.customerId;
-    
+
     setLoadingPortal(true);
     try {
       const response = await fetch('/api/create-portal-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           customerId,
-          userEmail: user?.email 
+          userEmail: user?.email
         }),
       });
 
@@ -30,11 +49,11 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
       } else {
         throw new Error(data.error || 'Failed to generate portal link');
       }
-    } catch (err) {
-      console.error('Portal error:', err);
+    } catch (errorVal) {
+      console.error('Portal error:', errorVal);
       showNotif(
-        'Portal Access Error', 
-        'Unable to open the billing portal. Please try again later or contact support.', 
+        'Portal Access Error',
+        'Unable to open the billing portal. Please try again later or contact support.',
         'error'
       );
     } finally {
@@ -48,9 +67,9 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
       const response = await fetch('/api/sync-subscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           email: user?.email,
-          uid: user?.uid 
+          uid: user?.uid
         }),
       });
 
@@ -58,18 +77,18 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
 
       if (response.ok) {
         showNotif(
-          'Sync Successful', 
-          'Your Pro status has been restored. Happy writing!', 
+          'Sync Successful',
+          'Your Pro status has been restored. Happy writing!',
           'success'
         );
       } else {
         throw new Error(data.error || 'No active subscription found.');
       }
-    } catch (err) {
-      console.error('Sync error:', err);
+    } catch (errorVal) {
+      console.error('Sync error:', errorVal);
       showNotif(
-        'Sync Failed', 
-        err.message || 'Unable to sync subscription. Please ensure you have an active plan on Polar.', 
+        'Sync Failed',
+        errorVal.message || 'Unable to sync subscription. Please ensure you have an active plan on Polar.',
         'error'
       );
     } finally {
@@ -79,23 +98,25 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <LandingNav 
+      <LandingNav
         user={user}
-        onAccountClick={() => {}}
-        onStart={onStart} 
-        onHomeClick={onBack} 
-        onPricingClick={onPricing} 
+        onAccountClick={() => { }}
+        onStart={onStart}
+        onHomeClick={onBack}
+        onPricingClick={onPricing}
+        onAriaClick={() => router.push('/aria')}
+        onPhilosophyClick={() => router.push('/philosophy')}
       />
 
       <main className="flex-grow flex flex-col items-center py-32 px-8">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-5xl"
         >
           {/* Top Header */}
           <div className="flex items-center gap-6 mb-16">
-            <button 
+            <button
               onClick={onBack}
               className="p-3 rounded-full hover:bg-foreground/5 transition-all border border-foreground/5"
             >
@@ -153,23 +174,22 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
                       </p>
                     </div>
                   </div>
-                  <span className={`px-5 py-2 rounded-full text-[11px] font-bold tracking-widest uppercase border ${
-                    user?.subscription?.status === 'active' 
-                      ? 'bg-accent/10 text-accent border-accent/20' 
-                      : 'bg-foreground/5 text-muted border-foreground/5'
-                  }`}>
+                  <span className={`px-5 py-2 rounded-full text-[11px] font-bold tracking-widest uppercase border ${user?.subscription?.status === 'active'
+                    ? 'bg-accent/10 text-accent border-accent/20'
+                    : 'bg-foreground/5 text-muted border-foreground/5'
+                    }`}>
                     {user?.subscription?.status === 'active' ? 'Premium Active' : 'Free Forever'}
                   </span>
                 </div>
-                
+
                 <p className="text-foreground/70 mb-10 leading-relaxed max-w-xl">
-                  {user?.subscription?.status === 'active' 
+                  {user?.subscription?.status === 'active'
                     ? "Thank you for supporting meditative writing. Your Pro features are unlocked across all devices."
                     : "You're currently exploring the calm basics. Upgrade to Writings Pro for unlimited AI assistance, binaural soundscapes, and advanced manuscript exports."}
                 </p>
 
                 <div className="flex flex-wrap items-center gap-4">
-                  <button 
+                  <button
                     onClick={user?.subscription?.status === 'active' ? handleManageBilling : onPricing}
                     disabled={loadingPortal}
                     className="px-8 py-4 rounded-full bg-accent text-background font-bold text-sm transition-all hover:opacity-90 disabled:opacity-50"
@@ -177,7 +197,7 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
                     {loadingPortal ? 'Opening Portal...' : (user?.subscription?.status === 'active' ? 'Manage Subscription' : 'Explore Pro Plans')}
                   </button>
                   {user?.subscription?.status !== 'active' && (
-                    <button 
+                    <button
                       onClick={handleSyncSubscription}
                       disabled={loadingSync}
                       className="px-8 py-4 rounded-full border border-foreground/10 hover:bg-foreground/5 transition-all text-sm font-bold flex items-center gap-2"
@@ -196,13 +216,13 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
                 <div>
                   <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-30 mb-6">Privacy & Access</h3>
                   <div className="space-y-4">
-                    <ActionButton 
-                      icon={<Receipt size={16} />} 
-                      label={loadingPortal ? "Connecting..." : "Manage Billing"} 
+                    <ActionButton
+                      icon={<Receipt size={16} />}
+                      label={loadingPortal ? "Connecting..." : "Manage Billing"}
                       onClick={handleManageBilling}
                     />
-                    <ActionButton icon={<Key size={16} />} label="Reset Password" />
-                    <ActionButton icon={<Shield size={16} />} label="Two-Factor Auth" />
+                    <ActionButton icon={<Key size={16} />} label="Reset Password" onClick={() => {}} />
+                    <ActionButton icon={<Shield size={16} />} label="Two-Factor Auth" onClick={() => {}} />
                   </div>
                 </div>
 
@@ -228,26 +248,13 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
         </motion.div>
       </main>
 
-      <LandingFooter />
+      <LandingFooter 
+        onTerms={() => router.push('/terms')}
+        onPrivacy={() => router.push('/privacy')}
+        onRefund={() => router.push('/refund')}
+      />
     </div>
   );
 };
-
-const ActionButton = ({ icon, label, onClick }) => (
-  <button 
-    onClick={onClick}
-    className="w-full flex items-center justify-between group px-4 py-3.5 rounded-xl hover:bg-foreground/5 transition-all"
-  >
-    <div className="flex items-center gap-3">
-      <div className="opacity-40 group-hover:opacity-100 group-hover:text-accent transition-all">
-        {icon}
-      </div>
-      <span className="text-sm font-semibold opacity-70 group-hover:opacity-100 transition-all">{label}</span>
-    </div>
-    <div className="opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
-      <ArrowLeft size={14} className="rotate-180" />
-    </div>
-  </button>
-);
 
 export default AccountPage;

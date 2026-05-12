@@ -115,6 +115,8 @@ const PricingPage = ({ onStart, onBack, onPricing, onAria, onPhilosophy, onTerms
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }}>
       <LandingNav 
+        user={user}
+        onAccountClick={() => {}}
         onStart={onStart} 
         onPricingClick={onPricing} 
         onAriaClick={onAria}

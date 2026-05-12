@@ -1,5 +1,4 @@
 'use client';
-import React from 'react';
 import { motion } from 'framer-motion';
 import LandingNav from './landing/LandingNav';
 import LandingFooter from './landing/LandingFooter';
@@ -8,6 +7,8 @@ const PhilosophyPage = ({ onStart, onBack, onPricing, onAria, onPhilosophy, onTe
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-accent/20 flex flex-col">
       <LandingNav 
+        user={null}
+        onAccountClick={() => {}}
         onStart={onStart} 
         onHomeClick={onBack} 
         onPricingClick={onPricing} 

@@ -8,6 +8,8 @@ const PrivacyPage = ({ onBack, onPricing, onAria, onPhilosophy, onTerms, onPriva
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-accent/20 flex flex-col">
       <LandingNav 
+        user={null}
+        onAccountClick={() => {}}
         onStart={onStart} 
         onHomeClick={onBack} 
         onPricingClick={onPricing} 

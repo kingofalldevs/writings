@@ -370,6 +370,27 @@ function AppContent() {
     }
   };
 
+  const handleCreateBlog = async () => {
+    if (!user) return;
+    try {
+      const docRef = await addDoc(collection(db, 'users', user.uid, 'works'), {
+        name: 'Untitled Blog Post',
+        content: '',
+        type: 'document',
+        section: 'blog',
+        parentId: null,
+        timestamp: serverTimestamp()
+      });
+      setCurrentWorkId(docRef.id);
+      setCurrentWorkName('Untitled Blog Post');
+      setSelectedItemId(docRef.id);
+      setEditorContent('');
+      handleNavigate('editor');
+    } catch (e) {
+      console.error("Error creating blog post: ", e);
+    }
+  };
+
   const handleCreateStory = async () => {
     if (!user) return;
     const ideaName = prompt("Enter Story Name:", `Idea ${binderData.ideabase.length + 1}`);
@@ -800,6 +821,7 @@ function AppContent() {
           user={user}
           onCreateArticle={handleCreateArticle}
           onCreateStory={handleCreateStory}
+          onCreateBlog={handleCreateBlog}
           onOpenWork={handleOpenWork}
           onPortfolio={() => handleNavigate('portfolio-editor')}
         />

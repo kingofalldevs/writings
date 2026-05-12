@@ -8,6 +8,8 @@ const AriaPage = ({ onStart, onBack, onPricing, onAria, onPhilosophy, onTerms, o
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-accent/20 flex flex-col">
       <LandingNav 
+        user={null}
+        onAccountClick={() => {}}
         onStart={onStart} 
         onHomeClick={onBack} 
         onPricingClick={onPricing} 
