@@ -13,14 +13,19 @@ export function middleware(req) {
   }
 
   // Extract subdomain
-  // Example: john.writings.page -> john
-  const subdomain = host.replace(`.${rootDomain}`, '').replace(':3000', '');
-
-  // If there's a subdomain
-  if (subdomain && subdomain !== 'www') {
-    // Only rewrite the root of the subdomain to the author profile
-    if (url.pathname === '/' || url.pathname === '') {
-      return NextResponse.rewrite(new URL(`/author/${subdomain}`, req.url));
+  const hostname = host.split(':')[0]; // Remove port if present
+  const parts = hostname.split('.');
+  
+  // Example: joseph.writings.page -> ["joseph", "writings", "page"]
+  if (parts.length >= 3) {
+    const subdomain = parts[0].toLowerCase();
+    
+    // Skip common subdomains
+    if (subdomain !== 'www' && subdomain !== 'app' && subdomain !== 'dev') {
+      // Only rewrite the root of the subdomain to the author profile
+      if (url.pathname === '/' || url.pathname === '') {
+        return NextResponse.rewrite(new URL(`/author/${subdomain}`, req.url));
+      }
     }
   }
 
