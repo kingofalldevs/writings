@@ -112,13 +112,25 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
     if (!user) return;
     setPublishing(true);
     try {
+      const cleanUsername = formData.username.toLowerCase().trim();
+      
+      // 1. Check if username is already taken by someone else
+      const docRef = doc(db, 'portfolios', cleanUsername);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists() && docSnap.data().uid !== user.uid) {
+        showNotif("Handle Taken", "This handle is already secured by another writer.", "error");
+        setPublishing(false);
+        return;
+      }
+
       const worksSnapshot = await getDocs(query(collection(db, 'users', user.uid, 'works')));
       const works = worksSnapshot.docs.map(d => ({ ...d.data(), id: d.id }));
 
-      await setDoc(doc(db, 'portfolios', formData.username.toLowerCase()), {
+      await setDoc(docRef, {
         uid: user.uid,
         authorName: formData.authorName,
-        username: formData.username.toLowerCase(),
+        username: cleanUsername,
         bio: formData.bio,
         inspirations: formData.inspirations,
         themeFont: formData.themeFont,
@@ -134,7 +146,7 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
         timestamp: serverTimestamp()
       });
       
-      showNotif("Portfolio Live", "Your changes have been published successfully.", "success");
+      showNotif("Portfolio Live", `Your portfolio is now live at ${cleanUsername}.writings.page`, "success");
     } catch (err) {
       console.error(err);
       showNotif("Publish Failed", "Something went wrong. Please try again.", "error");
@@ -181,7 +193,7 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
             
             <div className="flex items-center gap-4">
                <button 
-                onClick={() => window.open(`/author/${formData.username}`, '_blank')}
+                onClick={() => window.open(`https://${formData.username}.writings.page`, '_blank')}
                 className="flex items-center gap-2 px-6 py-3 rounded-full border border-foreground/10 hover:bg-foreground/5 transition-all text-sm font-bold"
                >
                  <Globe size={18} />
@@ -310,15 +322,15 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
                       </div>
                       <div className="space-y-2">
                         <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Unique Handle (URL)</label>
-                        <div className="relative">
-                          <span className="absolute left-6 top-1/2 -translate-y-1/2 opacity-30 text-sm font-mono">writings.page/?author=</span>
+                        <div className="relative group">
                           <input 
                             type="text"
                             value={formData.username}
                             onChange={(e) => setFormData({...formData, username: e.target.value.replace(/[^a-z0-9]/gi, '').toLowerCase()})}
-                            className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 pl-[160px] outline-none focus:ring-2 ring-accent/50 transition-all font-mono text-sm"
-                            placeholder="username"
+                            className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 pr-[140px] outline-none focus:ring-2 ring-accent/50 transition-all font-mono text-sm text-right"
+                            placeholder="handle"
                           />
+                          <span className="absolute right-6 top-1/2 -translate-y-1/2 opacity-30 text-sm font-mono pointer-events-none">.writings.page</span>
                         </div>
                       </div>
                     </div>
