@@ -153,7 +153,7 @@ const Dashboard = ({ user, onCreateArticle, onCreateStory, onCreateBlog, onOpenW
               className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-foreground text-background font-bold text-sm tracking-wide hover:scale-105 transition-transform"
             >
               <Globe size={16} />
-              Portfolio
+              Manage Portfolio
             </button>
           </div>
         </div>
