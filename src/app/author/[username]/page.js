@@ -3,21 +3,27 @@ import { doc, getDoc } from "firebase/firestore";
 import AuthorPortfolio from "@/components/AuthorPortfolio";
 
 export async function generateMetadata({ params }) {
-  const { username } = await params;
-  const docRef = doc(db, "portfolios", username);
-  const docSnap = await getDoc(docRef);
+  try {
+    const { username } = await params;
+    if (!db) return { title: "Author Portfolio | Writings" };
+    
+    const docRef = doc(db, "portfolios", username);
+    const docSnap = await getDoc(docRef);
 
-  if (docSnap.exists()) {
-    const data = docSnap.data();
-    return {
-      title: `${data.authorName} | Author Portfolio`,
-      description: data.bio || `Explore the works of ${data.authorName} on Writings.`,
-      openGraph: {
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
         title: `${data.authorName} | Author Portfolio`,
         description: data.bio || `Explore the works of ${data.authorName} on Writings.`,
-        images: data.profileImage ? [data.profileImage] : [],
-      },
-    };
+        openGraph: {
+          title: `${data.authorName} | Author Portfolio`,
+          description: data.bio || `Explore the works of ${data.authorName} on Writings.`,
+          images: data.profileImage ? [data.profileImage] : [],
+        },
+      };
+    }
+  } catch (err) {
+    console.error("Metadata fetch failed:", err);
   }
 
   return {
