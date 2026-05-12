@@ -220,6 +220,45 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
                  </div>
                  
                   <div className="space-y-8 p-8 rounded-4xl border border-foreground/5 bg-card/30 backdrop-blur-sm">
+                    {/* Identity Fields Top */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Author Name</label>
+                        <input 
+                          type="text"
+                          value={formData.authorName}
+                          onChange={(e) => setFormData({...formData, authorName: e.target.value})}
+                          className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 ring-accent/50 transition-all font-serif text-lg"
+                          placeholder="Your Pen Name"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Unique Handle (URL)</label>
+                        <div className="relative group">
+                          <input 
+                            type="text"
+                            value={formData.username}
+                            onChange={(e) => setFormData({...formData, username: e.target.value.replace(/[^a-z0-9]/gi, '').toLowerCase()})}
+                            className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 pr-[140px] outline-none focus:ring-2 ring-accent/50 transition-all font-mono text-sm text-right"
+                            placeholder="handle"
+                          />
+                          <span className="absolute right-6 top-1/2 -translate-y-1/2 opacity-30 text-sm font-mono pointer-events-none">.writings.page</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Bio (One-liner)</label>
+                      <textarea 
+                        value={formData.bio}
+                        onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                        className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 ring-accent/50 transition-all font-serif text-lg h-24 resize-none"
+                        placeholder="Crafting narratives at the intersection of..."
+                      />
+                    </div>
+
+                    <div className="h-[1px] bg-foreground/5 my-4" />
+
                      {/* Profile Photo Upload */}
                      <div className="flex flex-col md:flex-row items-center gap-8 mb-4 pb-8 border-b border-foreground/5">
                         <div className="relative group">
@@ -308,42 +347,6 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
                            )}
                         </div>
                      </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Author Name</label>
-                        <input 
-                          type="text"
-                          value={formData.authorName}
-                          onChange={(e) => setFormData({...formData, authorName: e.target.value})}
-                          className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 ring-accent/50 transition-all font-serif text-lg"
-                          placeholder="Your Pen Name"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Unique Handle (URL)</label>
-                        <div className="relative group">
-                          <input 
-                            type="text"
-                            value={formData.username}
-                            onChange={(e) => setFormData({...formData, username: e.target.value.replace(/[^a-z0-9]/gi, '').toLowerCase()})}
-                            className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 pr-[140px] outline-none focus:ring-2 ring-accent/50 transition-all font-mono text-sm text-right"
-                            placeholder="handle"
-                          />
-                          <span className="absolute right-6 top-1/2 -translate-y-1/2 opacity-30 text-sm font-mono pointer-events-none">.writings.page</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Bio (One-liner)</label>
-                      <textarea 
-                        value={formData.bio}
-                        onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                        className="w-full bg-foreground/5 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 ring-accent/50 transition-all font-serif text-lg h-24 resize-none"
-                        placeholder="Crafting narratives at the intersection of..."
-                      />
-                    </div>
 
                     <div className="space-y-2">
                       <label className="text-xs font-bold opacity-30 uppercase tracking-widest ml-1">Inspirations</label>
