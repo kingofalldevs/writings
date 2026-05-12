@@ -21,11 +21,10 @@ export function middleware(req) {
     const subdomain = parts[0].toLowerCase();
     
     // Skip common subdomains
-    if (subdomain !== 'www' && subdomain !== 'app' && subdomain !== 'dev') {
-      // Only rewrite the root of the subdomain to the author profile
-      if (url.pathname === '/' || url.pathname === '') {
-        return NextResponse.rewrite(new URL(`/author/${subdomain}`, req.url));
-      }
+    if (!['www', 'app', 'dev', 'api', 'admin'].includes(subdomain)) {
+      // Rewrite to /author/[subdomain]/...
+      const authorPath = `/author/${subdomain}${url.pathname === '/' ? '' : url.pathname}`;
+      return NextResponse.rewrite(new URL(authorPath, req.url));
     }
   }
 

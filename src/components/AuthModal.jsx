@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-const AuthModal = ({ isOpen, onClose, onTerms, onPrivacy }) => {
+const AuthModal = ({ isOpen, onClose, onTerms, onPrivacy, prefilledHandle }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { loginWithGoogle } = useAuth();
@@ -13,6 +13,9 @@ const AuthModal = ({ isOpen, onClose, onTerms, onPrivacy }) => {
     setError('');
     setLoading(true);
     try {
+      if (prefilledHandle) {
+        localStorage.setItem('pending_handle', prefilledHandle);
+      }
       await loginWithGoogle();
       onClose();
     } catch (err) {
@@ -51,10 +54,13 @@ const AuthModal = ({ isOpen, onClose, onTerms, onPrivacy }) => {
         <div className="p-8 pb-4 flex justify-between items-center">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">
-              Welcome
+              {prefilledHandle ? 'Claim your handle' : 'Welcome'}
             </h2>
             <p className="text-sm mt-1.5 opacity-60">
-              Sign in to Writings to continue.
+              {prefilledHandle 
+                ? <span>Secure <strong className="text-accent">{prefilledHandle}.writings.page</strong> by signing in.</span>
+                : 'Sign in to Writings to continue.'
+              }
             </p>
           </div>
           <button

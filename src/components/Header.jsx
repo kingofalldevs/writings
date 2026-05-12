@@ -1,6 +1,6 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
-import { Upload, Sparkles, Menu, LogOut, User, Sun, Moon, Coffee, Music, Columns, Share2, Globe, Palette, LayoutDashboard } from 'lucide-react';
+import { Upload, Sparkles, Menu, LogOut, User, Sun, Moon, Coffee, Music, Columns, Share2, Globe, Palette, LayoutDashboard, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import * as pdfjsLib from 'pdfjs-dist';
@@ -183,155 +183,183 @@ const Header = ({
 
           <AnimatePresence>
             {isMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="absolute right-0 top-full mt-3 w-72 rounded-2xl shadow-2xl glass overflow-hidden z-[100]"
-              >
-                {user && (
-                  <div
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      onAccount();
-                    }}
-                    className="p-5 border-b border-foreground/10 hover:bg-foreground/5 cursor-pointer transition-all"
-                  >
-                    <div className="flex flex-col">
-                      <span className="text-sm font-bold truncate max-w-[200px]">
-                        {user.displayName || user.email?.split('@')[0]}
-                      </span>
-                      <span className="text-[11px] opacity-50 truncate max-w-[200px] mt-0.5">
-                        {user.email}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                <div className="p-4 border-b border-foreground/10 flex items-center justify-center gap-2">
-                  <motion.button
-                    whileHover={{ scale: 1.05, y: -1 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => {
-                      onToggleAI();
-                      setIsMenuOpen(false);
-                    }}
-                    className={`flex items-center justify-center w-10 h-10 rounded-full cursor-pointer transition-all duration-300 ${isAIOpen
-                        ? 'bg-accent text-background shadow-[0_10px_20px_-5px_rgba(var(--accent-rgb),0.4)]'
-                        : 'bg-accent/10 text-accent hover:bg-accent/20'
-                      }`}
-                    title={isAIOpen ? "Close Aria" : "Ask Aria"}
-                  >
-                    <Sparkles size={18} fill={isAIOpen ? 'currentColor' : 'none'} />
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.05, y: -1 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => {
-                      onTogglePlayer();
-                      setIsMenuOpen(false);
-                    }}
-                    className={`flex items-center justify-center w-10 h-10 rounded-full cursor-pointer transition-all duration-300 ${isPlayerVisible
-                        ? 'bg-accent text-background shadow-[0_10px_20px_-5px_rgba(var(--accent-rgb),0.4)]'
-                        : 'bg-accent/10 text-accent hover:bg-accent/20'
-                      }`}
-                    title={isPlayerVisible ? "Close Player" : "Open Player"}
-                  >
-                    <Music size={18} />
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.1, backgroundColor: 'rgba(var(--accent-rgb), 0.05)' }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => {
-                      handleUploadClick();
-                      setIsMenuOpen(false);
-                    }}
-                    className="flex items-center justify-center w-10 h-10 rounded-full border border-foreground/10 bg-foreground/5 text-foreground transition-all shadow-sm"
-                    title="Upload Document (.txt, .md, .pdf)"
-                  >
-                    <Upload size={18} />
-                  </motion.button>
-
-                  {user && canShare && (
-                    <motion.button
-                      whileHover={{ scale: 1.1, backgroundColor: 'rgba(var(--accent-rgb), 0.05)' }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => {
-                        onShare();
-                        setIsMenuOpen(false);
-                      }}
-                      className="flex items-center justify-center w-10 h-10 rounded-full border border-foreground/10 bg-foreground/5 text-foreground transition-all shadow-sm"
-                      title="Share as Novel"
-                    >
-                      <Share2 size={18} />
-                    </motion.button>
-                  )}
-                </div>
-
-                <div className="p-3 border-b border-foreground/10 flex justify-center">
-                  <div className="flex items-center p-1 rounded-full border border-foreground/10 bg-foreground/5 gap-0.5">
-                    <ThemeIcon
-                      active={theme === 'light'}
-                      onClick={() => toggleTheme('light')}
-                      icon={<Sun size={14} />}
-                    />
-                    <ThemeIcon
-                      active={theme === 'sepia'}
-                      onClick={() => toggleTheme('sepia')}
-                      icon={<Coffee size={14} />}
-                    />
-                    <ThemeIcon
-                      active={theme === 'dark'}
-                      onClick={() => toggleTheme('dark')}
-                      icon={<Moon size={14} />}
-                    />
-                  </div>
-                </div>
-
-                <div className="p-2">
-                  <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      onPortfolioEditor();
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-foreground/5 transition-all text-sm font-semibold"
-                  >
-                    <Palette size={16} className="opacity-60" />
-                    Manage Portfolio
-                  </button>
-
-                  {!user && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="fixed inset-0 bg-background/60 backdrop-blur-sm z-[90] cursor-pointer"
+                  style={{ top: 0, left: 0, width: '100vw', height: '100vh' }}
+                />
+                
+                <motion.div
+                  initial={{ x: '100%' }}
+                  animate={{ x: 0 }}
+                  exit={{ x: '100%' }}
+                  transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+                  className="fixed top-0 right-0 w-[320px] max-w-[85vw] h-screen bg-background/95 backdrop-blur-xl border-l border-foreground/10 shadow-2xl z-[100] flex flex-col"
+                >
+                  <div className="flex items-center justify-between p-6 border-b border-foreground/10">
+                    <span className="font-serif font-bold text-xl tracking-tight">Menu</span>
                     <button
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        onSignIn();
-                      }}
-                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-foreground/5 transition-all text-sm font-semibold"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="p-2 rounded-full hover:bg-foreground/5 transition-all text-foreground/60 hover:text-foreground"
                     >
-                      <User size={16} className="opacity-60" />
-                      Sign In
+                      <X size={20} />
                     </button>
-                  )}
+                  </div>
 
-                  {user && (
-                    <>
-                      <div className="my-1 border-t border-foreground/10"></div>
+                  <div className="flex-1 overflow-y-auto hide-scrollbar flex flex-col p-4">
+                    {user && (
+                      <div
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          onAccount();
+                        }}
+                        className="p-4 mb-4 rounded-2xl border border-foreground/10 bg-foreground/[0.02] hover:bg-foreground/5 cursor-pointer transition-all flex flex-col"
+                      >
+                        <span className="text-sm font-bold truncate max-w-[200px]">
+                          {user.displayName || user.email?.split('@')[0]}
+                        </span>
+                        <span className="text-[11px] opacity-50 truncate max-w-[200px] mt-0.5">
+                          {user.email}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-4 gap-2 mb-6 px-2">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          onToggleAI();
+                          setIsMenuOpen(false);
+                        }}
+                        className={`flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all ${isAIOpen
+                            ? 'bg-accent text-background shadow-lg'
+                            : 'bg-accent/5 text-accent hover:bg-accent/10'
+                          }`}
+                        title={isAIOpen ? "Close Aria" : "Ask Aria"}
+                      >
+                        <Sparkles size={18} fill={isAIOpen ? 'currentColor' : 'none'} />
+                      </motion.button>
+
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          onTogglePlayer();
+                          setIsMenuOpen(false);
+                        }}
+                        className={`flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all ${isPlayerVisible
+                            ? 'bg-accent text-background shadow-lg'
+                            : 'bg-accent/5 text-accent hover:bg-accent/10'
+                          }`}
+                        title={isPlayerVisible ? "Close Player" : "Open Player"}
+                      >
+                        <Music size={18} />
+                      </motion.button>
+
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          handleUploadClick();
+                          setIsMenuOpen(false);
+                        }}
+                        className="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl border border-foreground/10 bg-foreground/5 hover:bg-foreground/10 text-foreground transition-all"
+                        title="Upload Document"
+                      >
+                        <Upload size={18} />
+                      </motion.button>
+
+                      {user && canShare ? (
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            onShare();
+                            setIsMenuOpen(false);
+                          }}
+                          className="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl border border-foreground/10 bg-foreground/5 hover:bg-foreground/10 text-foreground transition-all"
+                          title="Share as Novel"
+                        >
+                          <Share2 size={18} />
+                        </motion.button>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl border border-transparent opacity-0 pointer-events-none"></div>
+                      )}
+                    </div>
+
+                    <div className="mb-6 px-2">
+                      <div className="text-[10px] font-bold uppercase tracking-widest text-muted mb-3 pl-2">Theme</div>
+                      <div className="flex items-center p-1.5 rounded-2xl border border-foreground/10 bg-foreground/5 gap-1 justify-between">
+                        <ThemeIcon
+                          active={theme === 'light'}
+                          onClick={() => toggleTheme('light')}
+                          icon={<Sun size={16} />}
+                        />
+                        <ThemeIcon
+                          active={theme === 'sepia'}
+                          onClick={() => toggleTheme('sepia')}
+                          icon={<Coffee size={16} />}
+                        />
+                        <ThemeIcon
+                          active={theme === 'dark'}
+                          onClick={() => toggleTheme('dark')}
+                          icon={<Moon size={16} />}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2 mt-auto">
                       <button
                         onClick={() => {
                           setIsMenuOpen(false);
-                          onLogout();
+                          onPortfolioEditor();
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-500 transition-all text-sm font-semibold"
+                        className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-foreground/5 transition-all font-semibold border border-transparent hover:border-foreground/10"
                       >
-                        <LogOut size={16} className="opacity-60" />
-                        Sign Out
+                        <div className="w-8 h-8 rounded-full bg-foreground/5 flex items-center justify-center">
+                          <Palette size={16} className="text-foreground" />
+                        </div>
+                        Manage Portfolio
                       </button>
-                    </>
-                  )}
-                </div>
-              </motion.div>
+
+                      {!user && (
+                        <button
+                          onClick={() => {
+                            setIsMenuOpen(false);
+                            onSignIn();
+                          }}
+                          className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-foreground/5 transition-all font-semibold border border-transparent hover:border-foreground/10"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-foreground/5 flex items-center justify-center">
+                            <User size={16} className="text-foreground" />
+                          </div>
+                          Sign In
+                        </button>
+                      )}
+
+                      {user && (
+                        <button
+                          onClick={() => {
+                            setIsMenuOpen(false);
+                            onLogout();
+                          }}
+                          className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-red-500/10 text-red-500 transition-all font-semibold border border-transparent hover:border-red-500/10 mt-4"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center">
+                            <LogOut size={16} className="text-red-500" />
+                          </div>
+                          Sign Out
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              </>
             )}
           </AnimatePresence>
         </div>
@@ -343,7 +371,7 @@ const Header = ({
 const ThemeIcon = ({ active, onClick, icon }) => (
   <button
     onClick={onClick}
-    className={`w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${active ? 'bg-accent text-background opacity-100' : 'bg-transparent text-muted opacity-60 hover:opacity-100'
+    className={`flex-1 min-w-[3rem] h-10 rounded-xl flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${active ? 'bg-accent text-background shadow-md opacity-100' : 'bg-transparent text-muted opacity-60 hover:opacity-100 hover:bg-foreground/5'
       }`}
   >
     {icon}

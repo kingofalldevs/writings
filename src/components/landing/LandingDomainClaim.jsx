@@ -8,7 +8,12 @@ const LandingDomainClaim = ({ onStart }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (onStart) onStart();
+    const cleanHandle = handle.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (cleanHandle && onStart) {
+      onStart(cleanHandle);
+    } else if (onStart) {
+      onStart();
+    }
   };
 
   return (

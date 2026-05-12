@@ -31,17 +31,17 @@
 }
 
 [data-theme='dark'] {
-  --bg-color: #0a0f18;
-  --text-color: #e0e0e0;
-  --text-muted: #8a8f98;
-  --accent-color: #4fd1c5;
-  --accent-rgb: 79, 209, 197;
-  --accent-hover: #38b2ac;
-  --card-bg: rgba(255, 255, 255, 0.03);
-  --border-color: rgba(255, 255, 255, 0.1);
-  --glass-bg: rgba(15, 22, 34, 0.8);
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --text-muted: #a1a1aa;
+  --accent-color: #ffffff;
+  --accent-rgb: 255, 255, 255;
+  --accent-hover: #e4e4e7;
+  --card-bg: rgba(255, 255, 255, 0.04);
+  --border-color: rgba(255, 255, 255, 0.12);
+  --glass-bg: rgba(0, 0, 0, 0.85);
   --glass-border: rgba(255, 255, 255, 0.1);
-  --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+  --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.9);
 }
 
 [data-theme='light'] {

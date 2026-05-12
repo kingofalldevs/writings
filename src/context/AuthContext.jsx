@@ -30,23 +30,35 @@ export function AuthProvider({ children }) {
           setLoading(false);
           return;
         }
-        const unsubDoc = onSnapshot(doc(db, 'users', authUser.uid), async (docSnap) => {
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            setUser({ ...authUser, ...data });
-          } else {
-            // Create the user document so the Webhook can find them by email
-            const { setDoc } = await import('firebase/firestore');
-            await setDoc(doc(db, 'users', authUser.uid), {
-              email: authUser.email,
-              displayName: authUser.displayName,
-              createdAt: new Date().toISOString()
-            }, { merge: true });
-            
+        const unsubDoc = onSnapshot(
+          doc(db, 'users', authUser.uid), 
+          async (docSnap) => {
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              setUser({ ...authUser, ...data });
+            } else {
+              // Create the basic user document. 
+              // We DON'T set the username here; we let the Onboarding flow do it.
+              const { setDoc } = await import('firebase/firestore');
+              
+              await setDoc(doc(db, 'users', authUser.uid), {
+                email: authUser.email,
+                displayName: authUser.displayName,
+                createdAt: new Date().toISOString(),
+                onboardingCompleted: false
+              }, { merge: true });
+
+              setUser(authUser);
+            }
+            setLoading(false);
+          },
+          (err) => {
+            console.error("Auth snapshot error:", err);
+            // Even if the Firestore profile fails, we have the auth user
             setUser(authUser);
+            setLoading(false);
           }
-          setLoading(false);
-        });
+        );
         return () => {
           unsubDoc();
         };

@@ -21,6 +21,7 @@ import AuthorPortfolio from './components/AuthorPortfolio';
 import AccountPage from './components/AccountPage';
 import PortfolioEditor from './components/PortfolioEditor';
 import NotificationModal from './components/NotificationModal';
+import Onboarding from './components/Onboarding';
 import TermsPage from './components/TermsPage';
 import PrivacyPage from './components/PrivacyPage';
 import RefundPage from './components/RefundPage';
@@ -55,6 +56,7 @@ function AppContent() {
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [prefilledHandle, setPrefilledHandle] = useState('');
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(tracks[0]);
   const [editorContent, setEditorContent] = useState('');
@@ -190,7 +192,12 @@ function AppContent() {
     if (isProtected && !loading && !user) {
       router.push('/');
     }
-  }, [pathname, user, loading, router]);
+
+    // Redirect to onboarding if logged in but no username
+    if (user && !user.username && !loading && view !== 'onboarding' && view !== 'landing') {
+      setView('onboarding');
+    }
+  }, [pathname, user, loading, router, view]);
 
   const handleNavigate = (newView) => {
     const publicRoutes = {
@@ -217,10 +224,13 @@ function AppContent() {
     setView(newView);
   };
 
-  const handleStartJourney = () => {
+  const handleStartJourney = (handle) => {
     if (user) {
       handleNavigate('dashboard');
     } else {
+      if (handle && typeof handle === 'string') {
+        setPrefilledHandle(handle);
+      }
       setIsAuthModalOpen(true);
     }
   };
@@ -676,7 +686,11 @@ function AppContent() {
         />
         <AuthModal 
           isOpen={isAuthModalOpen} 
-          onClose={() => setIsAuthModalOpen(false)} 
+          onClose={() => {
+            setIsAuthModalOpen(false);
+            setPrefilledHandle('');
+          }} 
+          prefilledHandle={prefilledHandle}
           onTerms={() => { setIsAuthModalOpen(false); handleNavigate('terms'); }}
           onPrivacy={() => { setIsAuthModalOpen(false); handleNavigate('privacy'); }}
         />
@@ -711,7 +725,11 @@ function AppContent() {
         />
         <AuthModal 
           isOpen={isAuthModalOpen} 
-          onClose={() => setIsAuthModalOpen(false)} 
+          onClose={() => {
+            setIsAuthModalOpen(false);
+            setPrefilledHandle('');
+          }} 
+          prefilledHandle={prefilledHandle}
           onTerms={() => { setIsAuthModalOpen(false); handleNavigate('terms'); }}
           onPrivacy={() => { setIsAuthModalOpen(false); handleNavigate('privacy'); }}
         />
@@ -734,7 +752,11 @@ function AppContent() {
         />
         <AuthModal 
           isOpen={isAuthModalOpen} 
-          onClose={() => setIsAuthModalOpen(false)} 
+          onClose={() => {
+            setIsAuthModalOpen(false);
+            setPrefilledHandle('');
+          }} 
+          prefilledHandle={prefilledHandle}
           onTerms={() => { setIsAuthModalOpen(false); handleNavigate('terms'); }}
           onPrivacy={() => { setIsAuthModalOpen(false); handleNavigate('privacy'); }}
         />
@@ -757,11 +779,27 @@ function AppContent() {
         />
         <AuthModal 
           isOpen={isAuthModalOpen} 
-          onClose={() => setIsAuthModalOpen(false)} 
+          onClose={() => {
+            setIsAuthModalOpen(false);
+            setPrefilledHandle('');
+          }} 
+          prefilledHandle={prefilledHandle}
           onTerms={() => { setIsAuthModalOpen(false); handleNavigate('terms'); }}
           onPrivacy={() => { setIsAuthModalOpen(false); handleNavigate('privacy'); }}
         />
       </>
+    );
+  }
+
+  if (view === 'onboarding') {
+    return (
+      <Onboarding 
+        user={user} 
+        onComplete={() => {
+          setView('dashboard');
+          router.push('/dashboard');
+        }} 
+      />
     );
   }
 
