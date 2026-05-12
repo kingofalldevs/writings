@@ -32,13 +32,14 @@ const LandingProduct = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 1, delay: 0.2 }}
-        className="hidden md:block w-full relative rounded-2xl overflow-hidden border border-foreground/10 shadow-2xl bg-black/5"
+        className="hidden md:block w-full relative rounded-2xl overflow-hidden border border-foreground/10 shadow-2xl bg-black/5 max-h-[600px]"
       >
         <img
           src={desktopShowcaseImg}
           alt="Writings Desktop Interface"
-          className="w-full h-auto block"
+          className="w-full h-auto block object-cover object-top"
         />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background via-background/60 to-transparent z-10" />
       </motion.div>
 
       {/* Mobile Showcase Image */}
