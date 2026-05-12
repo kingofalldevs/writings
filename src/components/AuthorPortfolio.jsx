@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { db } from '../firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, getDocs, collection, query } from 'firebase/firestore';
 import { Library, ArrowLeft, BookOpen, Share2, Sun, Moon, Coffee, Link as LinkIcon, Mail, Edit3 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -71,7 +71,20 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
         if (docSnap.exists()) {
           const data = docSnap.data();
           
-          const allWorks = data.works || [];
+          // 1. Fetch LIVE works from the user's collection using their UID
+          let allWorks = [];
+          if (data.uid) {
+            try {
+              const worksSnapshot = await getDocs(query(collection(db, 'users', data.uid, 'works')));
+              allWorks = worksSnapshot.docs.map(d => ({ ...d.data(), id: d.id }));
+            } catch (worksErr) {
+              console.warn("Could not fetch live works, falling back to snapshot:", worksErr);
+              allWorks = data.works || [];
+            }
+          } else {
+            allWorks = data.works || [];
+          }
+
           const folders = allWorks.filter(w => w.type === 'folder');
           const documents = allWorks.filter(w => w.type === 'document');
 
@@ -99,7 +112,7 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
               childCount: children.length,
               type: 'story'
             };
-          }).filter(s => s.content.trim().length > 0);
+          }).filter(s => s.content && s.content.trim().length > 0);
 
           const articles = topLevelDocs.map(doc => ({
              ...doc,
