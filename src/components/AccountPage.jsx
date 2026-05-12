@@ -33,7 +33,7 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
 
     setLoadingPortal(true);
     try {
-      const response = await fetch('/api/create-portal-session', {
+      const response = await fetch('/api/subscription-portal', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
