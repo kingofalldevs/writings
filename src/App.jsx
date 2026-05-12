@@ -37,7 +37,7 @@ function AppContent() {
   const [view, setView] = useState('landing');
 
   useEffect(() => {
-    const path = pathname.toLowerCase();
+    const path = (pathname || '').toLowerCase();
     if (path.includes('/terms')) setView('terms');
     else if (path.includes('/privacy')) setView('privacy');
     else if (path.includes('/refund')) setView('refund');
@@ -72,12 +72,12 @@ function AppContent() {
   const closeNotif = () => setNotif(n => ({ ...n, isOpen: false }));
 
   // Initialize binder open state based on screen size after mount
-  React.useEffect(() => {
+  useEffect(() => {
     setIsBinderOpen(window.innerWidth > 768);
   }, []);
 
   // Keyboard shortcuts for Zen Mode
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.shiftKey && e.key.toLowerCase() === 'z') {
         setIsBinderOpen(prev => !prev);
@@ -95,7 +95,7 @@ function AppContent() {
   });
 
   // Fetch works and organize into binder
-  React.useEffect(() => {
+  useEffect(() => {
     if (user) {
       const q = query(collection(db, 'users', user.uid, 'works'), orderBy('name', 'asc'));
       const unsubscribe = onSnapshot(q, async (snapshot) => {
@@ -633,7 +633,7 @@ function AppContent() {
   };
 
   // Check for payment success in URL
-  React.useEffect(() => {
+  useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     if (params.get('payment') === 'success') {
@@ -644,7 +644,7 @@ function AppContent() {
   }, []);
 
   // Auto-save logic
-  React.useEffect(() => {
+  useEffect(() => {
     if (user && currentWorkId && editorContent !== undefined) {
       const timeoutId = setTimeout(async () => {
         try {
