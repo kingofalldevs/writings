@@ -1,4 +1,3 @@
-"use client";
 import { db } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import AuthorPortfolio from "@/components/AuthorPortfolio";
