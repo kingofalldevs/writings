@@ -90,19 +90,19 @@ const Header = ({
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full h-16 px-4 md:px-8 flex items-center justify-between z-50 bg-background border-b border-foreground/5">
+    <header className="fixed top-0 left-0 w-full h-20 px-6 md:px-12 flex items-center justify-between z-50 bg-background/80 backdrop-blur-2xl border-b border-foreground/10 shadow-sm">
       <div
         className="flex items-center gap-2 md:gap-3 cursor-pointer group shrink-0"
         onClick={onLogoClick}
       >
         <div className="flex items-center justify-center w-6 h-6 transition-transform group-hover:scale-110">
-          <svg width="32" height="28" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 5c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M2 12c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M2 19c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          <svg width="36" height="32" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 5c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M2 12c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M2 19c5-4 13-4 14 0s9 4 14 0" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
-        <span className="text-lg md:text-xl font-medium tracking-tight">Writings</span>
+        <span className="text-xl md:text-2xl font-bold tracking-tighter">Writings</span>
       </div>
 
       <div className="flex items-center gap-2 md:gap-4 flex-1 justify-start ml-4 md:ml-8">
