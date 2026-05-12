@@ -170,33 +170,33 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
                     <div>
                       <h2 className="text-xl font-bold font-serif">Subscription</h2>
                       <p className="text-xs opacity-40 mt-0.5 uppercase tracking-widest font-bold">
-                        {user?.subscription?.status === 'active' ? 'Writings Pro' : 'Zen Plan'}
+                        {(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') ? 'Writings Pro' : 'Zen Plan'}
                       </p>
                     </div>
                   </div>
-                  <span className={`px-5 py-2 rounded-full text-[11px] font-bold tracking-widest uppercase border ${user?.subscription?.status === 'active'
+                  <span className={`px-5 py-2 rounded-full text-[11px] font-bold tracking-widest uppercase border ${(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro')
                     ? 'bg-accent/10 text-accent border-accent/20'
                     : 'bg-foreground/5 text-muted border-foreground/5'
                     }`}>
-                    {user?.subscription?.status === 'active' ? 'Premium Active' : 'Free Forever'}
+                    {(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') ? 'Premium Active' : 'Free Forever'}
                   </span>
                 </div>
 
                 <p className="text-foreground/70 mb-10 leading-relaxed max-w-xl">
-                  {user?.subscription?.status === 'active'
+                  {(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro')
                     ? "Thank you for supporting meditative writing. Your Pro features are unlocked across all devices."
                     : "You're currently exploring the calm basics. Upgrade to Writings Pro for unlimited AI assistance, binaural soundscapes, and advanced manuscript exports."}
                 </p>
 
                 <div className="flex flex-wrap items-center gap-4">
                   <button
-                    onClick={user?.subscription?.status === 'active' ? handleManageBilling : onPricing}
+                    onClick={(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') ? handleManageBilling : onPricing}
                     disabled={loadingPortal}
                     className="px-8 py-4 rounded-full bg-accent text-background font-bold text-sm transition-all hover:opacity-90 disabled:opacity-50"
                   >
-                    {loadingPortal ? 'Opening Portal...' : (user?.subscription?.status === 'active' ? 'Manage Subscription' : 'Explore Pro Plans')}
+                    {loadingPortal ? 'Opening Portal...' : ((user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') ? 'Manage Subscription' : 'Explore Pro Plans')}
                   </button>
-                  {user?.subscription?.status !== 'active' && (
+                  {(user?.subscription?.status !== 'active' && user?.subscription?.status !== 'pro') && (
                     <button
                       onClick={handleSyncSubscription}
                       disabled={loadingSync}
