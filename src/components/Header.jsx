@@ -5,8 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import * as pdfjsLib from 'pdfjs-dist';
 
-// Use CDN for worker in Next.js
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib['version']}/build/pdf.worker.min.mjs`;
+// pdfjsLib.GlobalWorkerOptions.workerSrc is set inside Header component to avoid SSR issues
 
 const Header = ({
   onUpload,
@@ -35,6 +34,11 @@ const Header = ({
   const menuRef = useRef(null);
 
   useEffect(() => {
+    // Set PDF.js worker
+    if (pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib['version']}/build/pdf.worker.min.mjs`;
+    }
+
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsMenuOpen(false);

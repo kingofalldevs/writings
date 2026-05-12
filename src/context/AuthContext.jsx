@@ -26,6 +26,10 @@ export function AuthProvider({ children }) {
         // Fetch extra profile data (like subscription) from Firestore
         const { getFirestore, doc, onSnapshot } = await import('firebase/firestore');
         const db = getFirestore();
+        if (!db) {
+          setLoading(false);
+          return;
+        }
         const unsubDoc = onSnapshot(doc(db, 'users', authUser.uid), async (docSnap) => {
           if (docSnap.exists()) {
             const data = docSnap.data();
