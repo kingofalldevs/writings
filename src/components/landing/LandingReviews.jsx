@@ -5,21 +5,21 @@ import { Star, Quote } from 'lucide-react';
 
 const reviews = [
   {
-    name: "Alex Rivera",
-    role: "Senior Research Fellow, MIT",
-    content: "Writings has completely transformed how I handle deep research. The distraction-free environment is unlike anything I've used before.",
+    name: "Elena Thorne",
+    role: "Award-winning Novelist",
+    content: "Finally, a digital space that respects the sanctity of the blank page. Writings is where my most complex characters found their voices.",
     rating: 5
   },
   {
-    name: "Sarah Chen",
-    role: "Product Designer @ Linear",
-    content: "The aesthetic excellence of this OS is unmatched. It feels less like an app and more like a focused extension of my own mind.",
+    name: "Julian Vane",
+    role: "Essayist & Historian",
+    content: "The Ideabase has fundamentally changed how I bridge historical research with narrative flow. It's the first OS designed for the architect of stories.",
     rating: 5
   },
   {
-    name: "James Wilson",
-    role: "PhD Candidate, Stanford",
-    content: "The integrated binaural beats and AI tutor (Aria) make it the ultimate study companion. My productivity has peaked.",
+    name: "Claire Morrison",
+    role: "Poetry Editor",
+    content: "There is a quiet rhythm to this platform that mirrors the writing process itself. It doesn't just store my work; it encourages me to deepen it.",
     rating: 5
   }
 ];
