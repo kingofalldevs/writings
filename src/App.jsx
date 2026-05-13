@@ -816,8 +816,8 @@ function AppContent() {
     return (
       <AccountPage
         user={user}
-        onLogout={() => {
-          logout();
+        onLogout={async () => {
+          await logout();
           handleNavigate('landing');
         }}
         onBack={() => handleNavigate('dashboard')}
@@ -868,8 +868,8 @@ function AppContent() {
         <div className="flex flex-1 pt-20">
           <DashboardSidebar 
             user={user}
-            onLogout={() => {
-              logout();
+            onLogout={async () => {
+              await logout();
               handleNavigate('landing');
             }}
             onAccount={() => handleNavigate('account')}
