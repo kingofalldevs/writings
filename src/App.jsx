@@ -40,19 +40,23 @@ function AppContent() {
 
   useEffect(() => {
     const path = (pathname || '').toLowerCase();
-    if (path.includes('/terms')) setView('terms');
-    else if (path.includes('/privacy')) setView('privacy');
-    else if (path.includes('/refund')) setView('refund');
-    else if (path.includes('/pricing')) setView('pricing');
-    else if (path.includes('/aria')) setView('aria');
-    else if (path.includes('/philosophy')) setView('philosophy');
-    else if (path.includes('/editor')) setView('editor');
-    else if (path.includes('/dashboard')) setView('dashboard');
-    else if (path.includes('/account')) setView('account');
-    else if (path.includes('/portfolio-editor')) setView('portfolio-editor');
-    else if (path.includes('/onboarding')) setView('onboarding');
-    else setView('landing');
-  }, [pathname]);
+    let newView = 'landing';
+    if (path.includes('/terms')) newView = 'terms';
+    else if (path.includes('/privacy')) newView = 'privacy';
+    else if (path.includes('/refund')) newView = 'refund';
+    else if (path.includes('/pricing')) newView = 'pricing';
+    else if (path.includes('/aria')) newView = 'aria';
+    else if (path.includes('/philosophy')) newView = 'philosophy';
+    else if (path.includes('/editor')) newView = 'editor';
+    else if (path.includes('/dashboard')) newView = 'dashboard';
+    else if (path.includes('/account')) newView = 'account';
+    else if (path.includes('/portfolio-editor')) newView = 'portfolio-editor';
+    else if (path.includes('/onboarding')) newView = 'onboarding';
+
+    if (newView !== view) {
+      setView(newView);
+    }
+  }, [pathname, view]);
 
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [isAIOpen, setIsAIOpen] = useState(false);
@@ -172,6 +176,8 @@ function AppContent() {
           research: researchTree,
           trash: trashTree
         });
+      }, (err) => {
+        console.warn("Snapshot error (likely logged out):", err);
       });
       return () => unsubscribe();
     }
@@ -219,7 +225,6 @@ function AppContent() {
     };
 
     if (publicRoutes[newView]) {
-      setView(newView);
       router.push(publicRoutes[newView]);
       return;
     }
@@ -230,7 +235,6 @@ function AppContent() {
     else if (newView === 'portfolio-editor') path = '/portfolio-editor';
 
     router.push(path);
-    setView(newView);
   };
 
   const handleStartJourney = (handle) => {
@@ -818,6 +822,7 @@ function AppContent() {
         user={user}
         onLogout={async () => {
           await logout();
+          window.location.href = '/';
         }}
         onBack={() => handleNavigate('dashboard')}
         onStart={() => handleNavigate('dashboard')}
@@ -869,6 +874,7 @@ function AppContent() {
             user={user}
             onLogout={async () => {
               await logout();
+              window.location.href = '/';
             }}
             onAccount={() => handleNavigate('account')}
             onPortfolioEditor={() => handleNavigate('portfolio-editor')}
