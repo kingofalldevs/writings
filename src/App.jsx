@@ -50,6 +50,7 @@ function AppContent() {
     else if (path.includes('/dashboard')) setView('dashboard');
     else if (path.includes('/account')) setView('account');
     else if (path.includes('/portfolio-editor')) setView('portfolio-editor');
+    else if (path.includes('/onboarding')) setView('onboarding');
     else setView('landing');
   }, [pathname]);
 
@@ -195,8 +196,13 @@ function AppContent() {
     }
 
     // Redirect to onboarding if logged in but no username
-    if (user && !user.username && !loading && view !== 'onboarding' && view !== 'landing') {
-      setView('onboarding');
+    if (user && user.onboardingCompleted === false && !loading && view !== 'onboarding' && view !== 'landing') {
+      router.push('/onboarding');
+    }
+
+    // If on onboarding but already completed, go to dashboard
+    if (user && user.onboardingCompleted === true && !loading && view === 'onboarding') {
+      router.push('/dashboard');
     }
   }, [pathname, user, loading, router, view]);
 
@@ -209,9 +215,11 @@ function AppContent() {
       terms: '/terms',
       privacy: '/privacy',
       refund: '/refund',
+      onboarding: '/onboarding',
     };
 
     if (publicRoutes[newView]) {
+      setView(newView);
       router.push(publicRoutes[newView]);
       return;
     }

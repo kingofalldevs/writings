@@ -48,7 +48,7 @@ export function AuthProvider({ children }) {
                 onboardingCompleted: false
               }, { merge: true });
 
-              setUser(authUser);
+              setUser({ ...authUser, onboardingCompleted: false });
             }
             setLoading(false);
           },
