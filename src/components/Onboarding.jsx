@@ -116,7 +116,7 @@ const Onboarding = ({ user, onComplete }) => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-6 font-sans">
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6 font-sans">
       <div className="max-w-xl w-full">
         
         {/* Progress Bar */}
@@ -124,7 +124,7 @@ const Onboarding = ({ user, onComplete }) => {
           {[1, 2, 3].map((s) => (
             <div 
               key={s} 
-              className={`h-1 flex-1 rounded-full transition-all duration-500 ${step >= s ? 'bg-white' : 'bg-white/10'}`} 
+              className={`h-1 flex-1 rounded-full transition-all duration-500 ${step >= s ? 'bg-foreground' : 'bg-foreground/10'}`} 
             />
           ))}
         </div>
@@ -139,37 +139,37 @@ const Onboarding = ({ user, onComplete }) => {
               className="space-y-8"
             >
               <div className="space-y-2">
-                <h1 className="text-4xl font-bold font-serif tracking-tight">The Writer's Identity</h1>
-                <p className="text-white/40">How should the world address you?</p>
+                <h1 className="text-4xl font-bold font-serif tracking-tight text-foreground">The Writer's Identity</h1>
+                <p className="opacity-40 text-foreground">How should the world address you?</p>
               </div>
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/30">Display Name</label>
+                  <label className="text-[10px] uppercase tracking-[0.2em] font-bold opacity-30 text-foreground">Display Name</label>
                   <input 
                     type="text"
                     value={formData.authorName}
                     onChange={(e) => setFormData({...formData, authorName: e.target.value})}
                     placeholder="Your pen name"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-white/30 transition-all text-xl font-serif"
+                    className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl px-6 py-4 outline-none focus:border-foreground/30 transition-all text-xl font-serif text-foreground"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/30">Short Bio</label>
+                  <label className="text-[10px] uppercase tracking-[0.2em] font-bold opacity-30 text-foreground">Short Bio</label>
                   <textarea 
                     value={formData.bio}
                     onChange={(e) => setFormData({...formData, bio: e.target.value})}
                     placeholder="Crafting narratives at the intersection of..."
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-white/30 transition-all h-32 resize-none leading-relaxed"
+                    className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl px-6 py-4 outline-none focus:border-foreground/30 transition-all h-32 resize-none leading-relaxed text-foreground"
                   />
                 </div>
 
-                {error && <p className="text-red-400 text-sm">{error}</p>}
+                {error && <p className="text-red-400 text-sm font-medium">{error}</p>}
 
                 <button 
                   onClick={handleNext}
-                  className="w-full bg-white text-black font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="w-full bg-foreground text-background font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
                   Continue
                   <ArrowRight size={20} />
@@ -187,8 +187,8 @@ const Onboarding = ({ user, onComplete }) => {
               className="space-y-8"
             >
               <div className="space-y-2">
-                <h1 className="text-4xl font-bold font-serif tracking-tight">Claim Your Territory</h1>
-                <p className="text-white/40">Your unique address on the digital frontier.</p>
+                <h1 className="text-4xl font-bold font-serif tracking-tight text-foreground">Claim Your Territory</h1>
+                <p className="opacity-40 text-foreground">Your unique address on the digital frontier.</p>
               </div>
 
               <div className="space-y-6">
@@ -198,12 +198,12 @@ const Onboarding = ({ user, onComplete }) => {
                     value={formData.handle}
                     onChange={(e) => setFormData({...formData, handle: e.target.value.replace(/[^a-z0-9]/gi, '').toLowerCase()})}
                     placeholder="your-handle"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-6 pr-40 outline-none focus:border-white/30 transition-all text-2xl font-mono"
+                    className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl px-6 py-6 pr-40 outline-none focus:border-foreground/30 transition-all text-2xl font-mono text-foreground"
                   />
                   <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-3">
-                    <span className="text-white/20 font-mono">.writings.page</span>
+                    <span className="opacity-20 text-foreground font-mono">.writings.page</span>
                     {availability.loading ? (
-                      <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
                     ) : availability.checked && (
                       availability.available ? (
                         <CheckCircle2 size={20} className="text-green-500" />
@@ -215,32 +215,32 @@ const Onboarding = ({ user, onComplete }) => {
                 </div>
 
                 {availability.checked && !availability.available && (
-                  <p className="text-red-400 text-sm">This handle is already taken. Try something else.</p>
+                  <p className="text-red-400 text-sm font-medium">This handle is already taken. Try something else.</p>
                 )}
 
-                <div className="p-6 rounded-3xl bg-white/5 border border-white/10 space-y-4">
-                  <div className="flex items-center gap-3 text-white/40">
+                <div className="p-6 rounded-3xl bg-foreground/5 border border-foreground/10 space-y-4">
+                  <div className="flex items-center gap-3 opacity-40 text-foreground">
                     <Globe size={16} />
                     <span className="text-xs font-bold uppercase tracking-widest">Premium Feature</span>
                   </div>
-                  <p className="text-sm leading-relaxed text-white/70">
+                  <p className="text-sm leading-relaxed opacity-70 text-foreground">
                     Your handle creates a dedicated space for your readers. You can change this later, but your current links will break.
                   </p>
                 </div>
 
-                {error && <p className="text-red-400 text-sm">{error}</p>}
+                {error && <p className="text-red-400 text-sm font-medium">{error}</p>}
 
                 <div className="flex gap-4">
                   <button 
                     onClick={() => setStep(1)}
-                    className="flex-1 bg-white/5 border border-white/10 text-white font-bold py-4 rounded-2xl hover:bg-white/10 transition-all"
+                    className="flex-1 bg-foreground/5 border border-foreground/10 text-foreground font-bold py-4 rounded-2xl hover:bg-foreground/10 transition-all"
                   >
                     Back
                   </button>
                   <button 
                     onClick={handleSubmit}
                     disabled={loading || !availability.available}
-                    className="flex-[2] bg-white text-black font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
+                    className="flex-[2] bg-foreground text-background font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
                   >
                     {loading ? 'Securing Domain...' : 'Complete Setup'}
                     <Sparkles size={20} />
@@ -262,21 +262,21 @@ const Onboarding = ({ user, onComplete }) => {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                  className="w-24 h-24 bg-white rounded-full flex items-center justify-center"
+                  className="w-24 h-24 bg-foreground rounded-full flex items-center justify-center"
                 >
-                  <CheckCircle2 size={48} className="text-black" />
+                  <CheckCircle2 size={48} className="text-background" />
                 </motion.div>
                 <motion.div 
                   animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="absolute inset-0 bg-white rounded-full -z-10"
+                  className="absolute inset-0 bg-foreground rounded-full -z-10"
                 />
               </div>
 
               <div className="space-y-2">
-                <h1 className="text-4xl font-bold font-serif">Welcome Home.</h1>
-                <p className="text-white/40">Your corner of the internet is ready at</p>
-                <p className="text-xl font-mono text-white/80">{formData.handle}.writings.page</p>
+                <h1 className="text-4xl font-bold font-serif text-foreground">Welcome Home.</h1>
+                <p className="opacity-40 text-foreground">Your corner of the internet is ready at</p>
+                <p className="text-xl font-mono opacity-80 text-foreground">{formData.handle}.writings.page</p>
               </div>
             </motion.div>
           )}
