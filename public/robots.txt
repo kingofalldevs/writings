@@ -4,5 +4,6 @@
 User-agent: *
 Allow: /
 
-# Sitemap location
+# Sitemap locations
 Sitemap: https://writings.page/sitemap.xml
+Sitemap: https://writings.page/sitemap.txt
