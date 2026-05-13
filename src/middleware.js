@@ -14,18 +14,24 @@ export function middleware(req) {
 
   // Extract subdomain
   const hostname = host.split(':')[0]; // Remove port if present
-  const parts = hostname.split('.');
   
-  // Example: joseph.writings.page -> ["joseph", "writings", "page"]
-  if (parts.length >= 3) {
-    const subdomain = parts[0].toLowerCase();
-    
-    // Skip common subdomains
-    if (!['www', 'app', 'dev', 'api', 'admin'].includes(subdomain)) {
-      // Rewrite to /author/[subdomain]/...
-      const authorPath = `/author/${subdomain}${url.pathname === '/' ? '' : url.pathname}`;
-      return NextResponse.rewrite(new URL(authorPath, req.url));
+  let subdomain = '';
+  if (hostname.endsWith('.localhost')) {
+    subdomain = hostname.replace('.localhost', '');
+  } else if (hostname.endsWith('.' + rootDomain)) {
+    subdomain = hostname.replace('.' + rootDomain, '');
+  }
+
+  if (subdomain && !['www', 'app', 'dev', 'api', 'admin'].includes(subdomain)) {
+    // Rewrite to /author/[subdomain]/...
+    // If the internal path starts with /author already, don't double it
+    if (url.pathname.startsWith('/author')) {
+      return NextResponse.next();
     }
+    
+    const authorPath = `/author/${subdomain}${url.pathname === '/' ? '' : url.pathname}`;
+    console.log(`Subdomain rewrite: ${host}${url.pathname} -> ${authorPath}`);
+    return NextResponse.rewrite(new URL(authorPath, req.url));
   }
 
   return NextResponse.next();
