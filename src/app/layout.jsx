@@ -18,12 +18,12 @@ const playfair = Playfair_Display({
 export const metadata = {
   metadataBase: new URL('https://writings.page'),
   title: "Writings | The Living OS for Writers",
-  description: "Craft your narratives in a minimalist, high-fidelity environment designed for deep focus and elegant publication.",
-  keywords: ["writing software", "minimalist editor", "writer portfolio", "author platform", "publishing tools"],
+  description: "A premium digital sanctuary for authors. Writings offers a high-fidelity, distraction-free editor with a scrivener-style Ideabase, context-aware AI assistance, and one-click portfolio publishing. Designed for deep focus and elegant publication.",
+  keywords: ["writing software", "minimalist editor", "writer portfolio", "author platform", "publishing tools", "scrivener alternative", "distraction-free writing", "Living OS", "AI writing assistant"],
   authors: [{ name: "Writings Team" }],
   openGraph: {
     title: "Writings | The Living OS for Writers",
-    description: "Craft your narratives in a minimalist, high-fidelity environment designed for deep focus and elegant publication.",
+    description: "The minimalist workspace for deep work and professional publication. Experience the Living OS for authors.",
     url: 'https://writings.page',
     siteName: 'Writings',
     images: [
@@ -57,17 +57,25 @@ export const metadata = {
 };
 
 const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'Writings',
-  operatingSystem: 'Any',
-  applicationCategory: 'DesignApplication',
-  description: 'A minimalist, high-fidelity environment designed for deep focus and elegant publication.',
-  offers: {
-    '@type': 'Offer',
-    price: '0.00',
-    priceCurrency: 'USD',
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Writings",
+  "operatingSystem": "Web",
+  "applicationCategory": "WritingApplication",
+  "description": "Writings is a minimalist, high-fidelity environment designed for deep focus and elegant publication. It features a distraction-free editor, a comprehensive Ideabase for organization, and instant portfolio generation.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
   },
+  "featureList": [
+    "Distraction-free minimalist editor",
+    "Ideabase and Binder for hierarchical organization",
+    "One-click author portfolio publication",
+    "AI-powered writing assistance (Aria)",
+    "Zen Mode with ambient focus tracks",
+    "Cross-device synchronization"
+  ]
 };
 
 export default function RootLayout({ children }) {
