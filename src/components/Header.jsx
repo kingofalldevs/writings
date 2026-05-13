@@ -151,7 +151,7 @@ const Header = ({
                   href={`https://${user.username}.writings.page`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[11px] font-bold tracking-widest uppercase text-accent border-b border-accent/30 hover:border-accent transition-all pb-0.5"
+                  className="text-[13px] font-medium lowercase text-accent border-b border-accent/20 hover:border-accent transition-all pb-0.5 tracking-tight"
                 >
                   {user.username}.writings.page
                 </motion.a>
