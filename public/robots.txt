@@ -1,4 +1,4 @@
-# crescendo.best — robots.txt
+# writings.page — robots.txt
 # Allow all search engine crawlers
 
 User-agent: *
