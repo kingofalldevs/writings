@@ -145,18 +145,28 @@ const Header = ({
         <div className="relative flex items-center gap-2" ref={menuRef}>
           {user && (
             <div className="flex items-center gap-2 mr-1 md:mr-2">
-
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={onQuickPublish}
-                className="flex items-center gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-full bg-accent text-background transition-all text-[10px] md:text-[11px] font-bold tracking-widest uppercase"
-                title="Instant Publish to Portfolio"
-              >
-                <Globe size={14} />
-                <span className="hidden sm:inline">Publish</span>
-              </motion.button>
+              {currentView === 'dashboard' && user.username ? (
+                <motion.a
+                  whileHover={{ y: -1 }}
+                  href={`https://${user.username}.writings.page`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[11px] font-bold tracking-widest uppercase text-accent border-b border-accent/30 hover:border-accent transition-all pb-0.5"
+                >
+                  {user.username}.writings.page
+                </motion.a>
+              ) : (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={onQuickPublish}
+                  className="flex items-center gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-full bg-accent text-background transition-all text-[10px] md:text-[11px] font-bold tracking-widest uppercase"
+                  title="Instant Publish to Portfolio"
+                >
+                  <Globe size={14} />
+                  <span className="hidden sm:inline">Publish</span>
+                </motion.button>
+              )}
             </div>
           )}
 
