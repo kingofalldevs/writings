@@ -561,7 +561,11 @@ function AppContent() {
         timestamp: serverTimestamp()
       });
 
-      const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/author/${portfolioData.username.toLowerCase()}`;
+      const isLocal = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+      const shareUrl = isLocal 
+        ? `http://${portfolioData.username.toLowerCase()}.localhost:3000`
+        : `https://${portfolioData.username.toLowerCase()}.writings.page`;
+      
       navigator.clipboard.writeText(shareUrl);
       showNotif('Portfolio updated!', 'Your portfolio is live. Link copied to clipboard.', 'success', { copyText: shareUrl });
     } catch (e) {
@@ -600,7 +604,11 @@ function AppContent() {
         timestamp: serverTimestamp()
       });
 
-      const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/author/${username.toLowerCase()}`;
+      const isLocal = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+      const shareUrl = isLocal 
+        ? `http://${username.toLowerCase()}.localhost:3000`
+        : `https://${username.toLowerCase()}.writings.page`;
+
       navigator.clipboard.writeText(shareUrl);
       showNotif('Portfolio is live! 🎉', 'Your author page is published. Link copied to clipboard.', 'success', { copyText: shareUrl });
     } catch (e) {

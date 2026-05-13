@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { doc, getDoc, getDocs, collection, query } from 'firebase/firestore';
-import { Library, ArrowLeft, BookOpen, Share2, Sun, Moon, Coffee, Link as LinkIcon, Mail, Edit3 } from 'lucide-react';
+import { Library, ArrowLeft, ArrowRight, BookOpen, Share2, Sun, Moon, Coffee, Link as LinkIcon, Mail, Edit3, ChevronRight } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -59,11 +59,12 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
 
 
   useEffect(() => {
-    if (initialData) return; // Skip if we already have data from SSR
-  }, []);
-
-  useEffect(() => {
     const fetchPortfolio = async () => {
+      if (initialData) {
+        setLoading(false);
+        return;
+      }
+      
       try {
         const docRef = doc(db, 'portfolios', authorUsername.toLowerCase());
         const docSnap = await getDoc(docRef);
@@ -176,68 +177,249 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
   const accentColor = portfolio.accentColor || '#72B9AA';
   const fontFamily = portfolio.themeFont === 'sans' ? 'sans-serif' : "'Playfair Display', serif";
 
+  const renderClassicTemplate = () => (
+    <div className="min-h-screen flex flex-col bg-[#FDFBF7] text-[#2C2C2A] dark:bg-[#1A1A1A] dark:text-[#EAEAEA]">
+      {/* Editorial Header */}
+      <nav className="w-full px-8 md:px-16 py-12 flex flex-col md:flex-row items-center justify-between border-b border-foreground/10 sticky top-0 z-[100] bg-inherit">
+        <h2 className="text-3xl md:text-4xl font-serif italic tracking-tight">{portfolio.authorName}</h2>
+        <div className="flex gap-12 text-[11px] font-medium uppercase tracking-[0.2em] mt-6 md:mt-0">
+          <a href="#works-section" className="hover:text-accent transition-colors">Selected Works</a>
+          <a href="#about-section" className="hover:text-accent transition-colors">Author</a>
+          <a href="#connect-section" className="hover:text-accent transition-colors">Correspondence</a>
+        </div>
+      </nav>
+
+      <div className="flex-grow max-w-6xl mx-auto w-full px-8 py-24">
+        {/* Editorial Hero */}
+        <div className="flex flex-col md:flex-row items-center gap-16 md:gap-24 mb-32">
+          {portfolio.profileImage ? (
+            <div className="w-48 h-64 md:w-72 md:h-96 relative flex-shrink-0 group">
+              <div className="absolute inset-0 bg-accent/10 translate-x-4 translate-y-4 rounded-none transition-transform group-hover:translate-x-6 group-hover:translate-y-6" style={{ backgroundColor: accentColor }} />
+              <img src={portfolio.profileImage} className="w-full h-full object-cover rounded-none relative z-10 grayscale group-hover:grayscale-0 transition-all duration-700" alt={portfolio.authorName} />
+            </div>
+          ) : (
+             <div className="w-16 h-[1px] bg-foreground/20" />
+          )}
+          <div className="space-y-8 max-w-2xl text-center md:text-left">
+            <h1 className="text-6xl md:text-8xl font-serif leading-[1.1] tracking-tight">{portfolio.authorName}</h1>
+            <p className="text-xl md:text-3xl font-serif italic opacity-70 leading-relaxed border-l-2 pl-6" style={{ borderColor: accentColor }}>
+              {portfolio.bio || 'Crafting literary narratives...'}
+            </p>
+          </div>
+        </div>
+        
+        {/* Works Section - Literary Grid */}
+        <div id="works-section" className="space-y-32">
+          {['stories', 'articles', 'blog'].map(section => (portfolio[section] || []).length > 0 && (
+            <div key={section} className="space-y-16">
+              <div className="flex items-center gap-6">
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">The {section}</span>
+                <div className="flex-grow h-[1px] bg-foreground/10" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20">
+                {(portfolio[section] || []).map((work, i) => (
+                  <motion.div 
+                    key={work.id || i} 
+                    onClick={() => setSelectedWork(work)}
+                    whileHover={{ y: -4 }}
+                    className="group cursor-pointer flex gap-8"
+                  >
+                     <div className="w-12 pt-2 flex flex-col items-center gap-4">
+                       <span className="text-xl font-serif italic text-foreground/30 group-hover:text-foreground transition-colors">0{i+1}</span>
+                       <div className="w-[1px] h-full bg-foreground/10 group-hover:bg-accent transition-colors" style={{ backgroundColor: accentColor }} />
+                     </div>
+                     <div className="space-y-6">
+                       <h3 className="text-3xl md:text-4xl font-serif leading-tight group-hover:text-accent transition-colors">
+                         {work.name}
+                       </h3>
+                       <p className="text-base md:text-lg opacity-60 leading-relaxed font-serif line-clamp-3">
+                         {work.content?.substring(0, 180)}...
+                       </p>
+                       <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-foreground/40">
+                         <span>Read Piece</span>
+                         <div className="w-4 h-[1px] bg-foreground/40 group-hover:w-8 group-hover:bg-accent transition-all" />
+                       </div>
+                     </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Philosophy */}
+        {portfolio.inspirations && (
+           <div id="about-section" className="mt-40 pt-24 border-t border-foreground/10 max-w-3xl mx-auto text-center space-y-12">
+              <div className="w-8 h-8 mx-auto opacity-20">
+                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/></svg>
+              </div>
+              <p className="text-3xl md:text-4xl font-serif italic leading-relaxed">
+                {portfolio.inspirations}
+              </p>
+           </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderMinimalistTemplate = () => (
+    <div className="min-h-screen bg-background text-foreground font-sans">
+      <nav className="fixed top-0 inset-x-0 p-8 flex items-center justify-between z-[100] mix-blend-difference text-white">
+        <span className="text-2xl font-medium tracking-tighter">{portfolio.authorName}</span>
+        <div className="flex items-center gap-8 text-xs font-medium tracking-wide">
+           <a href="#works" className="hover:opacity-50 transition-opacity">Index</a>
+           <a href="#connect" className="hover:opacity-50 transition-opacity">Info</a>
+        </div>
+      </nav>
+
+      <div className="pt-[30vh] px-8 md:px-24 pb-32 max-w-[1400px] mx-auto">
+        {/* Extreme Minimalist Hero */}
+        <div className="max-w-4xl space-y-12 mb-40">
+           <h1 className="text-[12vw] md:text-[8rem] font-medium leading-[0.85] tracking-tighter">
+             {portfolio.authorName}
+             <span className="inline-block w-4 h-4 md:w-8 md:h-8 rounded-full ml-4 md:ml-8 translate-y-[-10px] md:translate-y-[-20px]" style={{ backgroundColor: accentColor }} />
+           </h1>
+           <p className="text-2xl md:text-4xl max-w-2xl font-light leading-tight opacity-70">
+             {portfolio.bio || 'Author & Writer'}
+           </p>
+        </div>
+
+        {/* Gallery Works */}
+        <div id="works" className="space-y-40">
+          {['stories', 'articles', 'blog'].map((section) => (portfolio[section] || []).length > 0 && (
+            <div key={section} className="border-t border-foreground text-foreground">
+              <div className="py-6 flex justify-between items-center opacity-40">
+                <span className="text-sm uppercase tracking-widest">{section}</span>
+                <span className="text-sm">{(portfolio[section] || []).length} items</span>
+              </div>
+              <div className="grid grid-cols-1 border-t border-foreground">
+                {(portfolio[section] || []).map((work, i) => (
+                  <motion.div 
+                    key={work.id || i} 
+                    onClick={() => setSelectedWork(work)}
+                    className="group border-b border-foreground flex flex-col md:flex-row items-baseline justify-between py-12 md:py-16 cursor-pointer hover:pl-8 transition-all duration-500"
+                  >
+                    <h3 className="text-5xl md:text-7xl font-medium tracking-tighter transition-colors" style={{ color: 'inherit' }}>
+                      {work.name}
+                    </h3>
+                    <div className="flex items-center gap-12 mt-6 md:mt-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <span className="text-sm uppercase tracking-widest">Read</span>
+                      <ArrowRight size={24} />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {portfolio.profileImage && (
+           <div className="mt-40 grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
+              <div className="aspect-[3/4] bg-foreground/5 relative overflow-hidden">
+                 <img src={portfolio.profileImage} className="w-full h-full object-cover mix-blend-luminosity hover:mix-blend-normal transition-all duration-1000" />
+              </div>
+              {portfolio.inspirations && (
+                <div className="space-y-8">
+                  <span className="text-sm uppercase tracking-widest opacity-40">Concept</span>
+                  <p className="text-3xl md:text-5xl font-light leading-tight">
+                    "{portfolio.inspirations}"
+                  </p>
+                </div>
+              )}
+           </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderModernTemplate = () => (
+    <div className="min-h-screen bg-background text-foreground font-sans">
+      <div className="flex flex-col lg:flex-row min-h-screen">
+        {/* Left Column Wrapper - Ensures background stretches the full height */}
+        <div className="w-full lg:w-[45%] bg-foreground text-background relative">
+          
+          {/* Sticky Inner Container */}
+          <div className="lg:sticky lg:top-0 min-h-screen p-8 md:p-16 flex flex-col justify-between overflow-hidden relative">
+            <div className="absolute inset-0 opacity-30 mix-blend-overlay">
+              {portfolio.bannerImage && <img src={portfolio.bannerImage} className="w-full h-full object-cover" />}
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-foreground/10 via-foreground/80 to-foreground" />
+            
+            <div className="relative z-10 flex justify-between items-start mb-20">
+               <div className="w-16 h-16 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-background/20">
+                 {portfolio.profileImage ? <img src={portfolio.profileImage} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-background/10" />}
+               </div>
+               <span className="text-xs font-bold tracking-[0.2em] uppercase px-4 py-2 bg-background text-foreground rounded-none">
+                 Portfolio
+               </span>
+            </div>
+
+            <div className="relative z-10 space-y-12 pb-12">
+              <div>
+                <h1 className="text-[5rem] md:text-[8rem] lg:text-[7rem] font-black uppercase tracking-tighter leading-[0.8] mb-8 break-words" style={{ color: accentColor }}>
+                  {portfolio.authorName}
+                </h1>
+                <p className="text-xl md:text-2xl font-medium max-w-md opacity-80 leading-snug">
+                  {portfolio.bio || 'Creative Writer & Author'}
+                </p>
+              </div>
+
+              {/* Writer's Extended Bio / Philosophy moved to fill the empty space */}
+              {portfolio.inspirations && (
+                 <div className="pt-12 border-t border-background/20">
+                    <span className="text-xs font-bold uppercase tracking-widest opacity-40 block mb-6">Vision & Philosophy</span>
+                    <p className="text-2xl md:text-3xl font-serif italic text-background/90 leading-tight">
+                      "{portfolio.inspirations}"
+                    </p>
+                 </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Scrolling Right Panel */}
+        <div className="w-full lg:w-[55%] p-8 md:p-16 xl:p-24 space-y-32">
+          {['stories', 'articles', 'blog'].map(section => (portfolio[section] || []).length > 0 && (
+            <div key={section} className="space-y-12">
+              <div className="inline-block px-6 py-3 rounded-none border-2 border-foreground uppercase text-sm font-bold tracking-widest">
+                {section}
+              </div>
+              <div className="space-y-6">
+                {(portfolio[section] || []).map((work, i) => (
+                  <motion.div 
+                    key={work.id || i} 
+                    onClick={() => setSelectedWork(work)}
+                    whileHover={{ scale: 1.02 }}
+                    className="p-8 md:p-12 rounded-none bg-foreground/5 hover:bg-foreground hover:text-background transition-all duration-300 cursor-pointer group"
+                  >
+                    <div className="flex justify-between items-start gap-8 mb-6">
+                      <h3 className="text-3xl md:text-5xl font-black tracking-tight leading-none group-hover:text-accent transition-colors">
+                        {work.name}
+                      </h3>
+                      <ArrowRight size={32} className="opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                    </div>
+                    <p className="text-lg opacity-60 group-hover:opacity-80 line-clamp-3 leading-relaxed">
+                      {work.content?.substring(0, 150)}...
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-accent selection:text-background" style={{ fontFamily }}>
-      {/* Navigation - Floating Glass Style */}
-      <div className="absolute top-0 left-0 w-full flex justify-center p-0 z-[100] bg-background/30 backdrop-blur-lg border-b border-foreground/5">
-        <nav className="w-full max-w-full px-12 py-8 flex items-center justify-between">
-          {/* Left: Author Name as Logo */}
-          <div 
-            onClick={() => setSelectedWork(null)}
-            className="flex items-center gap-2.5 cursor-pointer group"
-          >
-            <div className="transition-transform group-hover:scale-110">
-              <svg width="32" height="24" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 5c5-4 13-4 14 0s9 4 14 0" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M2 12c5-4 13-4 14 0s9 4 14 0" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M2 19c5-4 13-4 14 0s9 4 14 0" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <span className="text-xl font-bold tracking-tighter text-foreground">{portfolio.authorName}</span>
-          </div>
-
-          {/* Right: Actions */}
-          <div className="flex items-center gap-6">
-            <div className="hidden sm:flex items-center p-1 rounded-full border border-foreground/10 bg-foreground/5 gap-0.5">
-              <ThemeIcon 
-                active={theme === 'light'} 
-                onClick={() => toggleTheme('light')} 
-                icon={<Sun size={14} />} 
-              />
-              <ThemeIcon 
-                active={theme === 'sepia'} 
-                onClick={() => toggleTheme('sepia')} 
-                icon={<Coffee size={14} />} 
-              />
-              <ThemeIcon 
-                active={theme === 'dark'} 
-                onClick={() => toggleTheme('dark')} 
-                icon={<Moon size={14} />} 
-              />
-            </div>
-
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => {
-                  const el = document.getElementById('works-section');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="px-6 py-2.5 rounded-full text-foreground hover:opacity-70 text-sm font-semibold cursor-pointer transition-all"
-              >
-                My Works
-              </button>
-              <button
-                onClick={() => {
-                  const el = document.getElementById('connect-section');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="px-6 py-2.5 rounded-full bg-foreground text-background text-sm font-semibold cursor-pointer transition-all hover:opacity-90 shadow-xl shadow-foreground/5"
-              >
-                Let's Connect
-              </button>
-            </div>
-          </div>
-        </nav>
+    <div className="min-h-screen bg-background text-foreground overflow-clip selection:bg-accent selection:text-background" style={{ fontFamily }}>
+      {/* Settings Panel (Floating Toggle) */}
+      <div className="fixed bottom-8 right-8 z-[200] flex flex-col gap-4">
+         <div className="p-1 rounded-full bg-background/80 backdrop-blur-xl border border-foreground/10 shadow-2xl flex flex-col gap-1">
+            <ThemeIcon active={theme === 'light'} onClick={() => toggleTheme('light')} icon={<Sun size={14} />} />
+            <ThemeIcon active={theme === 'sepia'} onClick={() => toggleTheme('sepia')} icon={<Coffee size={14} />} />
+            <ThemeIcon active={theme === 'dark'} onClick={() => toggleTheme('dark')} icon={<Moon size={14} />} />
+         </div>
       </div>
 
       <AnimatePresence mode="wait">
@@ -250,10 +432,10 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
             className="fixed inset-0 z-[110] bg-background overflow-y-auto pt-20 custom-scrollbar"
           >
             <div className={`fixed top-0 left-0 right-0 z-[120] flex justify-center p-6`}>
-              <nav className={`w-full max-w-[1200px] px-8 py-4 bg-background/60 backdrop-blur-2xl rounded-2xl border border-foreground/10 flex items-center justify-between`}>
+              <nav className={`w-full max-w-[1200px] px-8 py-4 bg-background/60 backdrop-blur-2xl rounded-none border border-foreground/10 flex items-center justify-between shadow-2xl shadow-black/5`}>
                 <button 
                   onClick={() => setSelectedWork(null)}
-                  className="flex items-center gap-3 px-6 py-2 rounded-full hover:bg-foreground/5 transition-all group"
+                  className="flex items-center gap-3 px-6 py-2 rounded-none hover:bg-foreground/5 transition-all group"
                 >
                   <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
                   <span className="text-xs font-bold tracking-widest uppercase">Back to Library</span>
@@ -286,44 +468,52 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
                   </div>
 
                   {/* Table of Contents */}
-                  <div className="max-w-md mx-auto p-10 rounded-3xl border border-foreground/5 bg-foreground/[0.02] text-left">
-                    <h3 className="text-xs font-bold tracking-[0.3em] uppercase opacity-40 mb-8 text-center">Table of Contents</h3>
-                    <div className="space-y-4">
-                       {selectedWork.children.map((chapter, idx) => (
-                         <a 
-                          key={chapter.id} 
-                          href={`#chapter-${idx}`}
-                          className="flex items-baseline justify-between group no-underline"
-                         >
-                           <span className="text-sm italic opacity-60 group-hover:opacity-100 transition-all">
-                             {idx + 1}. {chapter.name}
-                           </span>
-                           <div className="flex-1 border-b border-dotted border-foreground/10 mx-4 translate-y-[-4px]" />
-                           <span className="text-[10px] font-bold opacity-30 group-hover:opacity-100 transition-all">CH {idx + 1}</span>
-                         </a>
-                       ))}
+                  {selectedWork.children?.length > 0 && (
+                    <div className="max-w-md mx-auto p-10 rounded-none border border-foreground/5 bg-foreground/[0.02] text-left">
+                      <h3 className="text-xs font-bold tracking-[0.3em] uppercase opacity-40 mb-8 text-center">Table of Contents</h3>
+                      <div className="space-y-4">
+                         {selectedWork.children.map((chapter, idx) => (
+                           <a 
+                            key={chapter.id} 
+                            href={`#chapter-${idx}`}
+                            className="flex items-baseline justify-between group no-underline"
+                           >
+                             <span className="text-sm italic opacity-60 group-hover:opacity-100 transition-all">
+                               {idx + 1}. {chapter.name}
+                             </span>
+                             <div className="flex-1 border-b border-dotted border-foreground/10 mx-4 translate-y-[-4px]" />
+                             <span className="text-[10px] font-bold opacity-30 group-hover:opacity-100 transition-all">CH {idx + 1}</span>
+                           </a>
+                         ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </motion.div>
               </header>
               
               <div className="prose-container text-xl md:text-2xl leading-[2.2] text-foreground/90 selection:bg-accent/20">
-                {selectedWork.children.map((chapter, idx) => (
-                  <section 
-                    key={chapter.id} 
-                    id={`chapter-${idx}`}
-                    className="mb-32 animate-fade-in"
-                  >
-                    <div className="flex flex-col items-center mb-16 opacity-30">
-                       <span className="text-xs font-bold tracking-[0.5em] uppercase mb-4">Chapter {idx + 1}</span>
-                       <h2 className="text-2xl italic">{chapter.name}</h2>
-                       <div className="w-12 h-[1px] mt-8" style={{ backgroundColor: accentColor }} />
-                    </div>
-                    <div className="whitespace-pre-wrap">
-                      {chapter.content}
-                    </div>
-                  </section>
-                ))}
+                {selectedWork.children?.length > 0 ? (
+                  selectedWork.children.map((chapter, idx) => (
+                    <section 
+                      key={chapter.id} 
+                      id={`chapter-${idx}`}
+                      className="mb-32 animate-fade-in"
+                    >
+                      <div className="flex flex-col items-center mb-16 opacity-30">
+                         <span className="text-xs font-bold tracking-[0.5em] uppercase mb-4">Chapter {idx + 1}</span>
+                         <h2 className="text-2xl italic">{chapter.name}</h2>
+                         <div className="w-12 h-[1px] mt-8" style={{ backgroundColor: accentColor }} />
+                      </div>
+                      <div className="whitespace-pre-wrap">
+                        {chapter.content}
+                      </div>
+                    </section>
+                  ))
+                ) : (
+                  <div className="whitespace-pre-wrap">
+                    {selectedWork.content}
+                  </div>
+                )}
               </div>
 
                <LandingFooter onTerms={nav.onTerms} onPrivacy={nav.onPrivacy} onRefund={nav.onRefund} />
@@ -337,141 +527,11 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
             exit={{ opacity: 0 }}
             className=""
           >
-            {/* Customizable Hero */}
-            <section className="relative mb-8">
-               {/* Banner Image Container */}
-               <div className="absolute top-0 left-0 w-full h-[50vh] min-h-[400px] overflow-hidden z-0">
-                  {portfolio.bannerImage ? (
-                    <img src={portfolio.bannerImage} alt="Banner" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full bg-foreground/[0.03]" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-background" />
-               </div>
+            {portfolio.templateId === 'minimalist' ? renderMinimalistTemplate() : 
+             portfolio.templateId === 'modern' ? renderModernTemplate() : 
+             renderClassicTemplate()}
 
-               <div className="max-w-4xl mx-auto px-8 pt-40 md:pt-64 text-center relative z-10">
-                 <motion.div
-                   initial={{ opacity: 0, y: 20 }}
-                   animate={{ opacity: 1, y: 0 }}
-                   transition={{ duration: 0.8 }}
-                 >
-                    {portfolio.profileImage && (
-                      <motion.div 
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="w-40 h-40 md:w-56 md:h-56 mx-auto mb-10 rounded-full overflow-hidden border-4 border-background shadow-2xl relative z-20"
-                      >
-                        <img 
-                          src={portfolio.profileImage} 
-                          alt={portfolio.authorName} 
-                          className="w-full h-full object-cover"
-                        />
-                      </motion.div>
-                    )}
-
-                  <p className="text-2xl md:text-4xl text-foreground font-serif italic mb-10 leading-[1.6] max-w-3xl mx-auto tracking-tight">
-                    "{portfolio.bio || "Crafting narratives at the intersection of architecture, philosophy, and the quiet moments of the everyday."}"
-                  </p>
-                  
-                  {/* Category Tabs */}
-                  <div className="flex items-center justify-center gap-8 md:gap-16 mt-12 border-b border-foreground/5 pb-8">
-                    {['stories', 'articles', 'blog'].map((tab) => (
-                      <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`relative py-2 text-[10px] md:text-xs font-bold tracking-[0.4em] uppercase transition-all ${
-                          activeTab === tab ? 'text-foreground' : 'text-foreground/30 hover:text-foreground/60'
-                        }`}
-                      >
-                        {tab}
-                        {activeTab === tab && (
-                          <motion.div 
-                            layoutId="activeTab"
-                            className="absolute -bottom-[33px] left-0 right-0 h-[2px] z-10" 
-                            style={{ backgroundColor: accentColor }} 
-                          />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                  
-                  <div className="mt-2 text-center">
-                    <h2 className="text-xl md:text-2xl font-bold tracking-tight mb-1">Selected Works</h2>
-                    <p className="text-[9px] font-bold tracking-[0.4em] uppercase opacity-20 mb-4">
-                      {(portfolio[activeTab] || []).length} {activeTab}
-                    </p>
-                    <div className="h-px w-8 mx-auto opacity-20" style={{ backgroundColor: accentColor }} />
-                  </div>
-               </motion.div>
-            </div>
-         </section>
-
-            {/* Book Grid */}
-            <section id="works-section" className="max-w-7xl mx-auto px-8 pt-4 pb-32">
-
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
-                  {(portfolio[activeTab] || []).length > 0 ? (
-                    (portfolio[activeTab] || []).map((work, idx) => (
-                      <motion.div 
-                        key={work.id || idx}
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: idx * 0.1 }}
-                        onClick={() => setSelectedWork(work)}
-                        className="group cursor-pointer"
-                      >
-                        {/* Premium Book Card */}
-                        <div className="aspect-[3/4] relative rounded-lg overflow-hidden border border-foreground/10 mb-8 bg-foreground/[0.01] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]">
-                           {/* Spine Highlight */}
-                           <div className="absolute top-0 left-0 w-8 h-full bg-foreground/5 border-r border-foreground/5 z-10" />
-                           
-                           {/* Cover Content */}
-                           <div className="absolute inset-0 p-12 pl-16 flex flex-col justify-between">
-                              <div>
-                                 {/* @ts-ignore */}
-                                 <div className="w-10 h-10 rounded-lg bg-foreground/5 flex items-center justify-center mb-10 group-hover:text-background transition-colors duration-500" style={{ '--hover-bg': accentColor }}>
-                                    {activeTab === 'stories' ? <Library size={20} /> : <BookOpen size={20} />}
-                                 </div>
-                                 <h3 className="text-3xl md:text-4xl font-bold leading-[1.1] tracking-tight group-hover:opacity-70 transition-opacity duration-500 line-clamp-4">
-                                    {work.name || 'Untitled'}
-                                  </h3>
-                              </div>
-                              
-                              <div className="space-y-6">
-                                 <div className="h-[1px] w-full bg-foreground/10 group-hover:w-full transition-all duration-700" />
-                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-bold tracking-widest uppercase opacity-40">
-                                      {activeTab === 'stories' ? `${work.childCount} Chapters` : 'Article'}
-                                    </span>
-                                    <span className="text-[10px] font-bold tracking-widest uppercase opacity-40">
-                                      {Math.max(1, Math.ceil((work.content || '').split(' ').length / 250))} MIN
-                                    </span>
-                                 </div>
-                              </div>
-                           </div>
-
-                           {/* Hover Overlay */}
-                           <div className="absolute inset-0 bg-foreground/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        </div>
-                        
-                        <div className="flex items-center justify-between px-2">
-                           <div>
-                              <p className="text-[10px] font-bold tracking-widest uppercase opacity-30 mb-1">{work.type}</p>
-                              <p className="text-sm font-medium opacity-60 group-hover:opacity-100 transition-opacity">Read {activeTab === 'stories' ? 'Collection' : 'Piece'} →</p>
-                           </div>
-                        </div>
-                      </motion.div>
-                    ))
-                  ) : (
-                    <div className="col-span-full py-32 text-center opacity-30">
-                      <p className="text-xs font-bold tracking-[0.4em] uppercase">No {activeTab} published yet</p>
-                    </div>
-                  )}
-               </div>
-            </section>
-
-            {/* Connect Section - Refined Flat Style */}
+            {/* Global Connect Section (Unified across templates for consistency) */}
             <section id="connect-section" className="max-w-7xl mx-auto px-8 py-48 border-t border-foreground/5">
                <div className="flex flex-col lg:flex-row items-start justify-between gap-24">
                   <motion.div 
@@ -485,6 +545,9 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
                       Let's create <br/>
                       <span className="italic font-serif opacity-40">together.</span>
                     </h2>
+                    <p className="text-2xl font-serif italic text-foreground/40 mt-12 max-w-lg">
+                      Interested in collaborating on a narrative project or have a story to tell? Let's connect.
+                    </p>
                   </motion.div>
 
                   <motion.div 
@@ -492,78 +555,43 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.2 }}
-                    className="flex flex-col w-full lg:w-[400px]"
+                    className="flex flex-col w-full lg:w-[450px]"
                   >
-                     {portfolio.socialTwitter && (
+                     {[
+                       { id: 'socialTwitter', label: 'Twitter', icon: Share2, prefix: 'twitter.com/' },
+                       { id: 'socialLinkedin', label: 'LinkedIn', icon: LinkedinIcon, prefix: '' },
+                       { id: 'socialMedium', label: 'Medium', icon: Edit3, prefix: '' },
+                       { id: 'socialSubstack', label: 'Substack', icon: Mail, prefix: '' },
+                       { id: 'socialWeb', label: 'Website', icon: LinkIcon, prefix: '' }
+                     ].map(social => portfolio[social.id] && (
                        <a 
-                         href={`https://twitter.com/${portfolio.socialTwitter.replace('@','')}`} 
+                         key={social.id}
+                         href={portfolio[social.id].startsWith('http') ? portfolio[social.id] : `https://${social.prefix}${portfolio[social.id].replace('@','')}`} 
                          target="_blank" 
-                         className="group flex items-center justify-between py-8 border-b border-foreground/5 hover:border-foreground/20 transition-all relative"
+                         className="group flex items-center justify-between py-10 border-b border-foreground/5 hover:border-foreground/20 transition-all relative"
                        >
-                         <span className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30">Twitter</span>
-                         <div className="flex items-center gap-4">
-                            <span className="text-lg font-medium tracking-tight group-hover:-translate-x-2 transition-transform duration-500">@{portfolio.socialTwitter.replace('@','')}</span>
-                            <Share2 size={16} className="opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0" style={{ color: accentColor }} />
+                         <span className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30">{social.label}</span>
+                         <div className="flex items-center gap-6">
+                            <span className="text-xl font-medium tracking-tight group-hover:-translate-x-2 transition-transform duration-500">
+                              {portfolio[social.id].includes('/') ? (portfolio[social.id].split('/').pop() || 'Visit') : portfolio[social.id]}
+                            </span>
+                            <social.icon size={18} className="opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0" style={{ color: accentColor }} />
                          </div>
                          <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-foreground/20 group-hover:w-full transition-all duration-700" />
                        </a>
-                     )}
-                     {portfolio.socialLinkedin && (
-                       <a 
-                         href={`https://${portfolio.socialLinkedin}`} 
-                         target="_blank" 
-                         className="group flex items-center justify-between py-8 border-b border-foreground/5 hover:border-foreground/20 transition-all relative"
-                       >
-                         <span className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30">LinkedIn</span>
-                         <div className="flex items-center gap-4">
-                            <span className="text-lg font-medium tracking-tight group-hover:-translate-x-2 transition-transform duration-500">{portfolio.socialLinkedin.split('/in/')[1] || 'Profile'}</span>
-                            <LinkedinIcon size={16} className="opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0" style={{ color: accentColor }} />
-                         </div>
-                         <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-foreground/20 group-hover:w-full transition-all duration-700" />
-                       </a>
-                     )}
-                     {portfolio.socialMedium && (
-                       <a 
-                         href={`https://${portfolio.socialMedium}`} 
-                         target="_blank" 
-                         className="group flex items-center justify-between py-8 border-b border-foreground/5 hover:border-foreground/20 transition-all relative"
-                       >
-                         <span className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30">Medium</span>
-                         <div className="flex items-center gap-4">
-                            <span className="text-lg font-medium tracking-tight group-hover:-translate-x-2 transition-transform duration-500">{portfolio.socialMedium.split('@')[1] || 'Read More'}</span>
-                            <Edit3 size={16} className="opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0" style={{ color: accentColor }} />
-                         </div>
-                         <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-foreground/20 group-hover:w-full transition-all duration-700" />
-                       </a>
-                     )}
-                     {portfolio.socialSubstack && (
-                       <a 
-                         href={`https://${portfolio.socialSubstack}`} 
-                         target="_blank" 
-                         className="group flex items-center justify-between py-8 border-b border-foreground/5 hover:border-foreground/20 transition-all relative"
-                       >
-                         <span className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30">Substack</span>
-                         <div className="flex items-center gap-4">
-                            <span className="text-lg font-medium tracking-tight group-hover:-translate-x-2 transition-transform duration-500">{portfolio.socialSubstack.split('.')[0]}</span>
-                            <Mail size={16} className="opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0" style={{ color: accentColor }} />
-                         </div>
-                         <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-foreground/20 group-hover:w-full transition-all duration-700" />
-                       </a>
-                     )}
-                     {portfolio.socialWeb && (
-                       <a 
-                         href={`https://${portfolio.socialWeb}`} 
-                         target="_blank" 
-                         className="group flex items-center justify-between py-8 border-b border-foreground/5 hover:border-foreground/20 transition-all relative"
-                       >
-                         <span className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30">Digital Home</span>
-                         <div className="flex items-center gap-4">
-                            <span className="text-lg font-medium tracking-tight group-hover:-translate-x-2 transition-transform duration-500">Visit Site</span>
-                            <LinkIcon size={16} className="opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0" style={{ color: accentColor }} />
-                         </div>
-                         <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-foreground/20 group-hover:w-full transition-all duration-700" />
-                       </a>
-                     )}
+                     ))}
+                     
+                     <a 
+                       href={`mailto:${portfolio.email || ''}`}
+                       className="group flex items-center justify-between py-10 border-b border-foreground/5 hover:border-foreground/20 transition-all relative"
+                     >
+                       <span className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30">Email</span>
+                       <div className="flex items-center gap-6">
+                          <span className="text-xl font-medium tracking-tight group-hover:-translate-x-2 transition-transform duration-500">Say Hello</span>
+                          <Mail size={18} className="opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0" style={{ color: accentColor }} />
+                       </div>
+                       <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-foreground/20 group-hover:w-full transition-all duration-700" />
+                     </a>
                   </motion.div>
                </div>
             </section>

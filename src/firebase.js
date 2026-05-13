@@ -1,5 +1,5 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { initializeFirestore, CACHE_SIZE_UNLIMITED } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 // Firebase configuration — values are loaded from .env
@@ -18,13 +18,13 @@ let db;
 let auth;
 
 try {
-  if (!firebaseConfig.apiKey) {
-    if (typeof window !== 'undefined') {
-      console.warn("Firebase API Key is missing. Check your .env file.");
-    }
-  }
-  app = initializeApp(firebaseConfig);
-  db = getFirestore(app);
+  app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+  
+  // Use initializeFirestore with experimentalForceLongPolling to prevent GRPC errors in Next.js SSR
+  db = initializeFirestore(app, {
+    experimentalForceLongPolling: true,
+  });
+  
   auth = getAuth(app);
 } catch (error) {
   console.error("Firebase initialization failed:", error);
