@@ -818,7 +818,6 @@ function AppContent() {
         user={user}
         onLogout={async () => {
           await logout();
-          handleNavigate('landing');
         }}
         onBack={() => handleNavigate('dashboard')}
         onStart={() => handleNavigate('dashboard')}
@@ -870,7 +869,6 @@ function AppContent() {
             user={user}
             onLogout={async () => {
               await logout();
-              handleNavigate('landing');
             }}
             onAccount={() => handleNavigate('account')}
             onPortfolioEditor={() => handleNavigate('portfolio-editor')}
