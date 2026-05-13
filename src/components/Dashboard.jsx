@@ -37,8 +37,8 @@ const Dashboard = ({ user, onCreateArticle, onCreateStory, onCreateBlog, onOpenW
   );
 
   return (
-    <div className="min-h-screen bg-background overflow-y-auto w-full">
-      <div className="max-w-6xl mx-auto px-6 md:px-12 pt-24 pb-32">
+    <div className="bg-background w-full">
+      <div className="max-w-6xl mx-auto px-6 md:px-12 pt-12 pb-32">
         
         {/* Header Section */}
         <div className="mb-16">

@@ -98,17 +98,9 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <LandingNav
-        user={user}
-        onAccountClick={() => { }}
-        onStart={onStart}
-        onHomeClick={onBack}
-        onPricingClick={onPricing}
-        onAriaClick={() => router.push('/aria')}
-        onPhilosophyClick={() => router.push('/philosophy')}
-      />
 
-      <main className="flex-grow flex flex-col items-center py-32 px-8">
+
+      <main className="flex-grow flex flex-col items-center py-20 px-8">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -248,11 +240,7 @@ const AccountPage = ({ user, onLogout, onBack, onStart, showNotif, onPricing }) 
         </motion.div>
       </main>
 
-      <LandingFooter 
-        onTerms={() => router.push('/terms')}
-        onPrivacy={() => router.push('/privacy')}
-        onRefund={() => router.push('/refund')}
-      />
+
     </div>
   );
 };

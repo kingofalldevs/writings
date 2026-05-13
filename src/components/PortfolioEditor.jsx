@@ -167,17 +167,9 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <LandingNav 
-        user={user} 
-        onStart={onStart} 
-        onHomeClick={() => router.push('/')}
-        onAccountClick={() => router.push('/account')}
-        onPricingClick={() => router.push('/pricing')}
-        onAriaClick={() => router.push('/aria')}
-        onPhilosophyClick={() => router.push('/philosophy')}
-      />
 
-      <main className="flex-grow pt-32 px-8 pb-32">
+
+      <main className="flex-grow pt-16 px-8 pb-32">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-16 gap-8">
@@ -523,11 +515,7 @@ const PortfolioEditor = ({ user, onBack, onStart, showNotif }) => {
         </div>
       </main>
 
-      <LandingFooter 
-        onTerms={() => router.push('/terms')} 
-        onPrivacy={() => router.push('/privacy')} 
-        onRefund={() => router.push('/refund')} 
-      />
+
     </div>
   );
 };

@@ -27,7 +27,7 @@ const Header = ({
   onPricing,
   currentView,
   onHome
-  }) => {
+}) => {
   const { theme, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const fileInputRef = useRef(null);
@@ -90,10 +90,10 @@ const Header = ({
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full h-20 px-6 md:px-12 flex items-center justify-between z-50 bg-background/80 backdrop-blur-2xl border-b border-foreground/10 shadow-sm">
+    <header className="fixed top-0 left-0 w-full h-20 px-6 md:px-12 flex items-center justify-between z-50 bg-background/80 backdrop-blur-2xl border-b border-foreground/10 shadow-sm transition-all duration-300">
       <div
-        className="flex items-center gap-2 md:gap-3 cursor-pointer group shrink-0"
-        onClick={onLogoClick}
+        className={`flex items-center gap-2 md:gap-3 group shrink-0 ${currentView === 'dashboard' ? 'cursor-default' : 'cursor-pointer'}`}
+        onClick={currentView === 'dashboard' ? undefined : onLogoClick}
       >
         <div className="flex items-center justify-center w-6 h-6 transition-transform group-hover:scale-110">
           <svg width="36" height="32" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -123,8 +123,8 @@ const Header = ({
             whileTap={{ scale: 0.95 }}
             onClick={onToggleBinder}
             className={`p-2 rounded-xl transition-all duration-300 ${isBinderOpen
-                ? 'bg-accent/10 text-accent'
-                : 'text-muted hover:bg-foreground/5'
+              ? 'bg-accent/10 text-accent'
+              : 'text-muted hover:bg-foreground/5'
               }`}
             title={isBinderOpen ? "Hide Ideabase" : "Show Ideabase"}
           >
@@ -145,21 +145,7 @@ const Header = ({
         <div className="relative flex items-center gap-2" ref={menuRef}>
           {user && (
             <div className="flex items-center gap-2 mr-1 md:mr-2">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  console.log("Current User Subscription:", user?.subscription);
-                  onPricing();
-                }}
-                className="flex items-center gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-full bg-accent/10 text-accent hover:bg-accent/20 transition-all text-[10px] md:text-[11px] font-bold tracking-widest uppercase"
-                title={(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') ? "Manage Subscription" : "Upgrade Plan"}
-              >
-                <Sparkles size={14} />
-                <span className="hidden sm:inline">{(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') ? 'Pro' : 'Upgrade'}</span>
-                {!(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') && <span className="sm:hidden text-[9px]">UP</span>}
-                {(user?.subscription?.status === 'active' || user?.subscription?.status === 'pro') && <span className="sm:hidden text-[9px]">PRO</span>}
-              </motion.button>
+
 
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -174,12 +160,14 @@ const Header = ({
             </div>
           )}
 
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="p-3 rounded-full hover:bg-foreground/5 transition-all border border-transparent hover:border-foreground/10 text-foreground"
-          >
-            <Menu size={20} />
-          </button>
+          {currentView !== 'dashboard' && (
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-3 rounded-full hover:bg-foreground/5 transition-all border border-transparent hover:border-foreground/10 text-foreground"
+            >
+              <Menu size={20} />
+            </button>
+          )}
 
           <AnimatePresence>
             {isMenuOpen && (
@@ -192,7 +180,7 @@ const Header = ({
                   className="fixed inset-0 bg-background/60 backdrop-blur-sm z-[90] cursor-pointer"
                   style={{ top: 0, left: 0, width: '100vw', height: '100vh' }}
                 />
-                
+
                 <motion.div
                   initial={{ x: '100%' }}
                   animate={{ x: 0 }}
@@ -237,8 +225,8 @@ const Header = ({
                           setIsMenuOpen(false);
                         }}
                         className={`flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all ${isAIOpen
-                            ? 'bg-accent text-background shadow-lg'
-                            : 'bg-accent/5 text-accent hover:bg-accent/10'
+                          ? 'bg-accent text-background shadow-lg'
+                          : 'bg-accent/5 text-accent hover:bg-accent/10'
                           }`}
                         title={isAIOpen ? "Close Aria" : "Ask Aria"}
                       >
@@ -253,8 +241,8 @@ const Header = ({
                           setIsMenuOpen(false);
                         }}
                         className={`flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all ${isPlayerVisible
-                            ? 'bg-accent text-background shadow-lg'
-                            : 'bg-accent/5 text-accent hover:bg-accent/10'
+                          ? 'bg-accent text-background shadow-lg'
+                          : 'bg-accent/5 text-accent hover:bg-accent/10'
                           }`}
                         title={isPlayerVisible ? "Close Player" : "Open Player"}
                       >

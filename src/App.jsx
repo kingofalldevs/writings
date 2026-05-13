@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
 import Editor from './components/Editor';
 import Dashboard from './components/Dashboard';
+import DashboardSidebar from './components/DashboardSidebar';
 import AudioPlayer from './components/AudioPlayer';
 import LibraryModal from './components/LibraryModal';
 import AICompanion from './components/AICompanion';
@@ -34,7 +35,7 @@ import { tracks } from './data/tracks';
 function AppContent() {
   const router = useRouter();
   const pathname = usePathname();
-  
+
   const [view, setView] = useState('landing');
 
   useEffect(() => {
@@ -209,17 +210,17 @@ function AppContent() {
       privacy: '/privacy',
       refund: '/refund',
     };
-    
+
     if (publicRoutes[newView]) {
       router.push(publicRoutes[newView]);
       return;
     }
-    
+
     let path = '/dashboard';
     if (newView === 'editor') path = '/editor';
     else if (newView === 'account') path = '/account';
     else if (newView === 'portfolio-editor') path = '/portfolio-editor';
-    
+
     router.push(path);
     setView(newView);
   };
@@ -454,15 +455,15 @@ function AppContent() {
   const handleOpenWork = (work) => {
     handleNavigate('editor');
     if (work.type === 'document') {
-        setCurrentWorkId(work.id);
-        setCurrentWorkName(work.name);
-        setSelectedItemId(work.id);
-        setEditorContent(work.content || '');
+      setCurrentWorkId(work.id);
+      setCurrentWorkName(work.name);
+      setSelectedItemId(work.id);
+      setEditorContent(work.content || '');
     } else {
-        setCurrentWorkId(null);
-        setCurrentWorkName('');
-        setEditorContent('');
-        setSelectedItemId(work.id);
+      setCurrentWorkId(null);
+      setCurrentWorkName('');
+      setEditorContent('');
+      setSelectedItemId(work.id);
     }
     setIsBinderOpen(true);
   };
@@ -684,12 +685,12 @@ function AppContent() {
           onPrivacy={() => handleNavigate('privacy')}
           onRefund={() => handleNavigate('refund')}
         />
-        <AuthModal 
-          isOpen={isAuthModalOpen} 
+        <AuthModal
+          isOpen={isAuthModalOpen}
           onClose={() => {
             setIsAuthModalOpen(false);
             setPrefilledHandle('');
-          }} 
+          }}
           prefilledHandle={prefilledHandle}
           onTerms={() => { setIsAuthModalOpen(false); handleNavigate('terms'); }}
           onPrivacy={() => { setIsAuthModalOpen(false); handleNavigate('privacy'); }}
@@ -723,12 +724,12 @@ function AppContent() {
           onPrivacy={() => handleNavigate('privacy')}
           onRefund={() => handleNavigate('refund')}
         />
-        <AuthModal 
-          isOpen={isAuthModalOpen} 
+        <AuthModal
+          isOpen={isAuthModalOpen}
           onClose={() => {
             setIsAuthModalOpen(false);
             setPrefilledHandle('');
-          }} 
+          }}
           prefilledHandle={prefilledHandle}
           onTerms={() => { setIsAuthModalOpen(false); handleNavigate('terms'); }}
           onPrivacy={() => { setIsAuthModalOpen(false); handleNavigate('privacy'); }}
@@ -750,12 +751,12 @@ function AppContent() {
           onPrivacy={() => handleNavigate('privacy')}
           onRefund={() => handleNavigate('refund')}
         />
-        <AuthModal 
-          isOpen={isAuthModalOpen} 
+        <AuthModal
+          isOpen={isAuthModalOpen}
           onClose={() => {
             setIsAuthModalOpen(false);
             setPrefilledHandle('');
-          }} 
+          }}
           prefilledHandle={prefilledHandle}
           onTerms={() => { setIsAuthModalOpen(false); handleNavigate('terms'); }}
           onPrivacy={() => { setIsAuthModalOpen(false); handleNavigate('privacy'); }}
@@ -777,12 +778,12 @@ function AppContent() {
           onPrivacy={() => handleNavigate('privacy')}
           onRefund={() => handleNavigate('refund')}
         />
-        <AuthModal 
-          isOpen={isAuthModalOpen} 
+        <AuthModal
+          isOpen={isAuthModalOpen}
           onClose={() => {
             setIsAuthModalOpen(false);
             setPrefilledHandle('');
-          }} 
+          }}
           prefilledHandle={prefilledHandle}
           onTerms={() => { setIsAuthModalOpen(false); handleNavigate('terms'); }}
           onPrivacy={() => { setIsAuthModalOpen(false); handleNavigate('privacy'); }}
@@ -793,12 +794,12 @@ function AppContent() {
 
   if (view === 'onboarding') {
     return (
-      <Onboarding 
-        user={user} 
+      <Onboarding
+        user={user}
         onComplete={() => {
           setView('dashboard');
           router.push('/dashboard');
-        }} 
+        }}
       />
     );
   }
@@ -832,7 +833,7 @@ function AppContent() {
 
   if (view === 'dashboard') {
     return (
-      <>
+      <div className="flex flex-col min-h-screen bg-background">
         <Header
           onUpload={setEditorContent}
           onShare={handleShareWork}
@@ -855,14 +856,43 @@ function AppContent() {
           currentView={view}
           onHome={() => handleNavigate('dashboard')}
         />
-        <Dashboard 
-          user={user}
-          onCreateArticle={handleCreateArticle}
-          onCreateStory={handleCreateStory}
-          onCreateBlog={handleCreateBlog}
-          onOpenWork={handleOpenWork}
-          onPortfolio={() => handleNavigate('portfolio-editor')}
-        />
+        
+        <div className="flex flex-1 pt-20">
+          <DashboardSidebar 
+            user={user}
+            onLogout={() => {
+              logout();
+              handleNavigate('landing');
+            }}
+            onAccount={() => handleNavigate('account')}
+            onPortfolioEditor={() => handleNavigate('portfolio-editor')}
+            onPricing={() => setIsPricingModalOpen(true)}
+            onToggleAI={() => setIsAIOpen(o => !o)}
+            isAIOpen={isAIOpen}
+            onTogglePlayer={() => setIsPlayerVisible(o => !o)}
+            isPlayerVisible={isPlayerVisible}
+            onUpload={() => {
+               const input = document.getElementById('global-file-input');
+               input?.click();
+            }}
+            onShare={handleShareWork}
+            canShare={!!user}
+            layout="under-nav"
+            isOpen={isBinderOpen}
+          />
+          
+          <main className="flex-1 overflow-y-auto">
+            <Dashboard 
+              user={user}
+              onCreateArticle={handleCreateArticle}
+              onCreateStory={handleCreateStory}
+              onCreateBlog={handleCreateBlog}
+              onOpenWork={handleOpenWork}
+              onPortfolio={() => handleNavigate('portfolio-editor')}
+            />
+          </main>
+        </div>
+
         <PricingModal
           isOpen={isPricingModalOpen}
           onClose={() => setIsPricingModalOpen(false)}
@@ -878,7 +908,7 @@ function AppContent() {
           confirmText={notif.confirmText}
           cancelText={notif.cancelText}
         />
-      </>
+      </div>
     );
   }
 
