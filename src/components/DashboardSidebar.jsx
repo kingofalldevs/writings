@@ -68,7 +68,7 @@ const DashboardSidebar = ({
             {/* Quick Actions Grid */}
             <div>
               <div className="text-[10px] font-bold uppercase tracking-widest opacity-30 mb-3 px-2">Workspace</div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 gap-2">
                 <ActionButton 
                   onClick={onToggleAI}
                   active={isAIOpen}
@@ -76,24 +76,6 @@ const DashboardSidebar = ({
                   label="Aria AI"
                   accent
                 />
-                <ActionButton 
-                  onClick={onTogglePlayer}
-                  active={isPlayerVisible}
-                  icon={<Music size={18} />}
-                  label="Focus"
-                />
-                <ActionButton 
-                  onClick={onUpload}
-                  icon={<Upload size={18} />}
-                  label="Upload"
-                />
-                {canShare && (
-                  <ActionButton 
-                    onClick={onShare}
-                    icon={<Share2 size={18} />}
-                    label="Share"
-                  />
-                )}
               </div>
             </div>
 

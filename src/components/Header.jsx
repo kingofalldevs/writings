@@ -234,60 +234,15 @@ const Header = ({
                           onToggleAI();
                           setIsMenuOpen(false);
                         }}
-                        className={`flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all ${isAIOpen
+                        className={`flex-1 flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all ${isAIOpen
                           ? 'bg-accent text-background shadow-lg'
                           : 'bg-accent/5 text-accent hover:bg-accent/10'
                           }`}
                         title={isAIOpen ? "Close Aria" : "Ask Aria"}
                       >
                         <Sparkles size={18} fill={isAIOpen ? 'currentColor' : 'none'} />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">Aria AI</span>
                       </motion.button>
-
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => {
-                          onTogglePlayer();
-                          setIsMenuOpen(false);
-                        }}
-                        className={`flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all ${isPlayerVisible
-                          ? 'bg-accent text-background shadow-lg'
-                          : 'bg-accent/5 text-accent hover:bg-accent/10'
-                          }`}
-                        title={isPlayerVisible ? "Close Player" : "Open Player"}
-                      >
-                        <Music size={18} />
-                      </motion.button>
-
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => {
-                          handleUploadClick();
-                          setIsMenuOpen(false);
-                        }}
-                        className="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl border border-foreground/10 bg-foreground/5 hover:bg-foreground/10 text-foreground transition-all"
-                        title="Upload Document"
-                      >
-                        <Upload size={18} />
-                      </motion.button>
-
-                      {user && canShare ? (
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => {
-                            onShare();
-                            setIsMenuOpen(false);
-                          }}
-                          className="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl border border-foreground/10 bg-foreground/5 hover:bg-foreground/10 text-foreground transition-all"
-                          title="Share as Novel"
-                        >
-                          <Share2 size={18} />
-                        </motion.button>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl border border-transparent opacity-0 pointer-events-none"></div>
-                      )}
                     </div>
 
                     <div className="mb-6 px-2">
