@@ -284,7 +284,9 @@ const PortfolioEditor = ({ user, onBack, showNotif }) => {
                 {[
                   { id: 'classic', label: 'Classic', desc: 'Centered, elegant, timeless.' },
                   { id: 'minimalist', label: 'Minimalist', desc: 'Focus on typography and whitespace.' },
-                  { id: 'modern', label: 'Modern Bold', desc: 'Split-screen, high-impact cards.' }
+                  { id: 'modern', label: 'Modern Bold', desc: 'Split-screen, high-impact cards.' },
+                  { id: 'cinematic', label: 'Cinematic', desc: 'Deep, immersive, luxury storytelling.' },
+                  { id: 'editorial', label: 'Editorial', desc: 'High-fashion, airy exhibition style.' }
                 ].map(t => (
                   <button key={t.id} onClick={() => setFormData({...formData, templateId: t.id})} className={`w-full text-left p-6 rounded-2xl border-2 transition-all ${formData.templateId === t.id ? 'border-black bg-black/[0.02]' : 'border-black/5'}`}>
                     <div className="flex items-center justify-between mb-1">

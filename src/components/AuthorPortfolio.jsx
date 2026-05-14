@@ -194,67 +194,85 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
   const fontFamily = portfolio.themeFont === 'sans' ? 'sans-serif' : "'Playfair Display', serif";
 
   const renderClassicTemplate = () => (
-    <div className="min-h-screen flex flex-col bg-[#FDFBF7] text-[#2C2C2A] dark:bg-[#1A1A1A] dark:text-[#EAEAEA]">
-      {/* Editorial Header */}
-      <nav className="w-full px-8 md:px-16 py-12 flex flex-col md:flex-row items-center justify-between border-b border-foreground/10 sticky top-0 z-[100] bg-inherit">
-        <h2 className="text-3xl md:text-4xl font-serif italic tracking-tight">{portfolio.authorName}</h2>
-        <div className="flex gap-12 text-[11px] font-medium uppercase tracking-[0.2em] mt-6 md:mt-0">
-          <a href="#works-section" className="hover:text-accent transition-colors">Selected Works</a>
-          <a href="#about-section" className="hover:text-accent transition-colors">Author</a>
-          <a href="#connect-section" className="hover:text-accent transition-colors">Correspondence</a>
+    <div className="min-h-screen flex flex-col bg-background text-foreground font-serif selection:bg-accent/20">
+      {/* Refined Navigation */}
+      <nav className="w-full px-8 md:px-16 py-8 flex flex-col md:flex-row items-center justify-between border-b border-foreground/5 sticky top-0 z-[100] bg-background/90 backdrop-blur-md">
+        <h2 className="text-2xl font-medium tracking-wide">{portfolio.authorName}</h2>
+        <div className="flex gap-10 text-[10px] font-sans font-bold uppercase tracking-[0.25em] mt-6 md:mt-0 opacity-70">
+          <a href="#works-section" className="hover:text-accent hover:opacity-100 transition-all">Selected Works</a>
+          <a href="#about-section" className="hover:text-accent hover:opacity-100 transition-all">Author</a>
+          <a href="#connect-section" className="hover:text-accent hover:opacity-100 transition-all">Correspondence</a>
         </div>
       </nav>
 
-      <div className="flex-grow max-w-6xl mx-auto w-full px-8 py-24">
-        {/* Editorial Hero */}
-        <div className="flex flex-col md:flex-row items-center gap-16 md:gap-24 mb-32">
-          {portfolio.profileImage ? (
-            <div className="w-48 h-64 md:w-72 md:h-96 relative flex-shrink-0 group">
-              <div className="absolute inset-0 bg-accent/10 translate-x-4 translate-y-4 rounded-none transition-transform group-hover:translate-x-6 group-hover:translate-y-6" style={{ backgroundColor: accentColor }} />
-              <img src={portfolio.profileImage} className="w-full h-full object-cover rounded-none relative z-10 grayscale group-hover:grayscale-0 transition-all duration-700" alt={portfolio.authorName} />
+      <div className="flex-grow max-w-[1400px] mx-auto w-full px-8 py-20 md:py-32">
+        {/* Magazine-Style Hero */}
+        <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-16 lg:gap-24 mb-40">
+          <div className="space-y-10 max-w-3xl text-center lg:text-left flex-1">
+            <div className="flex items-center gap-4 justify-center lg:justify-start opacity-50">
+               <div className="w-12 h-[1px] bg-foreground" />
+               <span className="text-[10px] font-sans font-bold uppercase tracking-[0.3em]">Volume I</span>
             </div>
-          ) : (
-             <div className="w-16 h-[1px] bg-foreground/20" />
-          )}
-          <div className="space-y-8 max-w-2xl text-center md:text-left">
-            <h1 className="text-6xl md:text-8xl font-serif leading-[1.1] tracking-tight">{portfolio.authorName}</h1>
-            <p className="text-xl md:text-3xl font-serif italic opacity-70 leading-relaxed border-l-2 pl-6" style={{ borderColor: accentColor }}>
-              {portfolio.profession || portfolio.bio || 'Crafting literary narratives...'}
+            <h1 className="text-7xl md:text-[8rem] leading-[0.9] tracking-tighter font-normal">
+              {portfolio.authorName}
+              <span className="inline-block ml-2 text-6xl" style={{ color: accentColor }}>.</span>
+            </h1>
+            <p className="text-2xl md:text-4xl italic opacity-80 leading-normal max-w-2xl font-light">
+              {portfolio.profession || portfolio.bio || 'Crafting literary narratives at the intersection of observation and imagination.'}
             </p>
           </div>
+          {portfolio.profileImage && (
+            <div className="relative flex-shrink-0 w-64 h-80 md:w-[400px] md:h-[500px]">
+              {/* Elegant framing */}
+              <div className="absolute inset-0 border border-foreground/20 translate-x-4 translate-y-4 md:translate-x-6 md:translate-y-6" />
+              <img src={portfolio.profileImage} className="absolute inset-0 w-full h-full object-cover shadow-2xl grayscale hover:grayscale-0 transition-all duration-1000" alt={portfolio.authorName} />
+            </div>
+          )}
         </div>
         
-        {/* Works Section - Literary Grid */}
-        <div id="works-section" className="space-y-32">
+        {/* Works Section - Table of Contents Style */}
+        <div id="works-section" className="space-y-40">
           {['stories', 'articles', 'blog'].map(section => (portfolio[section] || []).length > 0 && (
-            <div key={section} className="space-y-16">
-              <div className="flex items-center gap-6">
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">The {section}</span>
-                <div className="flex-grow h-[1px] bg-foreground/10" />
+            <div key={section} className="space-y-20">
+              <div className="flex flex-col items-center text-center space-y-4">
+                <span className="text-[10px] font-sans font-bold uppercase tracking-[0.4em] opacity-40">Section</span>
+                <h2 className="text-4xl md:text-5xl italic capitalize">{section === 'stories' ? 'Books & Stories' : section}</h2>
+                <div className="w-12 h-[1px] mt-4" style={{ backgroundColor: accentColor }} />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
                 {(portfolio[section] || []).map((work, i) => (
                   <motion.div 
                     key={work.id || i} 
                     onClick={() => setSelectedWork(work)}
-                    whileHover={{ y: -4 }}
-                    className="group cursor-pointer flex gap-8"
+                    whileHover={{ y: -8 }}
+                    className="group cursor-pointer flex flex-col justify-between p-10 md:p-12 border border-foreground/10 hover:border-foreground/40 transition-all duration-500 min-h-[300px] relative overflow-hidden bg-background/50 backdrop-blur-sm"
                   >
-                     <div className="w-12 pt-2 flex flex-col items-center gap-4">
-                       <span className="text-xl font-serif italic text-foreground/30 group-hover:text-foreground transition-colors">0{i+1}</span>
-                       <div className="w-[1px] h-full bg-foreground/10 group-hover:bg-accent transition-colors" style={{ backgroundColor: accentColor }} />
-                     </div>
-                     <div className="space-y-6">
-                       <h3 className="text-3xl md:text-4xl font-serif leading-tight group-hover:text-accent transition-colors">
+                     <div className="absolute inset-0 bg-foreground/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                     
+                     <div className="space-y-8 relative z-10">
+                       <div className="flex justify-between items-start">
+                         <span className="text-[10px] font-sans font-bold uppercase tracking-widest opacity-40">
+                           No. 0{i+1}
+                         </span>
+                       </div>
+                       <h3 className="text-3xl md:text-4xl font-medium tracking-tight leading-[1.1]">
                          {work.name}
                        </h3>
-                       <p className="text-base md:text-lg opacity-60 leading-relaxed font-serif line-clamp-3">
-                         {work.content?.substring(0, 180)}...
-                       </p>
-                       <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-foreground/40">
-                         <span>Read Piece</span>
-                         <div className="w-4 h-[1px] bg-foreground/40 group-hover:w-8 group-hover:bg-accent transition-all" />
-                       </div>
+                       {work.content && (
+                         <p className="text-sm font-sans opacity-60 leading-relaxed line-clamp-3">
+                           {work.content.replace(/[#*`>\-]/g, '').trim().substring(0, 150)}...
+                         </p>
+                       )}
+                     </div>
+                     
+                     <div className="pt-8 mt-8 border-t border-foreground/10 flex justify-between items-center relative z-10">
+                         <span className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] opacity-40 group-hover:opacity-100 transition-opacity" style={{ color: accentColor }}>
+                           Read Piece
+                         </span>
+                         <span className="opacity-0 group-hover:opacity-100 transition-all -translate-x-4 group-hover:translate-x-0" style={{ color: accentColor }}>
+                           →
+                         </span>
                      </div>
                   </motion.div>
                 ))}
@@ -263,13 +281,13 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
           ))}
         </div>
 
-        {/* Philosophy */}
+        {/* Philosophy - Elegant Quote */}
         {portfolio.inspirations && (
-           <div id="about-section" className="mt-40 pt-24 border-t border-foreground/10 max-w-3xl mx-auto text-center space-y-12">
-              <div className="w-8 h-8 mx-auto opacity-20">
-                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/></svg>
+           <div id="about-section" className="mt-48 pt-32 border-t border-foreground/10 max-w-4xl mx-auto text-center relative">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-background flex items-center justify-center">
+                 <svg className="w-8 h-8 opacity-20" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/></svg>
               </div>
-              <p className="text-3xl md:text-4xl font-serif italic leading-relaxed">
+              <p className="text-3xl md:text-5xl italic leading-[1.4] tracking-tight text-foreground/90">
                 {portfolio.inspirations}
               </p>
            </div>
@@ -280,75 +298,118 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
 
   const renderMinimalistTemplate = () => (
     <div className="min-h-screen bg-background text-foreground font-sans">
-      <nav className="fixed top-0 inset-x-0 p-8 flex items-center justify-between z-[100] mix-blend-difference text-white">
-        <span className="text-2xl font-medium tracking-tighter">{portfolio.authorName}</span>
-        <div className="flex items-center gap-8 text-xs font-medium tracking-wide">
-           <a href="#works" className="hover:opacity-50 transition-opacity">Index</a>
-           <a href="#connect" className="hover:opacity-50 transition-opacity">Info</a>
+      <nav className="fixed top-0 inset-x-0 p-8 md:px-16 flex items-center justify-between z-[100] text-white">
+        <span className="text-xl font-medium tracking-tight drop-shadow-md">{portfolio.authorName}</span>
+        <div className="flex items-center gap-8 text-xs font-medium tracking-wide drop-shadow-md">
+           <a href="#works" className="hover:opacity-70 transition-all">Works</a>
+           <a href="#info" className="hover:opacity-70 transition-all">Info</a>
         </div>
       </nav>
 
-      <div className="pt-[30vh] px-8 md:px-24 pb-32 max-w-[1400px] mx-auto">
-        {/* Extreme Minimalist Hero */}
-        <div className="max-w-4xl space-y-12 mb-40">
-           <h1 className="text-[12vw] md:text-[8rem] font-medium leading-[0.85] tracking-tighter">
-             {portfolio.authorName}
-             <span className="inline-block w-4 h-4 md:w-8 md:h-8 rounded-full ml-4 md:ml-8 translate-y-[-10px] md:translate-y-[-20px]" style={{ backgroundColor: accentColor }} />
-           </h1>
-           <p className="text-2xl md:text-4xl max-w-2xl font-light leading-tight opacity-70">
-             {portfolio.profession || portfolio.bio || 'Author & Writer'}
-           </p>
-        </div>
-
-        {/* Gallery Works */}
-        <div id="works" className="space-y-40">
-          {['stories', 'articles', 'blog'].map((section) => (portfolio[section] || []).length > 0 && (
-            <div key={section} className="border-t border-foreground text-foreground">
-              <div className="py-6 flex justify-between items-center opacity-40">
-                <span className="text-sm uppercase tracking-widest">{section}</span>
-                <span className="text-sm">{(portfolio[section] || []).length} items</span>
-              </div>
-              <div className="grid grid-cols-1 border-t border-foreground">
-                {(portfolio[section] || []).map((work, i) => (
-                  <motion.div 
-                    key={work.id || i} 
-                    onClick={() => setSelectedWork(work)}
-                    className="group border-b border-foreground flex flex-col md:flex-row items-baseline justify-between py-12 md:py-16 cursor-pointer hover:pl-8 transition-all duration-500"
-                  >
-                    <h3 className="text-5xl md:text-7xl font-medium tracking-tighter transition-colors" style={{ color: 'inherit' }}>
-                      {work.name}
-                    </h3>
-                    <div className="flex items-center gap-12 mt-6 md:mt-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      <span className="text-sm uppercase tracking-widest">Read</span>
-                      <ArrowRight size={24} />
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {portfolio.bannerImage && (
-             <div className="w-full h-[40vh] mb-24 relative overflow-hidden group">
-               <img src={portfolio.bannerImage} className="w-full h-full object-cover transition-all duration-1000" />
-               <div className="absolute inset-0 bg-background/10 group-hover:bg-transparent transition-all duration-1000" />
-             </div>
+      {/* Hero Section */}
+      <div className="relative w-full h-[60vh] md:h-[70vh] min-h-[500px] mb-32 md:mb-48">
+        {/* Banner Background */}
+        {portfolio.bannerImage ? (
+          <img src={portfolio.bannerImage} className="absolute inset-0 w-full h-full object-cover" alt="Banner" />
+        ) : (
+          <div className="absolute inset-0 bg-foreground/10" />
         )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-        {portfolio.profileImage && (
-           <div className="mt-40 grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
-              <div className="aspect-[3/4] bg-foreground/5 relative overflow-hidden">
-                 <img src={portfolio.profileImage} className="w-full h-full object-cover transition-all duration-1000" />
-              </div>
-              {portfolio.inspirations && (
-                <div className="space-y-8">
-                  <span className="text-sm uppercase tracking-widest opacity-40">Concept</span>
-                  <p className="text-3xl md:text-5xl font-light leading-tight">
-                    "{portfolio.inspirations}"
-                  </p>
+        {/* Content Container */}
+        <div className="absolute inset-0 flex items-end">
+          <div className="w-full max-w-7xl mx-auto px-8 md:px-16 flex flex-col md:flex-row items-start md:items-end gap-8 md:gap-16 translate-y-1/3 md:translate-y-1/4">
+            {/* Profile Picture in a Box */}
+            {portfolio.profileImage ? (
+               <div className="w-48 h-64 md:w-64 md:h-80 bg-background p-2 md:p-3 shadow-2xl flex-shrink-0">
+                 <img src={portfolio.profileImage} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" alt="Author" />
+               </div>
+            ) : (
+               <div className="w-48 h-64 md:w-64 md:h-80 bg-background p-2 md:p-3 shadow-2xl flex-shrink-0 flex items-center justify-center">
+                 <span className="opacity-20 text-xs uppercase tracking-widest text-foreground">No Photo</span>
+               </div>
+            )}
+            
+            {/* Author Info */}
+            <div className="flex-grow text-white pb-8 z-10 hidden md:block -translate-y-1/3 md:-translate-y-1/4">
+               <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-bold tracking-tighter leading-[0.9] mb-6 drop-shadow-lg">
+                 {portfolio.authorName}
+               </h1>
+               <p className="text-xl md:text-3xl font-light opacity-90 max-w-2xl leading-snug drop-shadow-md">
+                 {portfolio.profession || portfolio.bio || 'Author & Writer'}
+               </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Author Info (since it overlaps weirdly on small screens in the hero) */}
+      <div className="md:hidden px-8 mb-24 space-y-4">
+         <h1 className="text-5xl font-bold tracking-tighter leading-none">
+           {portfolio.authorName}
+         </h1>
+         <p className="text-xl font-light opacity-60">
+           {portfolio.profession || portfolio.bio || 'Author & Writer'}
+         </p>
+      </div>
+
+      {/* Main Content */}
+      <div className="px-8 md:px-16 pb-32 max-w-7xl mx-auto space-y-40">
+        {/* Works */}
+        <div id="works" className="space-y-24">
+          {['stories', 'articles', 'blog'].map((section) => {
+            const sectionWorks = portfolio[section] || [];
+            if (sectionWorks.length === 0) return null;
+            return (
+              <div key={section} className="space-y-12">
+                <div className="flex items-center gap-6">
+                  <h3 className="text-2xl md:text-3xl font-medium tracking-tight capitalize">{section === 'stories' ? 'Books & Stories' : section}</h3>
+                  <div className="flex-grow h-[1px] bg-foreground/10" />
+                  <span className="text-xs uppercase tracking-widest opacity-40">{sectionWorks.length} items</span>
                 </div>
-              )}
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {sectionWorks.map((work, i) => (
+                    <motion.div 
+                      key={work.id || i} 
+                      onClick={() => setSelectedWork(work)}
+                      whileHover={{ y: -4 }}
+                      className="group cursor-pointer bg-foreground/5 hover:bg-foreground hover:text-background p-8 md:p-10 transition-all duration-300 flex flex-col justify-between min-h-[300px]"
+                    >
+                      <div className="space-y-6">
+                        <span className="text-[10px] font-mono uppercase tracking-[0.2em] opacity-40 group-hover:opacity-60 block" style={{ color: accentColor }}>
+                          No. {(i+1).toString().padStart(2, '0')}
+                        </span>
+                        <h4 className="text-2xl md:text-3xl font-medium tracking-tight leading-snug">
+                          {work.name}
+                        </h4>
+                        {work.content && (
+                          <p className="text-sm opacity-60 line-clamp-3 leading-relaxed">
+                            {work.content.replace(/[#*`>\-]/g, '').trim()}
+                          </p>
+                        )}
+                      </div>
+                      
+                      <div className="mt-12 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                         <span className="text-[10px] uppercase tracking-widest font-bold">Read Piece</span>
+                         <ArrowRight size={20} />
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Philosophy */}
+        {portfolio.inspirations && (
+           <div id="info" className="p-10 md:p-20 bg-foreground/5 relative overflow-hidden group">
+              <div className="absolute left-0 top-0 bottom-0 w-2 transition-all duration-500 group-hover:w-4" style={{ backgroundColor: accentColor }} />
+              <span className="text-[10px] font-bold uppercase tracking-[0.4em] opacity-40 mb-8 block">Concept</span>
+              <p className="text-2xl md:text-4xl font-light leading-tight tracking-tight">
+                "{portfolio.inspirations}"
+              </p>
            </div>
         )}
       </div>
@@ -440,6 +501,213 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  );
+
+  const renderCinematicTemplate = () => (
+    <div className="min-h-screen bg-background text-foreground font-serif selection:bg-foreground/20">
+      <nav className="fixed top-0 inset-x-0 p-8 flex items-center justify-between z-[100] text-foreground">
+        <span className="text-2xl font-light tracking-wider">{portfolio.authorName}</span>
+        <div className="flex items-center gap-12 text-[10px] font-sans uppercase tracking-[0.4em] font-bold">
+           <a href="#works" className="hover:opacity-50 transition-opacity">Chronicles</a>
+           <a href="#info" className="hover:opacity-50 transition-opacity">Epilogue</a>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <div className="relative w-full h-screen flex flex-col items-center justify-center text-center">
+        {portfolio.bannerImage ? (
+           <div className="absolute inset-0 bg-fixed bg-cover bg-center" style={{ backgroundImage: `url(${portfolio.bannerImage})` }}>
+              <div className="absolute inset-0 bg-background/80" />
+           </div>
+        ) : (
+           <div className="absolute inset-0 bg-background" />
+        )}
+        
+        <div className="relative z-10 max-w-5xl px-8 flex flex-col items-center space-y-12 text-foreground">
+           <div className="w-1/2 h-[1px] bg-foreground/20 mb-12" />
+           <span className="text-[10px] font-sans uppercase tracking-[0.6em] font-bold opacity-60">A Narrative Journey</span>
+           <h1 className="text-7xl md:text-[9rem] font-light italic leading-[0.8] tracking-tighter drop-shadow-2xl">
+             {portfolio.authorName}
+           </h1>
+           <p className="text-xl md:text-2xl font-sans font-light opacity-70 tracking-widest uppercase max-w-2xl mt-12">
+             {portfolio.profession || portfolio.bio || 'Author & Writer'}
+           </p>
+           <div className="w-1/2 h-[1px] bg-foreground/20 mt-12" />
+        </div>
+      </div>
+
+      <div className="max-w-[1200px] mx-auto px-8 md:px-16 py-32 space-y-48 text-foreground">
+        <div id="works" className="space-y-40">
+          {['stories', 'articles', 'blog'].map((section) => {
+            const sectionWorks = portfolio[section] || [];
+            if (sectionWorks.length === 0) return null;
+            return (
+              <div key={section} className="space-y-24">
+                <div className="text-center space-y-8">
+                  <span className="text-[10px] font-sans uppercase tracking-[0.5em] font-bold opacity-40">Chapter // {section}</span>
+                  <h2 className="text-5xl md:text-7xl font-light italic">{section === 'stories' ? 'Books & Stories' : section}</h2>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-24">
+                  {sectionWorks.map((work, i) => (
+                    <motion.div 
+                      key={work.id || i} 
+                      onClick={() => setSelectedWork(work)}
+                      whileHover={{ scale: 1.02 }}
+                      className="group cursor-pointer relative h-[60vh] min-h-[500px] flex items-center justify-center text-center overflow-hidden"
+                    >
+                      {/* Fake parallax container for each work */}
+                      <div className="absolute inset-0 bg-foreground/5 group-hover:bg-foreground/10 transition-colors duration-1000" />
+                      <div className="absolute top-8 left-8 right-8 bottom-8 border border-foreground/10 group-hover:border-foreground/30 transition-colors duration-1000" />
+                      
+                      <div className="relative z-10 px-8 md:px-24 space-y-12">
+                         <span className="text-6xl md:text-8xl font-sans font-bold opacity-10">
+                           {(i+1).toString().padStart(2, '0')}
+                         </span>
+                         <h3 className="text-4xl md:text-6xl font-light italic tracking-tight">
+                           {work.name}
+                         </h3>
+                         {work.content && (
+                           <p className="text-lg font-sans font-light opacity-60 line-clamp-3 leading-relaxed max-w-3xl mx-auto">
+                             {work.content.replace(/[#*`>\-]/g, '').trim()}
+                           </p>
+                         )}
+                         <div className="pt-12 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                           <span className="text-[10px] font-sans uppercase tracking-[0.4em] font-bold border-b border-foreground pb-2">Enter Tale</span>
+                         </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {portfolio.inspirations && (
+           <div id="info" className="py-48 flex flex-col items-center text-center space-y-16 border-t border-foreground/10 relative">
+              {portfolio.profileImage && (
+                 <div className="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-12 shadow-2xl shadow-foreground/20">
+                   <img src={portfolio.profileImage} className="w-full h-full object-cover grayscale" />
+                 </div>
+              )}
+              <span className="text-[10px] font-sans uppercase tracking-[0.5em] font-bold opacity-40">The Epilogue</span>
+              <p className="text-3xl md:text-6xl font-light italic leading-tight tracking-tight max-w-4xl">
+                "{portfolio.inspirations}"
+              </p>
+           </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderEditorialTemplate = () => (
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-foreground selection:text-background">
+      <nav className="w-full px-8 md:px-12 py-10 flex items-end justify-between border-b border-foreground/10">
+        <div>
+          <h2 className="text-3xl md:text-4xl font-light tracking-tighter">{portfolio.authorName}</h2>
+        </div>
+        <div className="flex gap-12 text-[10px] uppercase tracking-[0.2em] font-bold">
+           <a href="#works" className="hover:opacity-50 transition-all">Curated Works</a>
+           <a href="#info" className="hover:opacity-50 transition-all">Philosophy</a>
+        </div>
+      </nav>
+
+      <div className="max-w-[1400px] mx-auto px-8 md:px-12 pt-12 pb-24">
+        {/* Editorial Hero */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 md:gap-24 items-center mb-48">
+           <div className="lg:col-span-5 space-y-12 order-2 lg:order-1">
+             <h1 className="text-6xl md:text-[7rem] font-light leading-[0.9] tracking-tighter">
+               {portfolio.authorName.split(' ').map((name, i) => (
+                 <span key={i} className="block">{name}</span>
+               ))}
+             </h1>
+             <p className="text-xl md:text-2xl font-serif italic opacity-70 max-w-md">
+               {portfolio.profession || portfolio.bio || 'Curator of literary experiences.'}
+             </p>
+           </div>
+           
+           <div className="lg:col-span-7 order-1 lg:order-2 h-[50vh] lg:h-[80vh] w-full relative">
+             {portfolio.bannerImage ? (
+                <img src={portfolio.bannerImage} className="absolute inset-0 w-full h-full object-cover" />
+             ) : (
+                <div className="absolute inset-0 bg-foreground/5" />
+             )}
+             <div className="absolute -bottom-12 -left-12 w-48 h-64 md:w-64 md:h-80 bg-background p-4 shadow-xl hidden md:block z-10">
+               {portfolio.profileImage ? (
+                 <img src={portfolio.profileImage} className="w-full h-full object-cover grayscale" />
+               ) : (
+                 <div className="w-full h-full bg-foreground/5" />
+               )}
+             </div>
+           </div>
+        </div>
+
+        {/* Works - Asymmetrical Grid */}
+        <div id="works" className="space-y-48">
+          {['stories', 'articles', 'blog'].map((section) => {
+            const sectionWorks = portfolio[section] || [];
+            if (sectionWorks.length === 0) return null;
+            return (
+              <div key={section} className="space-y-24 border-t border-foreground/10 pt-24">
+                <div className="flex items-center gap-12">
+                   <h2 className="text-4xl md:text-6xl font-light tracking-tighter capitalize">{section === 'stories' ? 'Books & Stories' : section}</h2>
+                   <span className="text-xs font-bold uppercase tracking-[0.3em] opacity-30 mt-4">Selected</span>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-y-24 gap-x-12 md:gap-x-24">
+                  {sectionWorks.map((work, i) => {
+                    // Asymmetrical styling
+                    const isEven = i % 2 === 0;
+                    return (
+                      <motion.div 
+                        key={work.id || i} 
+                        onClick={() => setSelectedWork(work)}
+                        className={`group cursor-pointer flex flex-col ${isEven ? 'md:mt-0' : 'md:mt-32'}`}
+                      >
+                         <div className="aspect-[3/4] w-full bg-foreground/5 mb-8 relative overflow-hidden flex items-center justify-center">
+                            <span className="text-[12rem] font-light opacity-5 group-hover:scale-110 transition-transform duration-1000">
+                              {(i+1)}
+                            </span>
+                            <div className="absolute inset-0 bg-transparent group-hover:bg-foreground/5 transition-colors duration-500" />
+                            <div className="absolute bottom-8 right-8 w-12 h-12 rounded-full border border-foreground/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 backdrop-blur-sm">
+                              <ArrowRight size={16} />
+                            </div>
+                         </div>
+                         <div className="space-y-4 max-w-md">
+                           <h3 className="text-2xl md:text-3xl font-medium tracking-tight">
+                             {work.name}
+                           </h3>
+                           {work.content && (
+                             <p className="text-sm opacity-60 line-clamp-2 leading-relaxed">
+                               {work.content.replace(/[#*`>\-]/g, '').trim()}
+                             </p>
+                           )}
+                         </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Philosophy */}
+        {portfolio.inspirations && (
+           <div id="info" className="mt-48 py-32 border-t border-foreground/10 grid grid-cols-1 md:grid-cols-3 gap-16">
+              <div className="md:col-span-1">
+                 <span className="text-[9px] uppercase tracking-[0.4em] font-bold opacity-40">Philosophy</span>
+              </div>
+              <div className="md:col-span-2">
+                 <p className="text-3xl md:text-5xl font-light leading-[1.3] tracking-tight">
+                   "{portfolio.inspirations}"
+                 </p>
+              </div>
+           </div>
+        )}
       </div>
     </div>
   );
@@ -562,6 +830,8 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
           >
             {portfolio.templateId === 'minimalist' ? renderMinimalistTemplate() : 
              portfolio.templateId === 'modern' ? renderModernTemplate() : 
+             portfolio.templateId === 'cinematic' ? renderCinematicTemplate() :
+             portfolio.templateId === 'editorial' ? renderEditorialTemplate() :
              renderClassicTemplate()}
 
             {/* Global Connect Section (Unified across templates for consistency) */}
