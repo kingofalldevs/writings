@@ -188,31 +188,7 @@ const Binder = ({ data, selectedId, onSelect, onAddItem, onDeleteItem, onRenameI
                   {section.name}
                 </span>
               </div>
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                {section.id === 'manuscript' && (
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); if(confirm("Wipe all data and reset to Ideabase?")) onAddItem(null, 'reset', section.id); }}
-                    className="p-2 hover:bg-red-500/10 rounded-xl text-red-500 transition-all hover:scale-110"
-                    title="Reset to Ideabase"
-                  >
-                    <RotateCcw size={14} />
-                  </button>
-                )}
-                <button 
-                  onClick={(e) => { e.stopPropagation(); onAddItem(null, 'document', section.id); }}
-                  className="p-2 hover:bg-accent/10 rounded-xl text-accent transition-all hover:scale-110"
-                  title="New Document"
-                >
-                  <Plus size={14} />
-                </button>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); onAddItem(null, 'folder', section.id); }}
-                  className="p-2 hover:bg-accent/10 rounded-xl text-accent transition-all hover:scale-110"
-                  title="New Folder"
-                >
-                  <FolderPlus size={14} />
-                </button>
-              </div>
+
             </div>
 
             <div className="space-y-1.5">

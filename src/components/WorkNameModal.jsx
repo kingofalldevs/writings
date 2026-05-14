@@ -58,8 +58,8 @@ const WorkNameModal = ({ isOpen, onSave }) => {
 
             <button
               type="submit"
-              className="w-full py-4 text-white rounded-2xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 mt-4 hover:scale-[1.02] active:scale-[0.98]"
-              style={{ backgroundColor: 'var(--accent-color)' }}
+              className="w-full py-4 rounded-2xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 mt-4 hover:scale-[1.02] active:scale-[0.98]"
+              style={{ backgroundColor: 'var(--accent-color)', color: 'var(--bg-color)' }}
             >
               Start Writing
               <ArrowRight size={20} />

@@ -15,6 +15,7 @@ const PortfolioEditor = ({ user, onBack, showNotif }) => {
   const [formData, setFormData] = useState({
     authorName: '',
     username: '',
+    profession: '',
     bio: '',
     inspirations: '',
     themeFont: 'serif',
@@ -83,6 +84,7 @@ const PortfolioEditor = ({ user, onBack, showNotif }) => {
           setFormData({
             authorName: data.authorName || user.displayName || '',
             username: data.username || defaultUsername,
+            profession: data.profession || '',
             bio: data.bio || '',
             inspirations: data.inspirations || '',
             themeFont: data.themeFont || 'serif',
@@ -100,6 +102,7 @@ const PortfolioEditor = ({ user, onBack, showNotif }) => {
           setFormData({
             authorName: user.displayName || '',
             username: defaultUsername,
+            profession: '',
             bio: '',
             inspirations: '',
             themeFont: 'serif',
@@ -169,6 +172,7 @@ const PortfolioEditor = ({ user, onBack, showNotif }) => {
         uid: user.uid,
         authorName: formData.authorName,
         username: cleanUsername,
+        profession: formData.profession,
         bio: formData.bio,
         inspirations: formData.inspirations,
         themeFont: formData.themeFont,
@@ -230,6 +234,10 @@ const PortfolioEditor = ({ user, onBack, showNotif }) => {
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase text-black/60">Author Name</label>
                   <input type="text" value={formData.authorName} onChange={(e) => setFormData({...formData, authorName: e.target.value})} className="w-full bg-black/[0.04] rounded-xl px-5 py-4 outline-none font-serif text-lg" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase text-black/60">Profession / Title</label>
+                  <input type="text" value={formData.profession} onChange={(e) => setFormData({...formData, profession: e.target.value})} placeholder="e.g. Creative Writer & Author" className="w-full bg-black/[0.04] rounded-xl px-5 py-4 outline-none font-serif text-lg" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase text-black/60">Bio</label>
@@ -310,7 +318,9 @@ const PortfolioEditor = ({ user, onBack, showNotif }) => {
                 {[
                   { id: 'socialTwitter', label: 'X (Twitter)', icon: <X size={14} /> },
                   { id: 'socialSubstack', label: 'Substack', icon: <Globe size={14} /> },
-                  { id: 'socialLinkedin', label: 'LinkedIn', icon: <Globe size={14} /> }
+                  { id: 'socialLinkedin', label: 'LinkedIn', icon: <Globe size={14} /> },
+                  { id: 'socialMedium', label: 'Medium', icon: <Globe size={14} /> },
+                  { id: 'socialWeb', label: 'Website', icon: <Globe size={14} /> }
                 ].map(s => (
                   <div key={s.id} className="space-y-2">
                     <label className="text-[10px] font-bold uppercase text-black/60 flex items-center gap-2">{s.icon}{s.label}</label>
@@ -388,7 +398,7 @@ const PortfolioEditor = ({ user, onBack, showNotif }) => {
                   <div className="px-8 -mt-20 relative z-10 space-y-12 pb-32">
                     {formData.profileImage && <div className={`${viewMode === 'mobile' ? 'w-24 h-24' : 'w-32 h-32'} rounded-full overflow-hidden mx-auto border-4 border-white shadow-xl`}><img src={formData.profileImage} className="w-full h-full object-cover" /></div>}
                     <h2 className={`${viewMode === 'mobile' ? 'text-3xl' : 'text-5xl'} font-bold`}>{formData.authorName || 'Your Name'}</h2>
-                    <p className={`${viewMode === 'mobile' ? 'text-base' : 'text-xl'} italic opacity-60 max-w-xl mx-auto`}>"{formData.bio || 'Crafting narratives...'}"</p>
+                    <p className={`${viewMode === 'mobile' ? 'text-base' : 'text-xl'} italic opacity-60 max-w-xl mx-auto`}>"{formData.profession || formData.bio || 'Crafting narratives...'}"</p>
                     
                     {/* Works Sections */}
                     {['Stories', 'Articles', 'Blog'].map(section => {
@@ -465,7 +475,7 @@ const PortfolioEditor = ({ user, onBack, showNotif }) => {
                     <div className="max-w-3xl mx-auto space-y-8">
                       <div className="h-[2px] w-12 bg-black mx-auto" style={{ backgroundColor: formData.accentColor }} />
                       <p className={`${viewMode === 'mobile' ? 'text-xl' : 'text-3xl'} font-serif italic text-black/60 leading-relaxed`}>
-                        {formData.bio || 'Crafting narratives at the intersection of human experience and digital evolution.'}
+                        {formData.profession || formData.bio || 'Crafting narratives at the intersection of human experience and digital evolution.'}
                       </p>
                     </div>
                   </div>
@@ -554,7 +564,7 @@ const PortfolioEditor = ({ user, onBack, showNotif }) => {
                       <div className="relative z-10">
                         <div className="h-1 w-20 mb-12" style={{ backgroundColor: formData.accentColor }} />
                         <h2 className={`${viewMode === 'mobile' ? 'text-4xl leading-tight' : 'text-6xl md:text-9xl leading-[0.8]'} font-black uppercase tracking-tighter mb-12`}>{formData.authorName || 'Writer'}</h2>
-                        <p className={`${viewMode === 'mobile' ? 'text-lg' : 'text-xl'} opacity-60 max-w-sm italic`}>"{formData.bio || 'Crafting...'}"</p>
+                        <p className={`${viewMode === 'mobile' ? 'text-lg' : 'text-xl'} opacity-60 max-w-sm italic`}>"{formData.profession || formData.bio || 'Crafting...'}"</p>
                       </div>
                     </div>
                     <div className={`${viewMode === 'mobile' ? 'w-full p-8' : 'w-1/2 p-24'} bg-white space-y-32`}>
@@ -618,7 +628,8 @@ const PortfolioEditor = ({ user, onBack, showNotif }) => {
                       { label: 'Email', value: user?.email || 'hello@example.com', icon: Mail, url: `mailto:${user?.email}` },
                       { label: 'Substack', value: formData.socialSubstack, icon: ExternalLink, url: formData.socialSubstack },
                       { label: 'X / Twitter', value: formData.socialTwitter, icon: Globe, url: formData.socialTwitter },
-                      { label: 'LinkedIn', value: formData.socialLinkedin, icon: Globe, url: formData.socialLinkedin }
+                      { label: 'LinkedIn', value: formData.socialLinkedin, icon: Globe, url: formData.socialLinkedin },
+                      { label: 'Medium', value: formData.socialMedium, icon: ExternalLink, url: formData.socialMedium ? `https://medium.com/@${formData.socialMedium.replace('@','')}` : '' }
                     ].map((link, idx) => (link.value || link.label === 'Email') && (
                       <motion.a 
                         key={idx}

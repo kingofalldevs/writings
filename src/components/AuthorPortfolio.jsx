@@ -9,6 +9,30 @@ import { useRouter } from 'next/navigation';
 
 import LandingFooter from './landing/LandingFooter';
 
+const IconTwitter = ({ size = 24, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.008 4.075H5.059z" />
+  </svg>
+);
+
+const IconLinkedIn = ({ size = 24, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
+    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+  </svg>
+);
+
+const IconSubstack = ({ size = 24, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
+    <path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/>
+  </svg>
+);
+
+const IconMedium = ({ size = 24, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
+    <path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/>
+  </svg>
+);
+
 const ThemeIcon = ({ active, onClick, icon }) => (
   <button
     onClick={onClick}
@@ -58,9 +82,57 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
 
 
 
+  const processPortfolioData = (data) => {
+    const allWorks = data.works || [];
+    const folders = allWorks.filter(w => w.type === 'folder');
+    const documents = allWorks.filter(w => w.type === 'document');
+
+    const getDocsInFolder = (folderId) => {
+      let docs = documents.filter(d => d.parentId === folderId);
+      const subFolders = folders.filter(f => f.parentId === folderId);
+      subFolders.forEach(sub => {
+        docs = [...docs, ...getDocsInFolder(sub.id)];
+      });
+      return docs;
+    };
+
+    const topLevelFolders = folders.filter(f => !f.parentId);
+    const topLevelDocs = documents.filter(d => !d.parentId && d.section !== 'blog');
+    const topLevelBlogs = documents.filter(d => !d.parentId && d.section === 'blog');
+
+    const stories = topLevelFolders.map(folder => {
+      const children = getDocsInFolder(folder.id)
+        .sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
+      const combinedContent = children.map(c => c.content).join('\n\n');
+      return {
+        id: folder.id,
+        name: folder.name,
+        content: combinedContent,
+        children: children,
+        childCount: children.length,
+        type: 'story'
+      };
+    }).filter(s => s.content && s.content.trim().length > 0);
+
+    const articles = topLevelDocs.map(doc => ({
+      ...doc,
+      type: 'article',
+      childCount: 1
+    }));
+
+    const blogs = topLevelBlogs.map(doc => ({
+      ...doc,
+      type: 'blog',
+      childCount: 1
+    }));
+
+    return { ...data, stories, articles, blogs };
+  };
+
   useEffect(() => {
     const fetchPortfolio = async () => {
       if (initialData) {
+        setPortfolio(processPortfolioData(initialData));
         setLoading(false);
         return;
       }
@@ -70,63 +142,7 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          const data = docSnap.data();
-          
-          // 1. Fetch LIVE works from the user's collection using their UID
-          let allWorks = [];
-          if (data.uid) {
-            try {
-              const worksSnapshot = await getDocs(query(collection(db, 'users', data.uid, 'works')));
-              allWorks = worksSnapshot.docs.map(d => ({ ...d.data(), id: d.id }));
-            } catch (worksErr) {
-              console.warn("Could not fetch live works, falling back to snapshot:", worksErr);
-              allWorks = data.works || [];
-            }
-          } else {
-            allWorks = data.works || [];
-          }
-
-          const folders = allWorks.filter(w => w.type === 'folder');
-          const documents = allWorks.filter(w => w.type === 'document');
-
-          const getDocsInFolder = (folderId) => {
-            let docs = documents.filter(d => d.parentId === folderId);
-            const subFolders = folders.filter(f => f.parentId === folderId);
-            subFolders.forEach(sub => {
-              docs = [...docs, ...getDocsInFolder(sub.id)];
-            });
-            return docs;
-          };
-
-          const topLevelFolders = folders.filter(f => !f.parentId);
-          const topLevelDocs = documents.filter(d => !d.parentId);
-
-          const stories = topLevelFolders.map(folder => {
-            const children = getDocsInFolder(folder.id)
-              .sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
-            const combinedContent = children.map(c => c.content).join('\n\n');
-            return {
-              id: folder.id,
-              name: folder.name,
-              content: combinedContent,
-              children: children,
-              childCount: children.length,
-              type: 'story'
-            };
-          }).filter(s => s.content && s.content.trim().length > 0);
-
-          const articles = topLevelDocs.map(doc => ({
-             ...doc,
-             type: 'article',
-             childCount: 1 // Single document
-          }));
-
-          setPortfolio({ 
-            ...data, 
-            stories: stories,
-            articles: articles,
-            blog: [] // For now
-          });
+          setPortfolio(processPortfolioData(docSnap.data()));
         } else {
           setError("This author hasn't published their portfolio yet.");
         }
@@ -203,7 +219,7 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
           <div className="space-y-8 max-w-2xl text-center md:text-left">
             <h1 className="text-6xl md:text-8xl font-serif leading-[1.1] tracking-tight">{portfolio.authorName}</h1>
             <p className="text-xl md:text-3xl font-serif italic opacity-70 leading-relaxed border-l-2 pl-6" style={{ borderColor: accentColor }}>
-              {portfolio.bio || 'Crafting literary narratives...'}
+              {portfolio.profession || portfolio.bio || 'Crafting literary narratives...'}
             </p>
           </div>
         </div>
@@ -280,7 +296,7 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
              <span className="inline-block w-4 h-4 md:w-8 md:h-8 rounded-full ml-4 md:ml-8 translate-y-[-10px] md:translate-y-[-20px]" style={{ backgroundColor: accentColor }} />
            </h1>
            <p className="text-2xl md:text-4xl max-w-2xl font-light leading-tight opacity-70">
-             {portfolio.bio || 'Author & Writer'}
+             {portfolio.profession || portfolio.bio || 'Author & Writer'}
            </p>
         </div>
 
@@ -313,10 +329,17 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
           ))}
         </div>
 
+        {portfolio.bannerImage && (
+             <div className="w-full h-[40vh] mb-24 relative overflow-hidden group">
+               <img src={portfolio.bannerImage} className="w-full h-full object-cover transition-all duration-1000" />
+               <div className="absolute inset-0 bg-background/10 group-hover:bg-transparent transition-all duration-1000" />
+             </div>
+        )}
+
         {portfolio.profileImage && (
            <div className="mt-40 grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
               <div className="aspect-[3/4] bg-foreground/5 relative overflow-hidden">
-                 <img src={portfolio.profileImage} className="w-full h-full object-cover mix-blend-luminosity hover:mix-blend-normal transition-all duration-1000" />
+                 <img src={portfolio.profileImage} className="w-full h-full object-cover transition-all duration-1000" />
               </div>
               {portfolio.inspirations && (
                 <div className="space-y-8">
@@ -340,13 +363,13 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
           
           {/* Sticky Inner Container */}
           <div className="lg:sticky lg:top-0 min-h-screen p-8 md:p-16 flex flex-col justify-between overflow-hidden relative">
-            <div className="absolute inset-0 opacity-30 mix-blend-overlay">
+            <div className="absolute inset-0 opacity-60">
               {portfolio.bannerImage && <img src={portfolio.bannerImage} className="w-full h-full object-cover" />}
             </div>
-            <div className="absolute inset-0 bg-gradient-to-b from-foreground/10 via-foreground/80 to-foreground" />
+            <div className="absolute inset-0 bg-gradient-to-b from-foreground/40 via-foreground/90 to-foreground" />
             
             <div className="relative z-10 flex justify-between items-start mb-20">
-               <div className="w-16 h-16 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-background/20">
+               <div className="w-40 h-40 md:w-52 md:h-52 rounded-full overflow-hidden border-2 border-background/20">
                  {portfolio.profileImage ? <img src={portfolio.profileImage} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-background/10" />}
                </div>
                <span className="text-xs font-bold tracking-[0.2em] uppercase px-4 py-2 bg-background text-foreground rounded-none">
@@ -360,7 +383,7 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
                   {portfolio.authorName}
                 </h1>
                 <p className="text-xl md:text-2xl font-medium max-w-md opacity-80 leading-snug">
-                  {portfolio.bio || 'Creative Writer & Author'}
+                  {portfolio.profession || portfolio.bio || 'Creative Writer & Author'}
                 </p>
               </div>
 
@@ -378,29 +401,39 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
         </div>
 
         {/* Scrolling Right Panel */}
-        <div className="w-full lg:w-[55%] p-8 md:p-16 xl:p-24 space-y-32">
+        <div className="w-full lg:w-[55%] p-8 md:p-16 xl:p-24 space-y-24">
           {['stories', 'articles', 'blog'].map(section => (portfolio[section] || []).length > 0 && (
-            <div key={section} className="space-y-12">
+            <div key={section} className="space-y-8">
               <div className="inline-block px-6 py-3 rounded-none border-2 border-foreground uppercase text-sm font-bold tracking-widest">
-                {section}
+                {section === 'blog' ? 'Blog' : section === 'articles' ? 'Articles' : 'Books & Stories'}
               </div>
-              <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {(portfolio[section] || []).map((work, i) => (
                   <motion.div 
                     key={work.id || i} 
                     onClick={() => setSelectedWork(work)}
-                    whileHover={{ scale: 1.02 }}
-                    className="p-8 md:p-12 rounded-none bg-foreground/5 hover:bg-foreground hover:text-background transition-all duration-300 cursor-pointer group"
+                    whileHover={{ y: -3 }}
+                    className="group p-8 bg-foreground/5 hover:bg-foreground hover:text-background transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[240px] relative overflow-hidden"
                   >
-                    <div className="flex justify-between items-start gap-8 mb-6">
-                      <h3 className="text-3xl md:text-5xl font-black tracking-tight leading-none group-hover:text-accent transition-colors">
+                    <div>
+                      <span className="text-[9px] font-bold uppercase tracking-[0.3em] opacity-30 block mb-6">
+                        {section === 'blog' ? 'Blog Post' : section === 'articles' ? 'Article' : 'Story'}
+                      </span>
+                      <h3 className="text-2xl md:text-3xl font-black tracking-tight leading-tight group-hover:text-accent transition-colors">
                         {work.name}
                       </h3>
-                      <ArrowRight size={32} className="opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                      {work.content && (
+                        <p className="text-sm opacity-50 group-hover:opacity-70 line-clamp-2 leading-relaxed mt-4">
+                          {work.content.replace(/[#*`>\-]/g, '').trim().substring(0, 100)}…
+                        </p>
+                      )}
                     </div>
-                    <p className="text-lg opacity-60 group-hover:opacity-80 line-clamp-3 leading-relaxed">
-                      {work.content?.substring(0, 150)}...
-                    </p>
+                    <div className="flex items-center justify-between mt-8">
+                      <span className="text-[9px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-60 transition-opacity">Read</span>
+                      <ArrowRight size={20} className="opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                    </div>
+                    {/* Bottom accent bar */}
+                    <div className="absolute bottom-0 left-0 right-0 h-[2px] w-0 group-hover:w-full transition-all duration-500" style={{ backgroundColor: accentColor }} />
                   </motion.div>
                 ))}
               </div>
@@ -542,8 +575,8 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
                   >
                     <p className="text-[10px] font-bold tracking-[0.5em] uppercase opacity-20 mb-10">Collaboration</p>
                     <h2 className="text-6xl md:text-9xl font-bold tracking-tightest mb-8 leading-[0.85]">
-                      Let's create <br/>
-                      <span className="italic font-serif opacity-40">together.</span>
+                      Connect <br/>
+                      <span className="italic font-serif opacity-40">with me.</span>
                     </h2>
                     <p className="text-2xl font-serif italic text-foreground/40 mt-12 max-w-lg">
                       Interested in collaborating on a narrative project or have a story to tell? Let's connect.
@@ -555,46 +588,130 @@ const AuthorPortfolio = ({ authorUsername, initialData }) => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.2 }}
-                    className="flex flex-col w-full lg:w-[450px]"
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full lg:w-[500px]"
                   >
                      {[
-                       { id: 'socialTwitter', label: 'Twitter', icon: Share2, prefix: 'twitter.com/' },
-                       { id: 'socialLinkedin', label: 'LinkedIn', icon: LinkedinIcon, prefix: '' },
-                       { id: 'socialMedium', label: 'Medium', icon: Edit3, prefix: '' },
-                       { id: 'socialSubstack', label: 'Substack', icon: Mail, prefix: '' },
+                       { id: 'socialTwitter', label: 'Twitter', icon: IconTwitter, prefix: 'twitter.com/' },
+                       { id: 'socialLinkedin', label: 'LinkedIn', icon: IconLinkedIn, prefix: 'linkedin.com/in/' },
+                       { id: 'socialMedium', label: 'Medium', icon: IconMedium, prefix: 'medium.com/@' },
+                       { id: 'socialSubstack', label: 'Substack', icon: IconSubstack, prefix: '' },
                        { id: 'socialWeb', label: 'Website', icon: LinkIcon, prefix: '' }
-                     ].map(social => portfolio[social.id] && (
-                       <a 
+                     ].filter(s => portfolio[s.id]).map(social => (
+                       <a
                          key={social.id}
-                         href={portfolio[social.id].startsWith('http') ? portfolio[social.id] : `https://${social.prefix}${portfolio[social.id].replace('@','')}`} 
-                         target="_blank" 
-                         className="group flex items-center justify-between py-10 border-b border-foreground/5 hover:border-foreground/20 transition-all relative"
+                         href={portfolio[social.id].startsWith('http') ? portfolio[social.id] : `https://${social.prefix}${portfolio[social.id].replace('@','')}`}
+                         target="_blank"
+                         className="group relative flex flex-col justify-between p-8 bg-foreground/[0.03] hover:bg-foreground hover:text-background transition-all duration-300 overflow-hidden min-h-[140px]"
                        >
-                         <span className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30">{social.label}</span>
-                         <div className="flex items-center gap-6">
-                            <span className="text-xl font-medium tracking-tight group-hover:-translate-x-2 transition-transform duration-500">
-                              {portfolio[social.id].includes('/') ? (portfolio[social.id].split('/').pop() || 'Visit') : portfolio[social.id]}
-                            </span>
-                            <social.icon size={18} className="opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0" style={{ color: accentColor }} />
+                         <span className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30 group-hover:opacity-60 transition-opacity">{social.label}</span>
+                         <div className="flex items-end justify-between mt-6">
+                           <span className="text-xl font-bold tracking-tight">
+                             {portfolio[social.id].includes('/') ? (portfolio[social.id].split('/').pop() || 'Visit') : portfolio[social.id]}
+                           </span>
+                           <social.icon size={18} className="opacity-0 group-hover:opacity-100 transition-all duration-300" style={{ color: accentColor }} />
                          </div>
-                         <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-foreground/20 group-hover:w-full transition-all duration-700" />
+                         <div className="absolute bottom-0 left-0 right-0 h-[2px] w-0 group-hover:w-full transition-all duration-500" style={{ backgroundColor: accentColor }} />
                        </a>
                      ))}
-                     
-                     <a 
-                       href={`mailto:${portfolio.email || ''}`}
-                       className="group flex items-center justify-between py-10 border-b border-foreground/5 hover:border-foreground/20 transition-all relative"
-                     >
-                       <span className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30">Email</span>
-                       <div className="flex items-center gap-6">
-                          <span className="text-xl font-medium tracking-tight group-hover:-translate-x-2 transition-transform duration-500">Say Hello</span>
-                          <Mail size={18} className="opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0" style={{ color: accentColor }} />
-                       </div>
-                       <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-foreground/20 group-hover:w-full transition-all duration-700" />
-                     </a>
+
+                     {portfolio.email && (
+                       <a
+                         href={`mailto:${portfolio.email}`}
+                         className="group relative flex flex-col justify-between p-8 bg-foreground/[0.03] hover:bg-foreground hover:text-background transition-all duration-300 overflow-hidden min-h-[140px] sm:col-span-2"
+                       >
+                         <span className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30 group-hover:opacity-60 transition-opacity">Email</span>
+                         <div className="flex items-end justify-between mt-6">
+                           <span className="text-2xl font-bold tracking-tight">Say Hello →</span>
+                           <Mail size={20} className="opacity-0 group-hover:opacity-100 transition-all duration-300" style={{ color: accentColor }} />
+                         </div>
+                         <div className="absolute bottom-0 left-0 right-0 h-[2px] w-0 group-hover:w-full transition-all duration-500" style={{ backgroundColor: accentColor }} />
+                       </a>
+                     )}
                   </motion.div>
                </div>
             </section>
+
+            {/* Blog Section */}
+            {portfolio.blogs && portfolio.blogs.length > 0 && (
+              <section id="blog-section" className="border-t border-foreground/5 py-32">
+                <div className="max-w-7xl mx-auto px-8">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="flex items-end justify-between mb-16"
+                  >
+                    <div>
+                      <p className="text-[10px] font-bold tracking-[0.5em] uppercase opacity-20 mb-4">Writing</p>
+                      <h2 className="text-5xl md:text-7xl font-bold tracking-tight leading-none">
+                        From the <span className="italic font-serif opacity-40">blog.</span>
+                      </h2>
+                    </div>
+                    <span className="text-sm opacity-30 font-medium">{portfolio.blogs.length} post{portfolio.blogs.length !== 1 ? 's' : ''}</span>
+                  </motion.div>
+
+                  <div className="flex gap-6 overflow-x-auto pb-6 -mx-2 px-2" style={{ scrollbarWidth: 'none' }}>
+                    {portfolio.blogs.map((post, i) => {
+                      const wordCount = post.content ? post.content.trim().split(/\s+/).length : 0;
+                      const readTime = Math.max(1, Math.ceil(wordCount / 200));
+                      const excerpt = post.content ? post.content.replace(/[#*`>\-]/g, '').trim().slice(0, 160) : '';
+                      const dateStr = post.timestamp?.seconds
+                        ? new Date(post.timestamp.seconds * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                        : '';
+
+                      return (
+                        <motion.div
+                          key={post.id}
+                          initial={{ opacity: 0, y: 24 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.07 * Math.min(i, 6) }}
+                          onClick={() => setSelectedWork(post)}
+                          className="group flex-shrink-0 cursor-pointer"
+                          style={{ width: '320px' }}
+                        >
+                          <div
+                            className="relative flex flex-col justify-between h-[440px] rounded-none border border-foreground/10 hover:border-foreground/30 p-10 transition-all duration-500 overflow-hidden"
+                            style={{ backgroundColor: 'var(--bg-secondary, rgba(255,255,255,0.02))' }}
+                          >
+                            {/* Accent stripe */}
+                            <div
+                              className="absolute top-0 left-0 right-0 h-[2px] w-0 group-hover:w-full transition-all duration-700"
+                              style={{ backgroundColor: accentColor }}
+                            />
+
+                            <div>
+                              {dateStr && (
+                                <p className="text-[10px] font-bold tracking-[0.3em] uppercase opacity-30 mb-8">{dateStr}</p>
+                              )}
+                              <h3 className="text-2xl font-bold leading-tight mb-5 group-hover:opacity-70 transition-opacity">
+                                {post.name}
+                              </h3>
+                              {excerpt && (
+                                <p className="text-sm opacity-40 leading-relaxed line-clamp-4">
+                                  {excerpt}{excerpt.length === 160 ? '…' : ''}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="flex items-center justify-between mt-8">
+                              <span className="text-[10px] font-bold tracking-[0.3em] uppercase opacity-25">
+                                {readTime} min read
+                              </span>
+                              <ArrowRight
+                                size={18}
+                                className="opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-500"
+                                style={{ color: accentColor }}
+                              />
+                            </div>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </section>
+            )}
 
             <LandingFooter onTerms={nav.onTerms} onPrivacy={nav.onPrivacy} onRefund={nav.onRefund} />
           </motion.div>

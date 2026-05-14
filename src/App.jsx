@@ -17,6 +17,7 @@ import PhilosophyPage from './components/PhilosophyPage';
 import AuthModal from './components/AuthModal';
 import PricingModal from './components/PricingModal';
 import WorkNameModal from './components/WorkNameModal';
+import PromptModal from './components/PromptModal';
 import SharedNovelView from './components/SharedNovelView';
 import AuthorPortfolio from './components/AuthorPortfolio';
 import AccountPage from './components/AccountPage';
@@ -65,11 +66,23 @@ function AppContent() {
   const [prefilledHandle, setPrefilledHandle] = useState('');
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(tracks[0]);
-  const [editorContent, setEditorContent] = useState('');
-  const [selectedItemId, setSelectedItemId] = useState(null);
-  const [currentWorkId, setCurrentWorkId] = useState(null);
-  const [currentWorkName, setCurrentWorkName] = useState('');
+  const [editorContent, setEditorContent] = useState(() => typeof window !== 'undefined' ? sessionStorage.getItem('editorContent') || '' : '');
+  const [selectedItemId, setSelectedItemId] = useState(() => typeof window !== 'undefined' ? sessionStorage.getItem('selectedItemId') : null);
+  const [currentWorkId, setCurrentWorkId] = useState(() => typeof window !== 'undefined' ? sessionStorage.getItem('currentWorkId') : null);
+  const [currentWorkName, setCurrentWorkName] = useState(() => typeof window !== 'undefined' ? sessionStorage.getItem('currentWorkName') || '' : '');
+  const [activeProjectId, setActiveProjectId] = useState(() => typeof window !== 'undefined' ? sessionStorage.getItem('activeProjectId') : null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (activeProjectId) sessionStorage.setItem('activeProjectId', activeProjectId); else sessionStorage.removeItem('activeProjectId');
+      if (currentWorkId) sessionStorage.setItem('currentWorkId', currentWorkId); else sessionStorage.removeItem('currentWorkId');
+      if (currentWorkName) sessionStorage.setItem('currentWorkName', currentWorkName); else sessionStorage.removeItem('currentWorkName');
+      if (selectedItemId) sessionStorage.setItem('selectedItemId', selectedItemId); else sessionStorage.removeItem('selectedItemId');
+      if (editorContent) sessionStorage.setItem('editorContent', editorContent); else sessionStorage.removeItem('editorContent');
+    }
+  }, [activeProjectId, currentWorkId, currentWorkName, selectedItemId, editorContent]);
   const [isNamingModalOpen, setIsNamingModalOpen] = useState(false);
+  const [promptConfig, setPromptConfig] = useState({ isOpen: false, title: '', description: '', defaultValue: '', placeholder: '', submitText: '', onSave: null, onCancel: null });
   const [isBinderOpen, setIsBinderOpen] = useState(false); // initialized after mount
   const [notif, setNotif] = useState({ isOpen: false, title: '', message: '', type: 'success', copyText: null, onConfirm: null, confirmText: 'Got it', cancelText: 'Cancel' });
   const { user, logout, loading } = useAuth();
@@ -78,6 +91,27 @@ function AppContent() {
     setNotif({ isOpen: true, title, message, type, copyText: extras.copyText || null, onConfirm: extras.onConfirm || null, confirmText: extras.confirmText || 'Got it', cancelText: extras.cancelText || 'Cancel' });
   };
   const closeNotif = () => setNotif(n => ({ ...n, isOpen: false }));
+
+  const showPrompt = (title, description, defaultValue, placeholder, submitText) => {
+    return new Promise((resolve) => {
+      setPromptConfig({
+        isOpen: true,
+        title,
+        description,
+        defaultValue,
+        placeholder,
+        submitText,
+        onSave: (value) => {
+          setPromptConfig(prev => ({ ...prev, isOpen: false }));
+          resolve(value);
+        },
+        onCancel: () => {
+          setPromptConfig(prev => ({ ...prev, isOpen: false }));
+          resolve(null);
+        }
+      });
+    });
+  };
 
   // Initialize binder open state based on screen size after mount
   useEffect(() => {
@@ -167,7 +201,7 @@ function AppContent() {
             }));
         };
 
-        const ideabaseTree = buildTree(null).filter(w => w.section === 'ideabase' || !w.section);
+        const ideabaseTree = buildTree(null).filter(w => w.section !== 'trash');
         const researchTree = buildTree(null).filter(w => w.section === 'research');
         const trashTree = buildTree(null).filter(w => w.section === 'trash');
 
@@ -306,7 +340,7 @@ function AppContent() {
 
     // TEMPLATE: New Idea inside Ideabase root
     if (section === 'ideabase' && !parentId && type === 'folder') {
-      const ideaName = prompt("Enter Idea Name:", `Idea ${binderData.ideabase.length + 1}`);
+      const ideaName = await showPrompt("Name your Idea", "What should we call this new idea folder?", `Idea ${binderData.ideabase.length + 1}`, "Idea 1", "Create Idea");
       if (!ideaName) return;
 
       // Create Idea Folder
@@ -337,7 +371,6 @@ function AppContent() {
         timestamp: serverTimestamp()
       });
 
-      // 3. Chapters (Folder)
       await addDoc(collection(db, 'users', user.uid, 'works'), {
         name: 'Chapters',
         type: 'folder',
@@ -346,6 +379,8 @@ function AppContent() {
         timestamp: serverTimestamp()
       });
 
+      setActiveProjectId(ideaRef.id);
+      if (typeof window !== 'undefined') sessionStorage.setItem('activeProjectId', ideaRef.id);
       return;
     }
 
@@ -362,10 +397,17 @@ function AppContent() {
       });
 
       if (type === 'document') {
+        if (!parentId) {
+          setActiveProjectId(docRef.id);
+          if (typeof window !== 'undefined') sessionStorage.setItem('activeProjectId', docRef.id);
+        }
         setCurrentWorkId(docRef.id);
         setCurrentWorkName(name);
         setSelectedItemId(docRef.id);
         setEditorContent('');
+      } else if (type === 'folder' && !parentId) {
+        setActiveProjectId(docRef.id);
+        if (typeof window !== 'undefined') sessionStorage.setItem('activeProjectId', docRef.id);
       }
     } catch (e) {
       console.error("Error adding item: ", e);
@@ -383,6 +425,8 @@ function AppContent() {
         parentId: null,
         timestamp: serverTimestamp()
       });
+      setActiveProjectId(docRef.id);
+      if (typeof window !== 'undefined') sessionStorage.setItem('activeProjectId', docRef.id);
       setCurrentWorkId(docRef.id);
       setCurrentWorkName('Untitled Article');
       setSelectedItemId(docRef.id);
@@ -404,6 +448,8 @@ function AppContent() {
         parentId: null,
         timestamp: serverTimestamp()
       });
+      setActiveProjectId(docRef.id);
+      if (typeof window !== 'undefined') sessionStorage.setItem('activeProjectId', docRef.id);
       setCurrentWorkId(docRef.id);
       setCurrentWorkName('Untitled Blog Post');
       setSelectedItemId(docRef.id);
@@ -416,7 +462,7 @@ function AppContent() {
 
   const handleCreateStory = async () => {
     if (!user) return;
-    const ideaName = prompt("Enter Story Name:", `Idea ${binderData.ideabase.length + 1}`);
+    const ideaName = await showPrompt("Name your Story", "What should we call this new story project?", `Idea ${binderData.ideabase.length + 1}`, "Idea 1", "Create Story");
     if (!ideaName) return;
 
     try {
@@ -453,6 +499,8 @@ function AppContent() {
         timestamp: serverTimestamp()
       });
 
+      setActiveProjectId(ideaRef.id);
+      if (typeof window !== 'undefined') sessionStorage.setItem('activeProjectId', ideaRef.id);
       setCurrentWorkId(storyRef.id);
       setCurrentWorkName('Storyline');
       setSelectedItemId(storyRef.id);
@@ -466,6 +514,8 @@ function AppContent() {
 
   const handleOpenWork = (work) => {
     handleNavigate('editor');
+    setActiveProjectId(work.id);
+    if (typeof window !== 'undefined') sessionStorage.setItem('activeProjectId', work.id);
     if (work.type === 'document') {
       setCurrentWorkId(work.id);
       setCurrentWorkName(work.name);
@@ -509,7 +559,7 @@ function AppContent() {
 
   const handleRenameItem = async (item) => {
     if (!user) return;
-    const newName = prompt("Enter new name:", item.name);
+    const newName = await showPrompt("Rename Item", "Enter a new name for this item:", item.name, item.name, "Rename");
     if (newName && newName !== item.name) {
       try {
         await updateDoc(doc(db, 'users', user.uid, 'works', item.id), {
@@ -552,12 +602,50 @@ function AppContent() {
       }
 
       const worksSnapshot = await getDocs(query(collection(db, 'users', user.uid, 'works')));
-      const works = worksSnapshot.docs.map(d => ({ ...d.data(), id: d.id }));
+      const allWorks = worksSnapshot.docs.map(d => ({ ...d.data(), id: d.id }));
+
+      const getActiveProjectWorks = (worksList, projectId) => {
+        if (!projectId) return [];
+        const result = [];
+        const findChildren = (parentId) => {
+          const children = worksList.filter(w => w.parentId === parentId);
+          result.push(...children);
+          children.forEach(c => findChildren(c.id));
+        };
+        const root = worksList.find(w => w.id === projectId);
+        if (root) {
+          result.push(root);
+          findChildren(root.id);
+        }
+        return result;
+      };
+
+      const activeProjectWorks = getActiveProjectWorks(allWorks, activeProjectId);
+      const existingWorks = portfolioData.works || [];
+      
+      const getDescendantIds = (worksList, rootId) => {
+        const ids = new Set([rootId]);
+        let added = true;
+        while(added) {
+          added = false;
+          for (const w of worksList) {
+            if (ids.has(w.parentId) && !ids.has(w.id)) {
+              ids.add(w.id);
+              added = true;
+            }
+          }
+        }
+        return ids;
+      };
+      
+      const idsToRemove = activeProjectId ? getDescendantIds(existingWorks, activeProjectId) : new Set();
+      const filteredExistingWorks = existingWorks.filter(w => !idsToRemove.has(w.id));
+      const mergedWorks = [...filteredExistingWorks, ...activeProjectWorks];
 
       await setDoc(doc(db, 'portfolios', portfolioData.username.toLowerCase()), {
         ...portfolioData,
         uid: user.uid,
-        works: works,
+        works: mergedWorks,
         timestamp: serverTimestamp()
       });
 
@@ -567,7 +655,8 @@ function AppContent() {
         : `https://${portfolioData.username.toLowerCase()}.writings.page`;
       
       navigator.clipboard.writeText(shareUrl);
-      showNotif('Portfolio updated!', 'Your portfolio is live. Link copied to clipboard.', 'success', { copyText: shareUrl });
+      window.open(shareUrl, '_blank');
+      showNotif('Portfolio updated!', 'Your portfolio is live. Opening in a new tab.', 'success', { copyText: shareUrl });
     } catch (e) {
       console.error("Error quick publishing: ", e);
       showNotif('Publish failed', 'Something went wrong. Please try again.', 'error');
@@ -581,26 +670,72 @@ function AppContent() {
     }
 
     const defaultUsername = user.displayName?.split(' ')[0]?.toLowerCase() || user.email?.split('@')[0]?.toLowerCase() || 'author';
-    const username = prompt("Enter your unique author handle (e.g. prince) to publish your portfolio:", defaultUsername);
-
-    const bio = prompt("A short bio about you as a writer:", "Crafting narratives at the intersection of architecture, philosophy, and the quiet moments of the everyday.");
-    const inspirations = prompt("Your inspirations (e.g. minimalist design, natural world):", "Inspired by the minimalist lines of design, classical music, and the raw beauty of the natural world.");
-
+    const username = await showPrompt("Set Author Handle", "Enter your unique author handle (e.g. prince) to publish your portfolio:", defaultUsername, defaultUsername, "Next");
     if (!username) return;
+
+    const bio = await showPrompt("Your Bio", "A short bio about you as a writer:", "Crafting narratives at the intersection of architecture, philosophy, and the quiet moments of the everyday.", "", "Next");
+    if (!bio) return;
+
+    const inspirations = await showPrompt("Your Inspirations", "Your inspirations (e.g. minimalist design, natural world):", "Inspired by the minimalist lines of design, classical music, and the raw beauty of the natural world.", "", "Publish");
+    if (!inspirations) return;
 
     try {
       const worksSnapshot = await getDocs(query(collection(db, 'users', user.uid, 'works')));
-      const works = worksSnapshot.docs.map(d => ({ ...d.data(), id: d.id }));
+      const allWorks = worksSnapshot.docs.map(d => ({ ...d.data(), id: d.id }));
+
+      const getActiveProjectWorks = (worksList, projectId) => {
+        if (!projectId) return [];
+        const result = [];
+        const findChildren = (parentId) => {
+          const children = worksList.filter(w => w.parentId === parentId);
+          result.push(...children);
+          children.forEach(c => findChildren(c.id));
+        };
+        const root = worksList.find(w => w.id === projectId);
+        if (root) {
+          result.push(root);
+          findChildren(root.id);
+        }
+        return result;
+      };
+
+      const activeProjectWorks = getActiveProjectWorks(allWorks, activeProjectId);
+      
+      const { getDoc } = await import('firebase/firestore');
+      const docRef = doc(db, 'portfolios', username.toLowerCase());
+      const docSnap = await getDoc(docRef);
+      const existingData = docSnap.exists() ? docSnap.data() : {};
+      const existingWorks = existingData.works || [];
+      
+      const getDescendantIds = (worksList, rootId) => {
+        const ids = new Set([rootId]);
+        let added = true;
+        while(added) {
+          added = false;
+          for (const w of worksList) {
+            if (ids.has(w.parentId) && !ids.has(w.id)) {
+              ids.add(w.id);
+              added = true;
+            }
+          }
+        }
+        return ids;
+      };
+      
+      const idsToRemove = activeProjectId ? getDescendantIds(existingWorks, activeProjectId) : new Set();
+      const filteredExistingWorks = existingWorks.filter(w => !idsToRemove.has(w.id));
+      const mergedWorks = [...filteredExistingWorks, ...activeProjectWorks];
 
       const authorName = user.displayName || username;
 
       await setDoc(doc(db, 'portfolios', username.toLowerCase()), {
+        ...existingData,
         uid: user.uid,
         authorName: authorName,
         username: username.toLowerCase(),
         bio: bio,
         inspirations: inspirations,
-        works: works,
+        works: mergedWorks,
         timestamp: serverTimestamp()
       });
 
@@ -610,7 +745,8 @@ function AppContent() {
         : `https://${username.toLowerCase()}.writings.page`;
 
       navigator.clipboard.writeText(shareUrl);
-      showNotif('Portfolio is live! 🎉', 'Your author page is published. Link copied to clipboard.', 'success', { copyText: shareUrl });
+      window.open(shareUrl, '_blank');
+      showNotif('Portfolio is live! 🎉', 'Your author page is published. Opening in a new tab.', 'success', { copyText: shareUrl });
     } catch (e) {
       console.error("Error publishing portfolio: ", e);
       showNotif('Publish failed', 'Something went wrong. Please try again.', 'error');
@@ -653,6 +789,8 @@ function AppContent() {
           parentId: null,
           timestamp: serverTimestamp()
         });
+        setActiveProjectId(docRef.id);
+        if (typeof window !== 'undefined') sessionStorage.setItem('activeProjectId', docRef.id);
         setCurrentWorkId(docRef.id);
         setSelectedItemId(docRef.id);
         setCurrentWorkName(name);
@@ -960,7 +1098,11 @@ function AppContent() {
       <div className="animate-fade-in flex flex-1 mt-16 overflow-hidden">
         {isBinderOpen && (
           <Binder
-            data={binderData}
+            data={{
+              ideabase: activeProjectId ? binderData.ideabase.filter(w => w.id === activeProjectId) : binderData.ideabase,
+              research: activeProjectId ? binderData.research.filter(w => w.id === activeProjectId) : binderData.research,
+              trash: activeProjectId ? binderData.trash.filter(w => w.id === activeProjectId) : binderData.trash
+            }}
             selectedId={selectedItemId}
             onSelect={handleSelectBinderItem}
             onAddItem={handleAddItem}
@@ -992,6 +1134,10 @@ function AppContent() {
       <WorkNameModal
         isOpen={isNamingModalOpen}
         onSave={handleSaveWorkName}
+      />
+
+      <PromptModal
+        {...promptConfig}
       />
 
       <PricingModal

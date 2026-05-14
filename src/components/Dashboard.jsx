@@ -166,28 +166,49 @@ const Dashboard = ({ user, onCreateArticle, onCreateStory, onCreateBlog, onOpenW
             <p className="text-foreground/40">Create a new article or story to get started.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredWorks.map((work, index) => (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * Math.min(index, 5) }}
-                key={work.id}
-                onClick={() => onOpenWork(work)}
-                className="group p-6 rounded-2xl border border-foreground/10 hover:border-accent/40 bg-foreground/[0.02] hover:bg-accent/[0.02] transition-all duration-300 cursor-pointer"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${work.type === 'folder' ? 'bg-accent/10 text-accent' : 'bg-foreground/5 text-foreground'}`}>
-                    {work.type === 'folder' ? <Folder size={20} /> : <FileText size={20} />}
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs opacity-40 font-medium">
-                    <Clock size={12} />
-                    {work.timestamp?.toDate ? work.timestamp.toDate().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'Just now'}
-                  </div>
+          <div className="space-y-16">
+            {[
+              { title: 'Books & Stories', items: filteredWorks.filter(w => w.type === 'folder' && w.section !== 'blog') },
+              { title: 'Articles', items: filteredWorks.filter(w => w.type === 'document' && w.section !== 'blog') },
+              { title: 'Blog Posts', items: filteredWorks.filter(w => w.section === 'blog') }
+            ].filter(group => group.items.length > 0).map((group, groupIndex) => (
+              <div key={group.title}>
+                <h3 className="text-xl font-bold mb-6 text-foreground/80 flex items-center gap-3">
+                  {group.title}
+                  <span className="px-2 py-0.5 rounded-full bg-foreground/5 text-[10px] font-bold tracking-wider opacity-60">
+                    {group.items.length}
+                  </span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {group.items.map((work, index) => (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.05 * Math.min(index, 10) }}
+                      key={work.id}
+                      onClick={() => onOpenWork(work)}
+                      className="group p-6 rounded-2xl border border-foreground/10 hover:border-accent/40 bg-foreground/[0.02] hover:bg-accent/[0.02] transition-all duration-300 cursor-pointer"
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${work.type === 'folder' ? 'bg-accent/10 text-accent' : 'bg-foreground/5 text-foreground'}`}>
+                          {work.type === 'folder' ? <Folder size={18} /> : <FileText size={18} />}
+                        </div>
+                        <div className="flex items-center gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity text-xs font-medium">
+                          <Clock size={12} />
+                          {work.timestamp?.seconds ? new Date(work.timestamp.seconds * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Just now'}
+                        </div>
+                      </div>
+                      
+                      <h4 className="text-lg font-bold mb-2 group-hover:text-accent transition-colors truncate">
+                        {work.name}
+                      </h4>
+                      <p className="text-sm text-foreground/40 capitalize">
+                        {work.type}
+                      </p>
+                    </motion.div>
+                  ))}
                 </div>
-                <h4 className="font-bold text-lg truncate mb-1">{work.name}</h4>
-                <p className="text-sm opacity-50 capitalize">{work.type}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         )}
